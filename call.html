@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nineO Trip Audio Call</title>
+  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; padding: 40px 20px; background: #f8fafc; }
+    .card { background: white; border-radius: 16px; padding: 30px 20px; max-width: 360px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+    h2 { margin-top: 0; color: #1e293b; }
+    p { color: #64748b; font-size: 14px; }
+    .status { font-weight: bold; color: #0284c7; margin: 20px 0; }
+    button { width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
+    .btn-join { background: #16a34a; color: white; }
+    .btn-end { background: #dc2626; color: white; display: none; }
+    .btn-mute { background: #e2e8f0; color: #334155; display: none; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <h2>nineO Trip Call 🛵</h2>
+  <p id="channel-label">Loading trip...</p>
+  <div id="status" class="status">Tap below to speak</div>
+
+  <button id="btn-join" class="btn-join" onclick="joinCall()">Connect Call</button>
+  <button id="btn-mute" class="btn-mute" onclick="toggleMute()">Mute Mic</button>
+  <button id="btn-end" class="btn-end" onclick="leaveCall()">End Call</button>
+</div>
+
+<script>
+  // PASTE YOUR 32-CHARACTER AGORA APP ID INSIDE THE QUOTES BELOW:
+  const AGORA_APP_ID = "dcbc63dc7efe40ac818394dd9e118562";
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const CHANNEL_NAME = urlParams.get('channel') || "test_channel";
+  document.getElementById("channel-label").innerText = `Trip ID: ${CHANNEL_NAME}`;
+
+  const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
+  let localAudioTrack = null;
+  let isMuted = false;
+
+  client.on("user-published", async (user, mediaType) => {
+    await client.subscribe(user, mediaType);
+    if (mediaType === "audio") {
+      user.audioTrack.play();
+      document.getElementById("status").innerText = "Connected & Speaking 🟢";
+    }
+  });
+
+  client.on("user-left", () => {
+    document.getElementById("status").innerText = "Other person disconnected";
+  });
+
+  async function joinCall() {
+    try {
+      document.getElementById("status").innerText = "Connecting...";
+      await client.join(AGORA_APP_ID, CHANNEL_NAME, null, null);
+
+      localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
+      await client.publish([localAudioTrack]);
+
+      document.getElementById("status").innerText = "Connected! Waiting for other party...";
+      document.getElementById("btn-join").style.display = "none";
+      document.getElementById("btn-mute").style.display = "block";
+      document.getElementById("btn-end").style.display = "block";
+    } catch (err) {
+      console.error(err);
+      document.getElementById("status").innerText = "Mic permission denied or error.";
+    }
+  }
+
+  function toggleMute() {
+    if (!localAudioTrack) return;
+    isMuted = !isMuted;
+    localAudioTrack.setMuted(isMuted);
+    document.getElementById("btn-mute").innerText = isMuted ? "Unmute Mic" : "Mute Mic";
+  }
+
+  async function leaveCall() {
+    if (localAudioTrack) {
+      localAudioTrack.stop();
+      localAudioTrack.close();
+    }
+    await client.leave();
+    document.getElementById("status").innerText = "Call ended";
+    document.getElementById("btn-join").style.display = "block";
+    document.getElementById("btn-mute").style.display = "none";
+    document.getElementById("btn-end").style.display = "none";
+  }
+</script>
+
+</body>
+</html>
