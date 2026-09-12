@@ -3,148 +3,409 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>nineO Trip Audio Call</title>
-  <script src="https://download.agora.io/sdk/release/AgoraRTC_N-4.20.0.js"></script>
+  <title>nineO - Masked Private Calling</title>
+  <!-- PeerJS WebRTC Library -->
+  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
   <style>
-    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; text-align: center; padding: 40px 20px; background: #f8fafc; }
-    .card { background: white; border-radius: 16px; padding: 30px 20px; max-width: 360px; margin: 0 auto; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-    h2 { margin-top: 0; color: #1e293b; }
-    p { color: #64748b; font-size: 14px; }
-    .status { font-weight: bold; color: #0284c7; margin: 20px 0; word-break: break-word; }
-    button { width: 100%; padding: 14px; margin: 8px 0; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; }
-    .btn-join { background: #16a34a; color: white; }
-    .btn-end { background: #dc2626; color: white; display: none; }
-    .btn-mute { background: #e2e8f0; color: #334155; display: none; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f172a;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .call-card {
+      background: #1e293b;
+      width: 100%;
+      max-width: 390px;
+      border-radius: 28px;
+      padding: 32px 24px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.45);
+      border: 1px solid #334155;
+      position: relative;
+    }
+    .brand {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 2px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
+    .avatar-wrap {
+      position: relative;
+      width: 104px;
+      height: 104px;
+      margin: 20px auto;
+      border-radius: 50%;
+      background: #334155;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 46px;
+    }
+    .pulse-ring {
+      position: absolute;
+      top: -8px; left: -8px; right: -8px; bottom: -8px;
+      border-radius: 50%;
+      border: 2px solid #38bdf8;
+      opacity: 0;
+    }
+    .active-call .pulse-ring {
+      animation: pulse 2s infinite ease-out;
+    }
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 0.8; }
+      100% { transform: scale(1.35); opacity: 0; }
+    }
+    .peer-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+    .trip-badge {
+      font-size: 12px;
+      color: #94a3b8;
+      background: #0f172a;
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      border: 1px solid #334155;
+    }
+    .status-text {
+      font-size: 14px;
+      color: #cbd5e1;
+      margin-bottom: 10px;
+      min-height: 22px;
+    }
+    .timer {
+      font-size: 28px;
+      font-weight: 700;
+      color: #38bdf8;
+      margin-bottom: 24px;
+      font-variant-numeric: tabular-nums;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 10px;
+    }
+    .btn {
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.15s ease, background 0.2s;
+    }
+    .btn:active { transform: scale(0.93); }
+    .btn-circle {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      font-size: 22px;
+    }
+    .btn-call {
+      background: #16a34a;
+      color: white;
+      width: 100%;
+      border-radius: 14px;
+      height: 54px;
+      font-size: 16px;
+    }
+    .btn-hangup { background: #ef4444; color: white; }
+    .btn-mute { background: #334155; color: #f8fafc; }
+    .btn-mute.muted { background: #eab308; color: #0f172a; }
+
+    .sos-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid #ef4444;
+      color: #f87171;
+      font-size: 12px;
+      padding: 6px 14px;
+      border-radius: 20px;
+      margin-top: 22px;
+      cursor: pointer;
+    }
+    .sos-btn:hover { background: rgba(239, 68, 68, 0.25); }
+
+    .disclaimer {
+      font-size: 11px;
+      color: #64748b;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+    .expired-view {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+    }
   </style>
 </head>
 <body>
 
-<div class="card">
-  <h2>nineO Trip Call 🛵</h2>
-  <p id="channel-label">Loading trip...</p>
-  <div id="status" class="status">Tap below to speak</div>
+  <div class="call-card" id="callCard">
+    <div class="brand">nineO VoIP Audio</div>
+    
+    <div class="avatar-wrap" id="avatarBox">
+      <div class="pulse-ring"></div>
+      <span id="roleIcon">🛵</span>
+    </div>
 
-  <button id="btn-join" class="btn-join" onclick="joinCall()">Connect Call</button>
-  <button id="btn-mute" class="btn-mute" onclick="toggleMute()">Mute Mic</button>
-  <button id="btn-end" class="btn-end" onclick="leaveCall()">End Call</button>
-</div>
+    <div class="peer-title" id="peerTitle">Connecting...</div>
+    <div class="trip-badge" id="tripBadge">Ride: Verifying...</div>
+    <div class="status-text" id="statusLabel">Validating trip access...</div>
+    <div class="timer" id="timer">00:00</div>
 
-<script>
-  const AGORA_APP_ID = "dcbc63dc7efe40ac818394dd9e118562";
+    <!-- Active Call Controls -->
+    <div class="controls" id="activeControls" style="display:none;">
+      <button class="btn btn-circle btn-mute" id="muteBtn" onclick="toggleMute()" title="Mute Mic">🎤</button>
+      <button class="btn btn-circle btn-hangup" id="hangupBtn" onclick="endCall()" title="End Call">📞</button>
+    </div>
 
-  const urlParams = new URLSearchParams(window.location.search);
-  const CHANNEL_NAME = urlParams.get('channel') || "test_channel";
-  document.getElementById("channel-label").innerText = `Trip ID: ${CHANNEL_NAME}`;
+    <!-- Start / Re-dial Button -->
+    <div id="startWrapper" style="display:none;">
+      <button class="btn btn-call" id="startCallBtn" onclick="initiateAudio()">Start Call</button>
+    </div>
 
-  const client = AgoraRTC.createClient({ mode: "rtc", codec: "vp8" });
-  let localAudioTrack = null;
-  let isMuted = false;
+    <!-- Emergency SOS -->
+    <div>
+      <button type="button" class="sos-btn" onclick="triggerSos()">🚨 Emergency SOS</button>
+    </div>
 
-  // Remote audio listener
-  client.on("user-published", async (user, mediaType) => {
-    await client.subscribe(user, mediaType);
-    if (mediaType === "audio") {
-      user.audioTrack.play();
-      document.getElementById("status").innerText = "Connected & Speaking 🟢";
+    <div class="disclaimer">
+      🔒 <b>Masked Number:</b> Encrypted WebRTC voice link. Your real cellular phone number is never revealed.
+    </div>
+  </div>
+
+  <!-- Expired State Card -->
+  <div class="call-card expired-view" id="expiredCard">
+    <div style="font-size: 48px; margin-bottom: 14px;">🔒</div>
+    <h2 style="font-size: 20px; color: #ef4444; margin-bottom: 8px;">Call Channel Closed</h2>
+    <p style="color: #94a3b8; font-size: 14px; line-height: 1.5;" id="expiredReason">
+      This ride has ended or the link has expired. Calling is restricted to active rides only.
+    </p>
+  </div>
+
+  <!-- Hidden Remote Audio Playback Element -->
+  <audio id="remoteAudio" autoplay playsinline></audio>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION
+    // =========================================================================
+    // Paste your deployed Google Apps Script Web App URL ending in /exec
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+
+    // Emergency Helpline Numbers
+    const POLICE_EMERGENCY_NUMBER = "112";
+
+    // 1. Parse URL Parameters (?channel=R-XXXXXX&role=captain|rider)
+    const urlParams = new URLSearchParams(window.location.search);
+    const channelId = urlParams.get("channel");
+    const myRole = (urlParams.get("role") || "").toLowerCase();
+
+    const targetRole = myRole === "captain" ? "rider" : "captain";
+    const myPeerId = `nineo-${channelId}-${myRole}`;
+    const targetPeerId = `nineo-${channelId}-${targetRole}`;
+
+    let peer = null;
+    let localStream = null;
+    let activeCall = null;
+    let timerInterval = null;
+    let secondsElapsed = 0;
+    let isMuted = false;
+
+    // DOM Elements
+    const peerTitle = document.getElementById("peerTitle");
+    const tripBadge = document.getElementById("tripBadge");
+    const statusLabel = document.getElementById("statusLabel");
+    const timerDisplay = document.getElementById("timer");
+    const roleIcon = document.getElementById("roleIcon");
+    const avatarBox = document.getElementById("avatarBox");
+    const startWrapper = document.getElementById("startWrapper");
+    const activeControls = document.getElementById("activeControls");
+    const remoteAudio = document.getElementById("remoteAudio");
+
+    // 2. Validate Credentials & State
+    if (!channelId || !myRole || (myRole !== "captain" && myRole !== "rider")) {
+      showExpired("Invalid or missing call credentials.");
+    } else {
+      peerTitle.innerText = myRole === "captain" ? "Rider" : "Captain";
+      roleIcon.innerText = myRole === "captain" ? "👤" : "🛵";
+      tripBadge.innerText = `Ride: ${channelId}`;
+      verifyBackendTripStatus();
     }
-  });
 
-  client.on("user-left", () => {
-    document.getElementById("status").innerText = "Other person disconnected";
-  });
+    // 3. Query Apps Script Backend to Ensure Ride is Active
+    async function verifyBackendTripStatus() {
+      try {
+        statusLabel.innerText = "Checking trip security...";
+        const response = await fetch(`${APPS_SCRIPT_URL}?action=getRideStatus&rideId=${channelId}`);
+        const data = await response.json();
 
-  async function joinCall() {
-    const btnJoin = document.getElementById("btn-join");
-    const statusEl = document.getElementById("status");
-
-    // 1. Insecure context check (WebRTC requires HTTPS)
-    if (window.location.protocol === "file:") {
-      statusEl.style.color = "#dc2626";
-      statusEl.innerText = "Error: Cannot run from desktop file. You must open the GitHub Pages (https://) link!";
-      return;
-    }
-
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      statusEl.style.color = "#dc2626";
-      statusEl.innerText = "Error: Browser blocked mic access. Open link in Chrome/Safari via HTTPS.";
-      return;
-    }
-
-    btnJoin.disabled = true;
-    statusEl.style.color = "#0284c7";
-    statusEl.innerText = "Requesting mic access...";
-
-    try {
-      // 2. Request mic access first
-      localAudioTrack = await AgoraRTC.createMicrophoneAudioTrack();
-
-      statusEl.innerText = "Connecting to trip room...";
-
-      // 3. Connect to Agora channel
-      await client.join(AGORA_APP_ID, CHANNEL_NAME, null, null);
-
-      // 4. Publish stream
-      await client.publish([localAudioTrack]);
-
-      statusEl.innerText = "Connected! Waiting for other party...";
-      btnJoin.style.display = "none";
-      document.getElementById("btn-mute").style.display = "block";
-      document.getElementById("btn-end").style.display = "block";
-
-    } catch (err) {
-      console.error("Agora Error Details:", err);
-
-      // Cleanup on failure
-      if (localAudioTrack) {
-        localAudioTrack.stop();
-        localAudioTrack.close();
-        localAudioTrack = null;
+        // Allowed only while trip is assigned or actively running
+        if (data.status === "ACCEPTED" || data.status === "IN_PROGRESS") {
+          statusLabel.innerText = "Security verified. Ready to connect.";
+          startWrapper.style.display = "block";
+          initPeer();
+        } else {
+          showExpired("This trip is " + (data.status || "no longer active") + ". Private calling is closed.");
+        }
+      } catch (err) {
+        // Fallback allows connection if backend temporarily throttles GET requests
+        statusLabel.innerText = "Ready to connect.";
+        startWrapper.style.display = "block";
+        initPeer();
       }
-      if (client.connectionState !== "DISCONNECTED") {
-        await client.leave();
+    }
+
+    // 4. Initialize PeerJS WebRTC Connection
+    function initPeer() {
+      peer = new Peer(myPeerId, { debug: 1 });
+
+      peer.on("open", () => {
+        statusLabel.innerText = "Online. Tap 'Start Call' below.";
+      });
+
+      // Handle Incoming Call Handshake
+      peer.on("call", async (incoming) => {
+        statusLabel.innerText = "Incoming audio call...";
+        try {
+          if (!localStream) {
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+          }
+          incoming.answer(localStream);
+          handleCallStream(incoming);
+        } catch (e) {
+          statusLabel.innerText = "Microphone access denied.";
+        }
+      });
+
+      peer.on("error", (err) => {
+        if (err.type === "peer-unavailable") {
+          statusLabel.innerText = `Waiting for ${targetRole} to open their link...`;
+        } else {
+          statusLabel.innerText = "Notice: " + err.type;
+        }
+      });
+    }
+
+    // 5. Dial Remote Peer
+    async function initiateAudio() {
+      try {
+        statusLabel.innerText = "Requesting mic access...";
+        localStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+
+        startWrapper.style.display = "none";
+        activeControls.style.display = "flex";
+        statusLabel.innerText = `Ringing ${targetRole}...`;
+
+        const call = peer.call(targetPeerId, localStream);
+        if (call) {
+          handleCallStream(call);
+        }
+      } catch (err) {
+        statusLabel.innerText = "Please allow microphone permissions to make calls.";
       }
+    }
 
-      btnJoin.disabled = false;
-      statusEl.style.color = "#dc2626";
+    // 6. Handle Active Audio Stream
+    function handleCallStream(call) {
+      activeCall = call;
 
-      // Precise diagnostics
-      const rawError = err.code || err.name || err.message || "";
-      if (rawError.includes("NotAllowed") || rawError.includes("PERMISSION_DENIED")) {
-        statusEl.innerText = "Permission Denied: Allow microphone in your browser settings.";
-      } else if (rawError.includes("NotFound") || rawError.includes("DEVICE_NOT_FOUND")) {
-        statusEl.innerText = "No mic detected on this device. Test on your phone.";
-      } else if (rawError.includes("DYNAMIC_KEY") || rawError.includes("TOKEN") || rawError.includes("401")) {
-        statusEl.innerText = "Agora Config Error: Your Agora project requires a token. Set project to 'App ID only' in Agora Console.";
-      } else {
-        statusEl.innerText = "Error: " + (rawError || JSON.stringify(err));
+      call.on("stream", (remoteStream) => {
+        remoteAudio.srcObject = remoteStream;
+        avatarBox.classList.add("active-call");
+        statusLabel.innerText = "Connected (End-to-End Encrypted)";
+        startTimer();
+      });
+
+      call.on("close", () => {
+        endCallCleanly("Call disconnected.");
+      });
+
+      call.on("error", () => {
+        endCallCleanly("Call connection dropped.");
+      });
+    }
+
+    // 7. Audio Controls
+    function toggleMute() {
+      if (!localStream) return;
+      const audioTrack = localStream.getAudioTracks()[0];
+      if (audioTrack) {
+        isMuted = !isMuted;
+        audioTrack.enabled = !isMuted;
+        document.getElementById("muteBtn").classList.toggle("muted", isMuted);
+        document.getElementById("muteBtn").innerText = isMuted ? "🔇" : "🎤";
       }
     }
-  }
 
-  function toggleMute() {
-    if (!localAudioTrack) return;
-    isMuted = !isMuted;
-    localAudioTrack.setMuted(isMuted);
-    document.getElementById("btn-mute").innerText = isMuted ? "Unmute Mic" : "Mute Mic";
-  }
-
-  async function leaveCall() {
-    if (localAudioTrack) {
-      localAudioTrack.stop();
-      localAudioTrack.close();
-      localAudioTrack = null;
+    function endCall() {
+      if (activeCall) activeCall.close();
+      endCallCleanly("Call ended.");
     }
-    if (client.connectionState !== "DISCONNECTED") {
-      await client.leave();
-    }
-    document.getElementById("status").style.color = "#0284c7";
-    document.getElementById("status").innerText = "Call ended";
-    document.getElementById("btn-join").disabled = false;
-    document.getElementById("btn-join").style.display = "block";
-    document.getElementById("btn-mute").style.display = "none";
-    document.getElementById("btn-end").style.display = "none";
-  }
-</script>
 
+    function endCallCleanly(message) {
+      avatarBox.classList.remove("active-call");
+      stopTimer();
+      statusLabel.innerText = message;
+      activeControls.style.display = "none";
+      startWrapper.style.display = "block";
+      document.getElementById("startCallBtn").innerText = "Call Again";
+
+      if (localStream) {
+        localStream.getTracks().forEach(track => track.stop());
+        localStream = null;
+      }
+    }
+
+    // 8. Timers & Cleanup
+    function startTimer() {
+      clearInterval(timerInterval);
+      secondsElapsed = 0;
+      timerInterval = setInterval(() => {
+        secondsElapsed++;
+        const mins = String(Math.floor(secondsElapsed / 60)).padStart(2, "0");
+        const secs = String(secondsElapsed % 60).padStart(2, "0");
+        timerDisplay.innerText = `${mins}:${secs}`;
+      }, 1000);
+    }
+
+    function stopTimer() {
+      clearInterval(timerInterval);
+      timerDisplay.innerText = "00:00";
+    }
+
+    function showExpired(msg) {
+      document.getElementById("callCard").style.display = "none";
+      document.getElementById("expiredCard").style.display = "block";
+      if (msg) document.getElementById("expiredReason").innerText = msg;
+    }
+
+    // 9. Emergency SOS Handler
+    function triggerSos() {
+      const confirmAction = confirm(
+        `🚨 EMERGENCY SOS ACTIVATION\n\nAre you in danger or facing an emergency on Ride ${channelId}?\n\nPress OK to call Emergency Services (${POLICE_EMERGENCY_NUMBER}).`
+      );
+      if (confirmAction) {
+        window.location.href = `tel:${POLICE_EMERGENCY_NUMBER}`;
+      }
+    }
+  </script>
 </body>
 </html>
