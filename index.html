@@ -12,8 +12,8 @@
       --primary-accent: #ef4444; /* nineO Red */
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
-      --glass-bg: rgba(15, 23, 42, 0.82);
-      --input-bg: rgba(11, 17, 32, 0.85);
+      --glass-bg: rgba(15, 23, 42, 0.85);
+      --input-bg: rgba(11, 17, 32, 0.88);
       --text: #f8fafc;
       --text-dim: #94a3b8;
     }
@@ -104,7 +104,7 @@
       50% { opacity: 1; }
     }
 
-    /* Switcher Tabs */
+    /* Switcher */
     .tab-switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -133,7 +133,6 @@
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
     }
 
-    /* Input Fields */
     .field {
       margin-bottom: 14px;
       position: relative;
@@ -160,7 +159,7 @@
       background: var(--input-bg);
       border: 1.5px solid var(--border);
       color: white;
-      padding: 14px 14px;
+      padding: 13px 14px;
       border-radius: 12px;
       font-size: 14px;
       outline: none;
@@ -187,17 +186,8 @@
       gap: 4px;
     }
 
-    .gps-btn:active {
-      background: var(--primary);
-      color: #090d16;
-    }
-
-    .gps-status {
-      font-size: 11px;
-      color: var(--text-dim);
-      margin-top: 4px;
-      min-height: 14px;
-    }
+    .gps-btn:active { background: var(--primary); color: #090d16; }
+    .gps-status { font-size: 11px; color: var(--text-dim); margin-top: 4px; min-height: 14px; }
 
     /* Landmark Chips */
     .chips {
@@ -205,7 +195,7 @@
       gap: 8px;
       overflow-x: auto;
       padding-bottom: 4px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       scrollbar-width: none;
     }
     .chips::-webkit-scrollbar { display: none; }
@@ -220,12 +210,86 @@
       cursor: pointer;
       border: 1px solid var(--border);
     }
-    .chip:active {
-      background: var(--primary);
-      color: #0f172a;
+    .chip:active { background: var(--primary); color: #0f172a; }
+
+    /* Route & Smart Pass Recommendation Card */
+    .route-card {
+      display: none;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid var(--primary);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 16px;
+      animation: fadeIn 0.3s ease;
     }
 
-    /* Pass Cards */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .route-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .route-dist {
+      font-size: 14px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .route-dist span {
+      color: var(--primary);
+      font-size: 16px;
+    }
+
+    .route-standard-fare {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .rec-box {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 204, 21, 0.08);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-top: 6px;
+    }
+
+    .rec-info {
+      font-size: 12px;
+      line-height: 1.4;
+      color: #cbd5e1;
+    }
+
+    .rec-info b {
+      color: var(--primary);
+    }
+
+    .btn-pass-action {
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      white-space: nowrap;
+      margin-left: 8px;
+    }
+
+    /* Pass Tab Cards */
     .pass-card {
       background: var(--input-bg);
       border: 1.5px solid var(--border);
@@ -275,7 +339,6 @@
       text-align: right;
     }
 
-    /* Buttons */
     .btn-submit {
       width: 100%;
       background: var(--green);
@@ -291,7 +354,7 @@
       justify-content: center;
       gap: 8px;
       box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
-      margin-top: 10px;
+      margin-top: 6px;
     }
 
     .btn-submit:active { transform: scale(0.98); }
@@ -312,7 +375,7 @@
     .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .trust-item b { color: var(--primary); }
 
-    /* Payment Modal */
+    /* Modal */
     .modal {
       display: none;
       position: fixed;
@@ -387,7 +450,7 @@
       <button class="tab-btn" id="btnTabPass" onclick="switchTab('pass')">🎟️ Daily Pass</button>
     </div>
 
-    <!-- Phone Number Field -->
+    <!-- WhatsApp Input -->
     <div class="field">
       <label>Your WhatsApp Number</label>
       <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10">
@@ -398,7 +461,7 @@
       <div class="field">
         <label>Pickup Location</label>
         <div class="input-wrap">
-          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type landmark" style="padding-right: 75px;">
+          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or enter pickup" onchange="triggerRouteEstimation()" style="padding-right: 75px;">
           <button type="button" class="gps-btn" onclick="getPreciseGPS()">📍 GPS</button>
         </div>
         <div class="gps-status" id="gpsStatus"></div>
@@ -406,7 +469,7 @@
 
       <div class="field">
         <label>Drop Destination</label>
-        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Landmark">
+        <input type="text" id="drop" class="input-box" placeholder="Enter landmark or destination" onchange="triggerRouteEstimation()">
       </div>
 
       <div class="chips">
@@ -417,17 +480,32 @@
         <span class="chip" onclick="setDrop('Birsa Munda Airport')">✈️ Airport</span>
       </div>
 
+      <!-- DYNAMIC ROUTE ESTIMATION & PASS SUGGESTION CARD -->
+      <div class="route-card" id="routeCard">
+        <div class="route-header">
+          <div class="route-dist">🛣️ Route: <span id="routeKm">0.0</span> km</div>
+          <div class="route-standard-fare" id="routeFare">Std: ₹0</div>
+        </div>
+        <div class="rec-box">
+          <div class="rec-info" id="recDetails">
+            Calculating best pass savings...
+          </div>
+          <button class="btn-pass-action" id="recBtn" onclick="buyRecommendedPass()">
+            Buy Pass ⚡
+          </button>
+        </div>
+      </div>
+
       <button class="btn-submit" id="btnBook" onclick="submitRideBooking()">
         <span>Confirm nineO Ride</span> ➔
       </button>
     </div>
 
-    <!-- ================= 2. BUY PASS TAB ================= -->
+    <!-- ================= 2. DAILY PASS TAB ================= -->
     <div id="sectionPass" style="display: none;">
       <label>Choose Your Pass (24-Hour Validity)</label>
 
-      <!-- ₹39 Pass -->
-      <div class="pass-card selected" onclick="selectPass(this, 'PASS_39', 39, '5 KM Daily (1 Ride)')">
+      <div class="pass-card selected" id="card_PASS_39" onclick="selectPass(this, 'PASS_39', 39, '5 KM Pass (1 Ride)')">
         <div>
           <div class="pass-title">5 KM Pass</div>
           <div class="pass-sub">5 KM Total • 1 Ride included • 24h</div>
@@ -435,8 +513,7 @@
         <div class="pass-price">₹39</div>
       </div>
 
-      <!-- ₹69 Pass -->
-      <div class="pass-card" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
+      <div class="pass-card" id="card_PASS_69" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
         <div>
           <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
           <div class="pass-sub">9 KM Total • 2 Rides included • 24h</div>
@@ -444,8 +521,7 @@
         <div class="pass-price">₹69</div>
       </div>
 
-      <!-- ₹129 Pass -->
-      <div class="pass-card" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
+      <div class="pass-card" id="card_PASS_129" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
         <div>
           <div class="pass-title">19 KM Pro Pass</div>
           <div class="pass-sub">19 KM Total • 3 Rides included • 24h</div>
@@ -488,17 +564,22 @@
 
   <script>
     // =========================================================================
-    // ⚙️ CONFIGURATION - REPLACE WITH YOUR LIVE DETAILS
+    // ⚙️ CONFIGURATION
     // =========================================================================
     const BACKEND_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
-    const COMPANY_UPI_ID = "YOUR_ACTUAL_UPI_ID@okaxis"; // Replace with your live UPI ID
+    const COMPANY_UPI_ID = "YOUR_ACTUAL_UPI_ID@okaxis"; 
     const COMPANY_NAME = "nineO Mobility";
 
     let selectedPassCode = "PASS_39";
     let selectedAmount = 39;
-    let selectedPassName = "5 KM Daily (1 Ride)";
-    let exactLat = null;
-    let exactLng = null;
+    let selectedPassName = "5 KM Pass (1 Ride)";
+    
+    let pickupCoords = null;
+    let dropCoords = null;
+    let calculatedKm = 0;
+    let recommendedTier = "PASS_39";
+    let recommendedAmount = 39;
+    let recommendedName = "5 KM Pass";
 
     if (localStorage.getItem("nineo_phone")) {
       document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
@@ -511,44 +592,164 @@
       document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
     }
 
-    function setDrop(v) { document.getElementById("drop").value = v; }
+    function setDrop(v) { 
+      document.getElementById("drop").value = v;
+      triggerRouteEstimation();
+    }
 
+    // High Precision GPS
     function getPreciseGPS() {
       const p = document.getElementById("pickup");
       const s = document.getElementById("gpsStatus");
       s.innerText = "Locking GPS satellites...";
 
       if (!navigator.geolocation) {
-        alert("GPS is not supported on your device.");
+        alert("GPS not supported on your device.");
         s.innerText = "";
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
-          exactLat = pos.coords.latitude;
-          exactLng = pos.coords.longitude;
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
           const acc = Math.round(pos.coords.accuracy);
+          pickupCoords = { lat: lat, lon: lng };
 
           s.innerText = `🛰️ Accurate to ~${acc}m. Resolving street...`;
 
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${exactLat}&lon=${exactLng}&zoom=18&addressdetails=1`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
             const d = await res.json();
             const a = d.address || {};
             const street = a.road || a.suburb || a.neighbourhood || "";
             const landmark = a.building || a.amenity || "";
             let full = [landmark, street].filter(Boolean).join(", ");
-            p.value = full || `${exactLat.toFixed(5)}, ${exactLng.toFixed(5)}`;
+            p.value = full || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             s.innerText = `📍 GPS Locked (±${acc}m)`;
           } catch (e) {
-            p.value = `${exactLat.toFixed(5)}, ${exactLng.toFixed(5)}`;
+            p.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
             s.innerText = `📍 GPS Locked`;
           }
+          triggerRouteEstimation();
         },
-        () => { s.innerText = "⚠️ GPS access denied. Please type pickup."; },
+        () => { s.innerText = "⚠️ GPS denied. Type pickup landmark."; },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
+    }
+
+    // Geocode Text to Coordinates in Ranchi
+    async function geocodeLocation(text) {
+      if (!text) return null;
+      // Coordinate format check
+      const match = text.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (match) return { lat: parseFloat(match[1]), lon: parseFloat(match[2]) };
+
+      try {
+        const query = text.toLowerCase().includes("ranchi") ? text : `${text}, Ranchi`;
+        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
+        const data = await res.json();
+        if (data && data.length > 0) {
+          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+        }
+      } catch (e) {}
+      return null;
+    }
+
+    // Calculate Real Road Distance and Render Recommendation
+    async function triggerRouteEstimation() {
+      const pickupVal = document.getElementById("pickup").value.trim();
+      const dropVal = document.getElementById("drop").value.trim();
+
+      if (!pickupVal || !dropVal) return;
+
+      const card = document.getElementById("routeCard");
+      card.style.display = "block";
+      document.getElementById("recDetails").innerText = "Calculating road distance & best pass...";
+
+      if (!pickupCoords) pickupCoords = await geocodeLocation(pickupVal);
+      dropCoords = await geocodeLocation(dropVal);
+
+      if (!pickupCoords || !dropCoords) {
+        card.style.display = "none";
+        return;
+      }
+
+      try {
+        // Open Source Routing Machine (OSRM) driving route
+        const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`);
+        const data = await res.json();
+
+        if (data && data.routes && data.routes.length > 0) {
+          calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
+        } else {
+          // Haversine fallback with 1.3x city road detour coefficient
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.3).toFixed(1);
+        }
+
+        renderSuggestion(parseFloat(calculatedKm));
+      } catch (err) {
+        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.3).toFixed(1);
+        renderSuggestion(parseFloat(calculatedKm));
+      }
+    }
+
+    function haversine(lat1, lon1, lat2, lon2) {
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    // Recommendation Logic Engine
+    function renderSuggestion(km) {
+      document.getElementById("routeKm").innerText = km;
+      const standardFare = Math.max(25, Math.round(km * 9));
+      document.getElementById("routeFare").innerText = `Non-Pass: ₹${standardFare}`;
+
+      const recDetails = document.getElementById("recDetails");
+      const recBtn = document.getElementById("recBtn");
+
+      if (km <= 5.0) {
+        recommendedTier = "PASS_39";
+        recommendedAmount = 39;
+        recommendedName = "5 KM Pass (1 Ride)";
+        recDetails.innerHTML = `💡 <b>Best Fit: ₹39 Pass</b><br>Covers this trip in full! (Zero cash needed)`;
+        recBtn.innerText = "Get ₹39 Pass ⚡";
+      } else if (km <= 9.0) {
+        recommendedTier = "PASS_69";
+        recommendedAmount = 69;
+        recommendedName = "9 KM Super (2 Rides)";
+        recDetails.innerHTML = `💡 <b>Best Fit: ₹69 Pass (9 KM)</b><br>Covers this trip + gives you a 2nd ride within 24h!`;
+        recBtn.innerText = "Get ₹69 Pass ⚡";
+      } else if (km <= 19.0) {
+        recommendedTier = "PASS_129";
+        recommendedAmount = 129;
+        recommendedName = "19 KM Pro (3 Rides)";
+        recDetails.innerHTML = `💡 <b>Best Fit: ₹129 Pass (19 KM)</b><br>Covers this trip + up to 2 extra trips today.`;
+        recBtn.innerText = "Get ₹129 Pass ⚡";
+      } else {
+        recommendedTier = "PASS_129";
+        recommendedAmount = 129;
+        recommendedName = "19 KM Pro (3 Rides)";
+        const overageKm = (km - 19.0).toFixed(1);
+        recDetails.innerHTML = `💡 <b>₹129 Pass Covers 19 KM</b><br>Remaining ${overageKm} km at ₹9/km overage.`;
+        recBtn.innerText = "Get ₹129 Pass ⚡";
+      }
+    }
+
+    // Direct Pass Purchase Action from Suggestion
+    function buyRecommendedPass() {
+      selectPass(
+        document.getElementById(`card_${recommendedTier}`),
+        recommendedTier,
+        recommendedAmount,
+        recommendedName
+      );
+      openPaymentModal();
     }
 
     async function submitRideBooking() {
@@ -560,8 +761,8 @@
       if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
       if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
-      if (exactLat && exactLng && !pickup.includes(exactLat.toFixed(2))) {
-        pickup = `${pickup} (${exactLat.toFixed(5)},${exactLng.toFixed(5)})`;
+      if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
+        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
       }
 
       localStorage.setItem("nineo_phone", phone);
@@ -580,7 +781,7 @@
 
     function selectPass(el, code, amt, name) {
       document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));
-      el.classList.add("selected");
+      if (el) el.classList.add("selected");
       selectedPassCode = code;
       selectedAmount = amt;
       selectedPassName = name;
