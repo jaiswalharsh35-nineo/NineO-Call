@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>nineO - Fast Bike Taxi</title>
+  <meta name="description" content="Book instant bike rides with nineO. 90% revenue share to captains.">
+  <meta name="theme-color" content="#090d16">
+  
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #131b2e;
+      --card-border: #1e293b;
+      --primary: #38bdf8;
+      --primary-hover: #0284c7;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --input-bg: #0b1120;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 12px;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 440px;
+      background: var(--card);
+      border-radius: 28px;
+      border: 1px solid var(--card-border);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .logo-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-text {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -1px;
+    }
+
+    .logo-sub {
+      font-size: 13px;
+      font-weight: 700;
+      color: #cbd5e1;
+      background: #1e293b;
+      padding: 3px 8px;
+      border-radius: 8px;
+    }
+
+    .status-pill {
+      font-size: 11px;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.15);
+      color: var(--accent-green);
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .pulse-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--accent-green);
+      border-radius: 50%;
+      animation: pulse 1.5s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; transform: scale(0.9); }
+      50% { opacity: 1; transform: scale(1.2); }
+      100% { opacity: 0.4; transform: scale(0.9); }
+    }
+
+    /* Input Sections */
+    .form-group {
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      font-size: 16px;
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .input-field {
+      width: 100%;
+      background: var(--input-bg);
+      border: 1.5px solid var(--card-border);
+      color: white;
+      padding: 14px 14px 14px 44px;
+      border-radius: 14px;
+      font-size: 15px;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      background: #0d1527;
+      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
+    }
+
+    .gps-btn {
+      position: absolute;
+      right: 8px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: var(--primary);
+      padding: 7px 12px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .gps-btn:active {
+      transform: scale(0.95);
+      background: var(--primary);
+      color: white;
+    }
+
+    /* Chips */
+    .chips-title {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .chips-scroll {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+      scrollbar-width: none;
+    }
+
+    .chips-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      background: #1e293b;
+      color: #cbd5e1;
+      font-size: 12px;
+      font-weight: 500;
+      padding: 8px 14px;
+      border-radius: 18px;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid #334155;
+      transition: all 0.15s ease;
+    }
+
+    .chip:active {
+      background: var(--primary);
+      color: #0f172a;
+      transform: scale(0.96);
+    }
+
+    /* Tariff Banner */
+    .tariff-box {
+      background: rgba(15, 23, 42, 0.7);
+      border-radius: 14px;
+      padding: 12px 14px;
+      border: 1px dashed #334155;
+      margin-bottom: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .tariff-info {
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    .tariff-info b {
+      color: var(--primary);
+    }
+
+    .rate-badge {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--accent-green);
+      background: rgba(16, 185, 129, 0.1);
+      padding: 4px 8px;
+      border-radius: 8px;
+      white-space: nowrap;
+    }
+
+    /* Action Buttons */
+    .btn-submit {
+      width: 100%;
+      background: var(--accent-green);
+      color: white;
+      border: none;
+      padding: 16px;
+      border-radius: 16px;
+      font-size: 16px;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-submit:hover {
+      background: var(--accent-green-hover);
+    }
+
+    .btn-submit:active {
+      transform: scale(0.98);
+    }
+
+    .btn-submit:disabled {
+      background: #334155;
+      color: #64748b;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
+
+    .footer-note {
+      font-size: 11px;
+      text-align: center;
+      color: #64748b;
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* Loading Overlay */
+    .overlay {
+      display: none;
+      position: absolute;
+      inset: 0;
+      background: rgba(9, 13, 22, 0.95);
+      backdrop-filter: blur(8px);
+      z-index: 10;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid #1e293b;
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .overlay-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: white;
+      margin-bottom: 8px;
+    }
+
+    .overlay-desc {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .btn-wa {
+      background: #25d366;
+      color: white;
+      text-decoration: none;
+      padding: 14px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <div class="header">
+      <div class="logo-badge">
+        <span class="logo-text">nineO</span>
+        <span class="logo-sub">BIKE</span>
+      </div>
+      <div class="status-pill">
+        <span class="pulse-dot"></span> Captains Active
+      </div>
+    </div>
+
+    <!-- Phone Number -->
+    <div class="form-group">
+      <label class="label">WhatsApp Number</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📱</span>
+        <input 
+          type="tel" 
+          id="phone" 
+          class="input-field" 
+          placeholder="Enter 10-digit number" 
+          maxlength="10" 
+          autocomplete="tel"
+        >
+      </div>
+    </div>
+
+    <!-- Pickup Location -->
+    <div class="form-group">
+      <label class="label">Pickup Location</label>
+      <div class="input-wrapper">
+        <span class="input-icon">📍</span>
+        <input 
+          type="text" 
+          id="pickup" 
+          class="input-field" 
+          placeholder="Landmark, Gate, or Road" 
+          autocomplete="off"
+        >
+        <button type="button" class="gps-btn" onclick="fetchGPS()">
+          <span>📍</span> GPS
+        </button>
+      </div>
+    </div>
+
+    <!-- Drop Location -->
+    <div class="form-group">
+      <label class="label">Drop Destination</label>
+      <div class="input-wrapper">
+        <span class="input-icon">🏁</span>
+        <input 
+          type="text" 
+          id="drop" 
+          class="input-field" 
+          placeholder="Destination or Landmark" 
+          autocomplete="off"
+        >
+      </div>
+    </div>
+
+    <!-- Quick Drop Chips (Customize these landmarks for your city) -->
+    <span class="chips-title">Popular Destinations</span>
+    <div class="chips-scroll">
+      <div class="chip" onclick="setDrop('Railway Station')">🚉 Railway Station</div>
+      <div class="chip" onclick="setDrop('Main Bus Stand')">🚌 Bus Stand</div>
+      <div class="chip" onclick="setDrop('City Mall')">🛍️ City Center Mall</div>
+      <div class="chip" onclick="setDrop('University Main Gate')">🎓 Campus Gate</div>
+      <div class="chip" onclick="setDrop('District Hospital')">🏥 Hospital</div>
+    </div>
+
+    <!-- Tariff & Quota Summary -->
+    <div class="tariff-box">
+      <div class="tariff-info">
+        🎟️ <b>Pass Rides:</b> 100% covered if quota active.<br>
+        ⚡ <b>Non-pass / Overage:</b> ₹9/km prepaid.
+      </div>
+      <div class="rate-badge">₹9 / km</div>
+    </div>
+
+    <!-- Book Button -->
+    <button class="btn-submit" id="submitBtn" onclick="initiateBooking()">
+      <span>Request Captain</span> ➔
+    </button>
+
+    <div class="footer-note">
+      🔒 End-to-End Masked Calls • Verified Captains
+    </div>
+
+    <!-- Overlay Loader & Confirmation -->
+    <div class="overlay" id="loadingOverlay">
+      <div class="spinner"></div>
+      <div class="overlay-title" id="overlayTitle">Dispatching Captains...</div>
+      <p class="overlay-desc" id="overlayDesc">
+        Matching with the closest verified nineO captain. Check your WhatsApp for the ride PIN and confirmation.
+      </p>
+      <a href="#" class="btn-wa" id="waRedirectBtn" target="_blank">
+        Open WhatsApp 💬
+      </a>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // ⚙️ CONFIGURATION
+    // =========================================================================
+    // Paste your Google Apps Script Deployment URL ending with /exec
+    const BACKEND_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+
+    // Auto-restore previously saved phone number
+    const savedPhone = localStorage.getItem("nineo_rider_phone");
+    if (savedPhone) {
+      document.getElementById("phone").value = savedPhone;
+    }
+
+    function setDrop(locationName) {
+      document.getElementById("drop").value = locationName;
+    }
+
+    // 1-Tap Geolocation with Reverse Geocoding
+    function fetchGPS() {
+      const pickupInput = document.getElementById("pickup");
+      pickupInput.value = "Acquiring GPS location...";
+
+      if (!navigator.geolocation) {
+        alert("Geolocation is not supported by your mobile browser.");
+        pickupInput.value = "";
+        return;
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          
+          try {
+            // Free OpenStreetMap Reverse Geocoding for human-readable street names
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+            const data = await res.json();
+            if (data && data.display_name) {
+              const road = data.address.road || data.address.suburb || data.address.neighbourhood || "";
+              const landmark = data.address.amenity || data.address.commercial || "";
+              pickupInput.value = (landmark ? landmark + ", " : "") + (road ? road : `${lat.toFixed(4)}, ${lng.toFixed(4)}`);
+            } else {
+              pickupInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            }
+          } catch (e) {
+            pickupInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          }
+        },
+        (err) => {
+          alert("GPS permission was denied. Please enter your pickup landmark manually.");
+          pickupInput.value = "";
+        },
+        { enableHighAccuracy: true, timeout: 8000 }
+      );
+    }
+
+    // Booking Submission Handler
+    async function initiateBooking() {
+      const phoneInput = document.getElementById("phone");
+      const pickupInput = document.getElementById("pickup");
+      const dropInput = document.getElementById("drop");
+      const submitBtn = document.getElementById("submitBtn");
+
+      const phone = phoneInput.value.replace(/[^0-9]/g, "");
+      const pickup = pickupInput.value.trim();
+      const drop = dropInput.value.trim();
+
+      if (phone.length !== 10) {
+        alert("Please enter a valid 10-digit WhatsApp number.");
+        phoneInput.focus();
+        return;
+      }
+      if (!pickup) {
+        alert("Please specify a pickup location or tap GPS.");
+        pickupInput.focus();
+        return;
+      }
+      if (!drop) {
+        alert("Please enter your destination landmark.");
+        dropInput.focus();
+        return;
+      }
+
+      // Save for subsequent bookings
+      localStorage.setItem("nineo_rider_phone", phone);
+
+      // Trigger visual waiting state
+      submitBtn.disabled = true;
+      const overlay = document.getElementById("loadingOverlay");
+      overlay.style.display = "flex";
+
+      const waLink = `https://wa.me/91${phone}`;
+      document.getElementById("waRedirectBtn").href = waLink;
+
+      // Construct API Call to Apps Script Web App
+      const endpoint = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}`;
+
+      try {
+        // Mode 'no-cors' allows sending to Google Apps Script without CORS blockage
+        await fetch(endpoint, { mode: "no-cors" });
+
+        document.getElementById("overlayTitle").innerText = "Ride Requested! 🚀";
+        document.getElementById("overlayDesc").innerText = 
+          "Your request is registered. If your pass is active, check WhatsApp for your OTP. If overage is due, an upfront payment link has been sent.";
+
+        // Auto redirect to WhatsApp after 2 seconds
+        setTimeout(() => {
+          window.location.href = waLink;
+        }, 2500);
+
+      } catch (err) {
+        // Fallback redirect if browser network times out
+        window.location.href = waLink;
+      }
+    }
+  </script>
+</body>
+</html>
