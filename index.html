@@ -3,54 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>nineO - Fast Bike Taxi</title>
-  <meta name="description" content="Book instant bike rides with nineO. 90% revenue share to captains.">
+  <title>nineO - Ranchi's Smart Bike Taxi</title>
   <meta name="theme-color" content="#090d16">
   
   <style>
     :root {
-      --bg: #090d16;
-      --card: #131b2e;
-      --card-border: #1e293b;
-      --primary: #38bdf8;
-      --primary-hover: #0284c7;
-      --accent-green: #10b981;
-      --accent-green-hover: #059669;
-      --text-main: #f8fafc;
-      --text-muted: #94a3b8;
-      --input-bg: #0b1120;
+      --primary: #facc15;       /* nineO Yellow */
+      --primary-accent: #ef4444;/* nineO Flame Red */
+      --green: #10b981;
+      --border: rgba(255, 255, 255, 0.15);
+      --glass-bg: rgba(15, 23, 42, 0.82);
+      --input-bg: rgba(11, 17, 32, 0.85);
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
     }
 
+    /* Cinematic Branded Background */
     body {
-      background-color: var(--bg);
-      color: var(--text-main);
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.45) 0%, rgba(9, 13, 22, 0.88) 100%), 
+                  url('bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
       min-height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 12px;
+      padding: 16px;
     }
 
-    .app-container {
+    /* Frosted-Glass App Container */
+    .app {
       width: 100%;
-      max-width: 440px;
-      background: var(--card);
+      max-width: 430px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
       border-radius: 28px;
-      border: 1px solid var(--card-border);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(250, 204, 21, 0.08);
       padding: 24px 20px;
-      display: flex;
-      flex-direction: column;
       position: relative;
-      overflow: hidden;
     }
 
     /* Header */
@@ -58,522 +58,535 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
     }
 
-    .logo-badge {
+    .brand-group {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
 
-    .logo-text {
+    .brand-title {
       font-size: 26px;
       font-weight: 900;
       color: var(--primary);
-      letter-spacing: -1px;
+      letter-spacing: -0.5px;
+      text-shadow: 0 2px 8px rgba(250, 204, 21, 0.3);
     }
 
-    .logo-sub {
-      font-size: 13px;
-      font-weight: 700;
-      color: #cbd5e1;
-      background: #1e293b;
-      padding: 3px 8px;
-      border-radius: 8px;
+    .brand-tag {
+      font-size: 11px;
+      font-weight: 800;
+      background: #ef4444;
+      color: white;
+      padding: 2px 7px;
+      border-radius: 6px;
+      text-transform: uppercase;
     }
 
-    .status-pill {
+    .live-status {
       font-size: 11px;
       font-weight: 700;
+      color: var(--green);
       background: rgba(16, 185, 129, 0.15);
-      color: var(--accent-green);
-      padding: 5px 12px;
+      border: 1px solid rgba(16, 185, 129, 0.35);
+      padding: 4px 10px;
       border-radius: 20px;
-      border: 1px solid rgba(16, 185, 129, 0.3);
       display: flex;
       align-items: center;
       gap: 5px;
     }
 
-    .pulse-dot {
+    .live-dot {
       width: 6px;
       height: 6px;
-      background: var(--accent-green);
+      background: var(--green);
       border-radius: 50%;
       animation: pulse 1.5s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 0.4; transform: scale(0.9); }
-      50% { opacity: 1; transform: scale(1.2); }
-      100% { opacity: 0.4; transform: scale(0.9); }
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
     }
 
-    /* Input Sections */
-    .form-group {
-      margin-bottom: 16px;
+    /* Tabs */
+    .tab-switch {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      background: rgba(11, 17, 32, 0.6);
+      border-radius: 14px;
+      padding: 4px;
+      margin-bottom: 18px;
+      border: 1px solid var(--border);
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      padding: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
+    }
+
+    /* Form Inputs */
+    .field {
+      margin-bottom: 14px;
       position: relative;
     }
 
-    .label {
+    label {
       font-size: 11px;
       font-weight: 700;
-      color: var(--text-muted);
+      color: var(--text-dim);
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
       margin-bottom: 6px;
       display: block;
     }
 
-    .input-wrapper {
+    .input-wrap {
       position: relative;
       display: flex;
       align-items: center;
     }
 
-    .input-icon {
-      position: absolute;
-      left: 14px;
-      font-size: 16px;
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-
-    .input-field {
+    .input-box {
       width: 100%;
       background: var(--input-bg);
-      border: 1.5px solid var(--card-border);
+      border: 1.5px solid var(--border);
       color: white;
-      padding: 14px 14px 14px 44px;
-      border-radius: 14px;
-      font-size: 15px;
+      padding: 14px 14px;
+      border-radius: 12px;
+      font-size: 14px;
       outline: none;
-      transition: all 0.2s ease;
+      transition: border-color 0.2s;
     }
 
-    .input-field:focus {
+    .input-box:focus {
       border-color: var(--primary);
-      background: #0d1527;
-      box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
     }
 
     .gps-btn {
       position: absolute;
       right: 8px;
-      background: #1e293b;
-      border: 1px solid #334155;
+      background: rgba(250, 204, 21, 0.15);
+      border: 1px solid var(--primary);
       color: var(--primary);
-      padding: 7px 12px;
-      border-radius: 10px;
+      padding: 6px 11px;
+      border-radius: 8px;
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
-      transition: all 0.15s ease;
     }
 
     .gps-btn:active {
-      transform: scale(0.95);
       background: var(--primary);
-      color: white;
+      color: #090d16;
     }
 
-    /* Chips */
-    .chips-title {
+    .gps-status {
       font-size: 11px;
-      color: var(--text-muted);
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 6px;
-      display: block;
+      color: var(--text-dim);
+      margin-top: 4px;
+      min-height: 14px;
     }
 
-    .chips-scroll {
+    /* Quick Chips */
+    .chips {
       display: flex;
       gap: 8px;
       overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 18px;
+      padding-bottom: 4px;
+      margin-bottom: 16px;
       scrollbar-width: none;
     }
-
-    .chips-scroll::-webkit-scrollbar {
-      display: none;
-    }
+    .chips::-webkit-scrollbar { display: none; }
 
     .chip {
-      background: #1e293b;
+      background: rgba(30, 41, 59, 0.7);
       color: #cbd5e1;
       font-size: 12px;
-      font-weight: 500;
-      padding: 8px 14px;
-      border-radius: 18px;
+      padding: 6px 12px;
+      border-radius: 16px;
       white-space: nowrap;
       cursor: pointer;
-      border: 1px solid #334155;
-      transition: all 0.15s ease;
+      border: 1px solid var(--border);
     }
-
     .chip:active {
       background: var(--primary);
       color: #0f172a;
-      transform: scale(0.96);
     }
 
-    /* Tariff Banner */
-    .tariff-box {
-      background: rgba(15, 23, 42, 0.7);
-      border-radius: 14px;
-      padding: 12px 14px;
-      border: 1px dashed #334155;
-      margin-bottom: 22px;
+    /* Pass Cards */
+    .pass-card {
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
       display: flex;
-      align-items: center;
       justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .tariff-info {
-      font-size: 12px;
-      color: var(--text-muted);
-      line-height: 1.4;
+    .pass-card.selected {
+      border-color: var(--primary);
+      background: rgba(250, 204, 21, 0.08);
     }
 
-    .tariff-info b {
-      color: var(--primary);
-    }
-
-    .rate-badge {
-      font-size: 13px;
-      font-weight: 800;
-      color: var(--accent-green);
-      background: rgba(16, 185, 129, 0.1);
-      padding: 4px 8px;
-      border-radius: 8px;
-      white-space: nowrap;
-    }
+    .pass-title { font-size: 15px; font-weight: 800; color: white; }
+    .pass-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+    .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
 
     /* Action Buttons */
     .btn-submit {
       width: 100%;
-      background: var(--accent-green);
+      background: var(--green);
       color: white;
       border: none;
       padding: 16px;
-      border-radius: 16px;
+      border-radius: 14px;
       font-size: 16px;
       font-weight: 800;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 8px;
       box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
-      transition: all 0.2s ease;
+      margin-top: 10px;
     }
 
-    .btn-submit:hover {
-      background: var(--accent-green-hover);
-    }
+    .btn-submit:active { transform: scale(0.98); }
+    .btn-submit:disabled { background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; }
 
-    .btn-submit:active {
-      transform: scale(0.98);
-    }
-
-    .btn-submit:disabled {
-      background: #334155;
-      color: #64748b;
-      box-shadow: none;
-      cursor: not-allowed;
-    }
-
-    .footer-note {
-      font-size: 11px;
-      text-align: center;
-      color: #64748b;
-      margin-top: 14px;
+    /* Trust Footer Banner matching Ranchi board */
+    .trust-strip {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-    }
-
-    /* Loading Overlay */
-    .overlay {
-      display: none;
-      position: absolute;
-      inset: 0;
-      background: rgba(9, 13, 22, 0.95);
-      backdrop-filter: blur(8px);
-      z-index: 10;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 30px;
+      justify-content: space-around;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
       text-align: center;
     }
 
-    .spinner {
-      width: 50px;
-      height: 50px;
-      border: 4px solid #1e293b;
-      border-top-color: var(--primary);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin-bottom: 20px;
+    .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .trust-item b { color: var(--primary); }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
     }
 
-    @keyframes spin {
-      to { transform: rotate(360deg); }
+    .modal-card {
+      background: #131b2e;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      max-width: 360px;
+      width: 100%;
+      padding: 24px 20px;
+      text-align: center;
     }
 
-    .overlay-title {
-      font-size: 20px;
-      font-weight: 800;
-      color: white;
-      margin-bottom: 8px;
+    .qr-img {
+      width: 160px;
+      height: 160px;
+      background: white;
+      padding: 8px;
+      border-radius: 12px;
+      margin: 16px auto;
+      display: block;
     }
 
-    .overlay-desc {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.5;
-      margin-bottom: 24px;
-    }
-
-    .btn-wa {
-      background: #25d366;
+    .btn-upi {
+      background: #16a34a;
       color: white;
       text-decoration: none;
-      padding: 14px 22px;
+      padding: 14px;
       border-radius: 12px;
-      font-weight: 700;
-      font-size: 14px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      font-weight: 800;
+      display: block;
+      margin-bottom: 10px;
     }
   </style>
 </head>
 <body>
 
-  <div class="app-container">
-    <!-- Header -->
+  <div class="app">
+    <!-- Header with Branding -->
     <div class="header">
-      <div class="logo-badge">
-        <span class="logo-text">nineO</span>
-        <span class="logo-sub">BIKE</span>
+      <div class="brand-group">
+        <div class="brand-title">nineO</div>
+        <div class="brand-tag">Ranchi</div>
       </div>
-      <div class="status-pill">
-        <span class="pulse-dot"></span> Captains Active
-      </div>
-    </div>
-
-    <!-- Phone Number -->
-    <div class="form-group">
-      <label class="label">WhatsApp Number</label>
-      <div class="input-wrapper">
-        <span class="input-icon">📱</span>
-        <input 
-          type="tel" 
-          id="phone" 
-          class="input-field" 
-          placeholder="Enter 10-digit number" 
-          maxlength="10" 
-          autocomplete="tel"
-        >
+      <div class="live-status">
+        <div class="live-dot"></div> Captains Live
       </div>
     </div>
 
-    <!-- Pickup Location -->
-    <div class="form-group">
-      <label class="label">Pickup Location</label>
-      <div class="input-wrapper">
-        <span class="input-icon">📍</span>
-        <input 
-          type="text" 
-          id="pickup" 
-          class="input-field" 
-          placeholder="Landmark, Gate, or Road" 
-          autocomplete="off"
-        >
-        <button type="button" class="gps-btn" onclick="fetchGPS()">
-          <span>📍</span> GPS
-        </button>
+    <!-- Booking / Pass Switcher -->
+    <div class="tab-switch">
+      <button class="tab-btn active" id="btnTabBook" onclick="switchTab('book')">🛵 Book Bike</button>
+      <button class="tab-btn" id="btnTabPass" onclick="switchTab('pass')">🎟️ Daily Pass</button>
+    </div>
+
+    <!-- WhatsApp Field -->
+    <div class="field">
+      <label>Your WhatsApp Number</label>
+      <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10">
+    </div>
+
+    <!-- ================= 1. BOOK RIDE TAB ================= -->
+    <div id="sectionBook">
+      <div class="field">
+        <label>Pickup Location</label>
+        <div class="input-wrap">
+          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type landmark" style="padding-right: 75px;">
+          <button type="button" class="gps-btn" onclick="getPreciseGPS()">📍 GPS</button>
+        </div>
+        <div class="gps-status" id="gpsStatus"></div>
+      </div>
+
+      <div class="field">
+        <label>Drop Destination</label>
+        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Campus">
+      </div>
+
+      <!-- Ranchi Landmark Chips -->
+      <div class="chips">
+        <span class="chip" onclick="setDrop('Ranchi Railway Station')">🚉 Station</span>
+        <span class="chip" onclick="setDrop('Lalpur Chowk')">📍 Lalpur</span>
+        <span class="chip" onclick="setDrop('Main Road Overbridge')">🏙️ Main Road</span>
+        <span class="chip" onclick="setDrop('BIT Mesra Gate')">🎓 BIT Mesra</span>
+        <span class="chip" onclick="setDrop('Birsa Munda Airport')">✈️ Airport</span>
+      </div>
+
+      <button class="btn-submit" id="btnBook" onclick="submitRideBooking()">
+        <span>Confirm nineO Ride</span> ➔
+      </button>
+    </div>
+
+    <!-- ================= 2. BUY PASS TAB ================= -->
+    <div id="sectionPass" style="display: none;">
+      <label>Select 24-Hour Pass Tier</label>
+
+      <div class="pass-card selected" onclick="selectPass(this, 'PASS_39', 39, '5 KM Daily')">
+        <div>
+          <div class="pass-title">5 KM Pass</div>
+          <div class="pass-sub">Valid 24h • Up to 2 rides • ₹0 extra</div>
+        </div>
+        <div class="pass-price">₹39</div>
+      </div>
+
+      <div class="pass-card" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super')">
+        <div>
+          <div class="pass-title">9 KM Super Pass</div>
+          <div class="pass-sub">Valid 24h • Up to 3 rides • Best Value</div>
+        </div>
+        <div class="pass-price">₹69</div>
+      </div>
+
+      <div class="pass-card" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro')">
+        <div>
+          <div class="pass-title">19 KM Pro Pass</div>
+          <div class="pass-sub">Valid 24h • Multi-ride • Zero Cash</div>
+        </div>
+        <div class="pass-price">₹129</div>
+      </div>
+
+      <button class="btn-submit" style="background:#0284c7;" onclick="openPaymentModal()">
+        <span>Activate Pass with UPI</span> ⚡
+      </button>
+    </div>
+
+    <!-- Trust Strip matching image icons -->
+    <div class="trust-strip">
+      <div class="trust-item">
+        <span>🛡️</span>
+        <b>Safe & Secure</b>
+      </div>
+      <div class="trust-item">
+        <span>⚡</span>
+        <b>Fast Booking</b>
+      </div>
+      <div class="trust-item">
+        <span>🌱</span>
+        <b>Cleaner Cities</b>
       </div>
     </div>
+  </div>
 
-    <!-- Drop Location -->
-    <div class="form-group">
-      <label class="label">Drop Destination</label>
-      <div class="input-wrapper">
-        <span class="input-icon">🏁</span>
-        <input 
-          type="text" 
-          id="drop" 
-          class="input-field" 
-          placeholder="Destination or Landmark" 
-          autocomplete="off"
-        >
-      </div>
-    </div>
+  <!-- UPI Modal -->
+  <div class="modal" id="paymentModal">
+    <div class="modal-card">
+      <h3 style="font-size: 19px; color: white;">UPI Instant Payment</h3>
+      <p id="modalSub" style="color:var(--text-dim); font-size:13px; margin-top:4px;"></p>
 
-    <!-- Quick Drop Chips (Customize these landmarks for your city) -->
-    <span class="chips-title">Popular Destinations</span>
-    <div class="chips-scroll">
-      <div class="chip" onclick="setDrop('Railway Station')">🚉 Railway Station</div>
-      <div class="chip" onclick="setDrop('Main Bus Stand')">🚌 Bus Stand</div>
-      <div class="chip" onclick="setDrop('City Mall')">🛍️ City Center Mall</div>
-      <div class="chip" onclick="setDrop('University Main Gate')">🎓 Campus Gate</div>
-      <div class="chip" onclick="setDrop('District Hospital')">🏥 Hospital</div>
-    </div>
+      <img id="qrCode" class="qr-img" alt="QR Code">
 
-    <!-- Tariff & Quota Summary -->
-    <div class="tariff-box">
-      <div class="tariff-info">
-        🎟️ <b>Pass Rides:</b> 100% covered if quota active.<br>
-        ⚡ <b>Non-pass / Overage:</b> ₹9/km prepaid.
-      </div>
-      <div class="rate-badge">₹9 / km</div>
-    </div>
-
-    <!-- Book Button -->
-    <button class="btn-submit" id="submitBtn" onclick="initiateBooking()">
-      <span>Request Captain</span> ➔
-    </button>
-
-    <div class="footer-note">
-      🔒 End-to-End Masked Calls • Verified Captains
-    </div>
-
-    <!-- Overlay Loader & Confirmation -->
-    <div class="overlay" id="loadingOverlay">
-      <div class="spinner"></div>
-      <div class="overlay-title" id="overlayTitle">Dispatching Captains...</div>
-      <p class="overlay-desc" id="overlayDesc">
-        Matching with the closest verified nineO captain. Check your WhatsApp for the ride PIN and confirmation.
-      </p>
-      <a href="#" class="btn-wa" id="waRedirectBtn" target="_blank">
-        Open WhatsApp 💬
-      </a>
+      <a id="upiLink" class="btn-upi" href="#">1. Pay via GPay / PhonePe / Paytm</a>
+      <button class="btn-submit" style="font-size:14px; padding:13px;" onclick="confirmPassPurchase()">
+        2. I Have Completed Payment ✅
+      </button>
+      <button onclick="closeModal()" style="background:none; border:none; color:var(--text-dim); font-size:13px; margin-top:10px; cursor:pointer;">
+        Cancel
+      </button>
     </div>
   </div>
 
   <script>
     // =========================================================================
-    // ⚙️ CONFIGURATION
+    // ⚙️ BACKEND & PAYMENT CONFIGURATION
     // =========================================================================
-    // Paste your Google Apps Script Deployment URL ending with /exec
     const BACKEND_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
+    const COMPANY_UPI_ID = "YOUR_UPI_ID@okaxis";
+    const COMPANY_NAME = "nineO Mobility";
 
-    // Auto-restore previously saved phone number
-    const savedPhone = localStorage.getItem("nineo_rider_phone");
-    if (savedPhone) {
-      document.getElementById("phone").value = savedPhone;
+    let selectedPassCode = "PASS_39";
+    let selectedAmount = 39;
+    let selectedPassName = "5 KM Daily";
+    let exactLat = null;
+    let exactLng = null;
+
+    if (localStorage.getItem("nineo_phone")) {
+      document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
     }
 
-    function setDrop(locationName) {
-      document.getElementById("drop").value = locationName;
+    function switchTab(t) {
+      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';
+      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';
+      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');
+      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
     }
 
-    // 1-Tap Geolocation with Reverse Geocoding
-    function fetchGPS() {
-      const pickupInput = document.getElementById("pickup");
-      pickupInput.value = "Acquiring GPS location...";
+    function setDrop(v) { document.getElementById("drop").value = v; }
+
+    function getPreciseGPS() {
+      const p = document.getElementById("pickup");
+      const s = document.getElementById("gpsStatus");
+      s.innerText = "Locking GPS satellite...";
 
       if (!navigator.geolocation) {
-        alert("Geolocation is not supported by your mobile browser.");
-        pickupInput.value = "";
+        alert("GPS not supported on your device.");
+        s.innerText = "";
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
-        async (position) => {
-          const lat = position.coords.latitude;
-          const lng = position.coords.longitude;
-          
+        async (pos) => {
+          exactLat = pos.coords.latitude;
+          exactLng = pos.coords.longitude;
+          const acc = Math.round(pos.coords.accuracy);
+
+          s.innerText = `🛰️ Accurate to ~${acc}m. Resolving street...`;
+
           try {
-            // Free OpenStreetMap Reverse Geocoding for human-readable street names
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-            const data = await res.json();
-            if (data && data.display_name) {
-              const road = data.address.road || data.address.suburb || data.address.neighbourhood || "";
-              const landmark = data.address.amenity || data.address.commercial || "";
-              pickupInput.value = (landmark ? landmark + ", " : "") + (road ? road : `${lat.toFixed(4)}, ${lng.toFixed(4)}`);
-            } else {
-              pickupInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-            }
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${exactLat}&lon=${exactLng}&zoom=18&addressdetails=1`);
+            const d = await res.json();
+            const a = d.address || {};
+            const street = a.road || a.suburb || a.neighbourhood || "";
+            const landmark = a.building || a.amenity || "";
+            let full = [landmark, street].filter(Boolean).join(", ");
+            p.value = full || `${exactLat.toFixed(5)}, ${exactLng.toFixed(5)}`;
+            s.innerText = `📍 GPS Locked (±${acc}m)`;
           } catch (e) {
-            pickupInput.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            p.value = `${exactLat.toFixed(5)}, ${exactLng.toFixed(5)}`;
+            s.innerText = `📍 GPS Locked`;
           }
         },
-        (err) => {
-          alert("GPS permission was denied. Please enter your pickup landmark manually.");
-          pickupInput.value = "";
-        },
-        { enableHighAccuracy: true, timeout: 8000 }
+        () => { s.innerText = "⚠️ GPS access denied. Please type pickup."; },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
 
-    // Booking Submission Handler
-    async function initiateBooking() {
-      const phoneInput = document.getElementById("phone");
-      const pickupInput = document.getElementById("pickup");
-      const dropInput = document.getElementById("drop");
-      const submitBtn = document.getElementById("submitBtn");
+    async function submitRideBooking() {
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      let pickup = document.getElementById("pickup").value.trim();
+      const drop = document.getElementById("drop").value.trim();
+      const btn = document.getElementById("btnBook");
 
-      const phone = phoneInput.value.replace(/[^0-9]/g, "");
-      const pickup = pickupInput.value.trim();
-      const drop = dropInput.value.trim();
+      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
+      if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
-      if (phone.length !== 10) {
-        alert("Please enter a valid 10-digit WhatsApp number.");
-        phoneInput.focus();
-        return;
-      }
-      if (!pickup) {
-        alert("Please specify a pickup location or tap GPS.");
-        pickupInput.focus();
-        return;
-      }
-      if (!drop) {
-        alert("Please enter your destination landmark.");
-        dropInput.focus();
-        return;
+      if (exactLat && exactLng && !pickup.includes(exactLat.toFixed(2))) {
+        pickup = `${pickup} (${exactLat.toFixed(5)},${exactLng.toFixed(5)})`;
       }
 
-      // Save for subsequent bookings
-      localStorage.setItem("nineo_rider_phone", phone);
+      localStorage.setItem("nineo_phone", phone);
+      btn.disabled = true;
+      btn.innerText = "Dispatching Captains...";
 
-      // Trigger visual waiting state
-      submitBtn.disabled = true;
-      const overlay = document.getElementById("loadingOverlay");
-      overlay.style.display = "flex";
-
-      const waLink = `https://wa.me/91${phone}`;
-      document.getElementById("waRedirectBtn").href = waLink;
-
-      // Construct API Call to Apps Script Web App
-      const endpoint = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}`;
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}`;
 
       try {
-        // Mode 'no-cors' allows sending to Google Apps Script without CORS blockage
-        await fetch(endpoint, { mode: "no-cors" });
+        await fetch(url, { mode: "no-cors" });
+        window.location.href = `https://wa.me/91${phone}`;
+      } catch (e) {
+        window.location.href = `https://wa.me/91${phone}`;
+      }
+    }
 
-        document.getElementById("overlayTitle").innerText = "Ride Requested! 🚀";
-        document.getElementById("overlayDesc").innerText = 
-          "Your request is registered. If your pass is active, check WhatsApp for your OTP. If overage is due, an upfront payment link has been sent.";
+    function selectPass(el, code, amt, name) {
+      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));
+      el.classList.add("selected");
+      selectedPassCode = code;
+      selectedAmount = amt;
+      selectedPassName = name;
+    }
 
-        // Auto redirect to WhatsApp after 2 seconds
-        setTimeout(() => {
-          window.location.href = waLink;
-        }, 2500);
+    function openPaymentModal() {
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      if (phone.length !== 10) return alert("Enter your WhatsApp number first.");
+      localStorage.setItem("nineo_phone", phone);
 
-      } catch (err) {
-        // Fallback redirect if browser network times out
-        window.location.href = waLink;
+      document.getElementById("modalSub").innerText = `${selectedPassName} • ₹${selectedAmount}`;
+      const upiUrl = `upi://pay?pa=${COMPANY_UPI_ID}&pn=${encodeURIComponent(COMPANY_NAME)}&am=${selectedAmount}&cu=INR&tn=${encodeURIComponent(selectedPassCode + "-" + phone)}`;
+      
+      document.getElementById("upiLink").href = upiUrl;
+      document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
+      document.getElementById("paymentModal").style.display = "flex";
+    }
+
+    function closeModal() { document.getElementById("paymentModal").style.display = "none"; }
+
+    async function confirmPassPurchase() {
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const url = `${BACKEND_URL}?action=apiBuyPass&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;
+
+      try {
+        await fetch(url, { mode: "no-cors" });
+        closeModal();
+        window.location.href = `https://wa.me/91${phone}`;
+      } catch (e) {
+        closeModal();
+        window.location.href = `https://wa.me/91${phone}`;
       }
     }
   </script>
