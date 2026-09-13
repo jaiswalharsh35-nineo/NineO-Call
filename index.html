@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>nineO - Ranchi's Smart Bike Taxi</title>
+  <title>nineO - Ranchi Bike Taxi & Daily Passes</title>
   <meta name="theme-color" content="#090d16">
   
   <style>
     :root {
-      --primary: #facc15;       /* nineO Yellow */
-      --primary-accent: #ef4444;/* nineO Flame Red */
+      --primary: #facc15;        /* nineO Yellow */
+      --primary-accent: #ef4444; /* nineO Red */
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
       --glass-bg: rgba(15, 23, 42, 0.82);
@@ -26,7 +26,6 @@
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* Cinematic Branded Background */
     body {
       background: linear-gradient(180deg, rgba(9, 13, 22, 0.45) 0%, rgba(9, 13, 22, 0.88) 100%), 
                   url('bg.png') no-repeat center center fixed;
@@ -39,7 +38,6 @@
       padding: 16px;
     }
 
-    /* Frosted-Glass App Container */
     .app {
       width: 100%;
       max-width: 430px;
@@ -61,12 +59,6 @@
       margin-bottom: 18px;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
     .brand-title {
       font-size: 26px;
       font-weight: 900;
@@ -78,11 +70,12 @@
     .brand-tag {
       font-size: 11px;
       font-weight: 800;
-      background: #ef4444;
+      background: var(--primary-accent);
       color: white;
       padding: 2px 7px;
       border-radius: 6px;
       text-transform: uppercase;
+      margin-left: 6px;
     }
 
     .live-status {
@@ -111,7 +104,7 @@
       50% { opacity: 1; }
     }
 
-    /* Tabs */
+    /* Switcher Tabs */
     .tab-switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -140,7 +133,7 @@
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
     }
 
-    /* Form Inputs */
+    /* Input Fields */
     .field {
       margin-bottom: 14px;
       position: relative;
@@ -206,7 +199,7 @@
       min-height: 14px;
     }
 
-    /* Quick Chips */
+    /* Landmark Chips */
     .chips {
       display: flex;
       gap: 8px;
@@ -251,11 +244,38 @@
       background: rgba(250, 204, 21, 0.08);
     }
 
-    .pass-title { font-size: 15px; font-weight: 800; color: white; }
-    .pass-sub { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
-    .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
+    .pass-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: white;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-    /* Action Buttons */
+    .pass-badge {
+      font-size: 10px;
+      font-weight: 800;
+      background: #0284c7;
+      color: white;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    .pass-sub {
+      font-size: 12px;
+      color: var(--text-dim);
+      margin-top: 3px;
+    }
+
+    .pass-price {
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--primary);
+      text-align: right;
+    }
+
+    /* Buttons */
     .btn-submit {
       width: 100%;
       background: var(--green);
@@ -277,7 +297,7 @@
     .btn-submit:active { transform: scale(0.98); }
     .btn-submit:disabled { background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; }
 
-    /* Trust Footer Banner matching Ranchi board */
+    /* Trust Strip */
     .trust-strip {
       display: flex;
       justify-content: space-around;
@@ -292,7 +312,7 @@
     .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .trust-item b { color: var(--primary); }
 
-    /* Modal */
+    /* Payment Modal */
     .modal {
       display: none;
       position: fixed;
@@ -321,7 +341,7 @@
       background: white;
       padding: 8px;
       border-radius: 12px;
-      margin: 16px auto;
+      margin: 14px auto;
       display: block;
     }
 
@@ -334,30 +354,40 @@
       font-weight: 800;
       display: block;
       margin-bottom: 10px;
+      font-size: 15px;
+    }
+
+    .upi-id-box {
+      background: #0b1120;
+      border: 1px dashed var(--border);
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      color: var(--primary);
+      margin-bottom: 12px;
+      word-break: break-all;
     }
   </style>
 </head>
 <body>
 
   <div class="app">
-    <!-- Header with Branding -->
+    <!-- Header -->
     <div class="header">
-      <div class="brand-group">
-        <div class="brand-title">nineO</div>
-        <div class="brand-tag">Ranchi</div>
+      <div style="display:flex; align-items:center;">
+        <span class="brand-title">nineO</span>
+        <span class="brand-tag">Ranchi</span>
       </div>
-      <div class="live-status">
-        <div class="live-dot"></div> Captains Live
-      </div>
+      <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Booking / Pass Switcher -->
+    <!-- Mode Selector -->
     <div class="tab-switch">
       <button class="tab-btn active" id="btnTabBook" onclick="switchTab('book')">🛵 Book Bike</button>
       <button class="tab-btn" id="btnTabPass" onclick="switchTab('pass')">🎟️ Daily Pass</button>
     </div>
 
-    <!-- WhatsApp Field -->
+    <!-- Phone Number Field -->
     <div class="field">
       <label>Your WhatsApp Number</label>
       <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10">
@@ -376,10 +406,9 @@
 
       <div class="field">
         <label>Drop Destination</label>
-        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Campus">
+        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Landmark">
       </div>
 
-      <!-- Ranchi Landmark Chips -->
       <div class="chips">
         <span class="chip" onclick="setDrop('Ranchi Railway Station')">🚉 Station</span>
         <span class="chip" onclick="setDrop('Lalpur Chowk')">📍 Lalpur</span>
@@ -395,28 +424,31 @@
 
     <!-- ================= 2. BUY PASS TAB ================= -->
     <div id="sectionPass" style="display: none;">
-      <label>Select 24-Hour Pass Tier</label>
+      <label>Choose Your Pass (24-Hour Validity)</label>
 
-      <div class="pass-card selected" onclick="selectPass(this, 'PASS_39', 39, '5 KM Daily')">
+      <!-- ₹39 Pass -->
+      <div class="pass-card selected" onclick="selectPass(this, 'PASS_39', 39, '5 KM Daily (1 Ride)')">
         <div>
           <div class="pass-title">5 KM Pass</div>
-          <div class="pass-sub">Valid 24h • Up to 2 rides • ₹0 extra</div>
+          <div class="pass-sub">5 KM Total • 1 Ride included • 24h</div>
         </div>
         <div class="pass-price">₹39</div>
       </div>
 
-      <div class="pass-card" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super')">
+      <!-- ₹69 Pass -->
+      <div class="pass-card" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
         <div>
-          <div class="pass-title">9 KM Super Pass</div>
-          <div class="pass-sub">Valid 24h • Up to 3 rides • Best Value</div>
+          <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
+          <div class="pass-sub">9 KM Total • 2 Rides included • 24h</div>
         </div>
         <div class="pass-price">₹69</div>
       </div>
 
-      <div class="pass-card" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro')">
+      <!-- ₹129 Pass -->
+      <div class="pass-card" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
         <div>
           <div class="pass-title">19 KM Pro Pass</div>
-          <div class="pass-sub">Valid 24h • Multi-ride • Zero Cash</div>
+          <div class="pass-sub">19 KM Total • 3 Rides included • 24h</div>
         </div>
         <div class="pass-price">₹129</div>
       </div>
@@ -426,20 +458,11 @@
       </button>
     </div>
 
-    <!-- Trust Strip matching image icons -->
+    <!-- Trust Strip -->
     <div class="trust-strip">
-      <div class="trust-item">
-        <span>🛡️</span>
-        <b>Safe & Secure</b>
-      </div>
-      <div class="trust-item">
-        <span>⚡</span>
-        <b>Fast Booking</b>
-      </div>
-      <div class="trust-item">
-        <span>🌱</span>
-        <b>Cleaner Cities</b>
-      </div>
+      <div class="trust-item"><span>🛡️</span><b>Safe & Secure</b></div>
+      <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
+      <div class="trust-item"><span>🌱</span><b>Cleaner Cities</b></div>
     </div>
   </div>
 
@@ -447,13 +470,15 @@
   <div class="modal" id="paymentModal">
     <div class="modal-card">
       <h3 style="font-size: 19px; color: white;">UPI Instant Payment</h3>
-      <p id="modalSub" style="color:var(--text-dim); font-size:13px; margin-top:4px;"></p>
+      <p id="modalSub" style="color:var(--text-dim); font-size:13px; margin:4px 0 10px;"></p>
+
+      <div class="upi-id-box" id="displayUpiId"></div>
 
       <img id="qrCode" class="qr-img" alt="QR Code">
 
-      <a id="upiLink" class="btn-upi" href="#">1. Pay via GPay / PhonePe / Paytm</a>
+      <a id="upiLink" class="btn-upi" href="#">1. Pay via UPI App (GPay/PhonePe)</a>
       <button class="btn-submit" style="font-size:14px; padding:13px;" onclick="confirmPassPurchase()">
-        2. I Have Completed Payment ✅
+        2. I Have Paid & Completed ✅
       </button>
       <button onclick="closeModal()" style="background:none; border:none; color:var(--text-dim); font-size:13px; margin-top:10px; cursor:pointer;">
         Cancel
@@ -463,15 +488,15 @@
 
   <script>
     // =========================================================================
-    // ⚙️ BACKEND & PAYMENT CONFIGURATION
+    // ⚙️ CONFIGURATION - REPLACE WITH YOUR LIVE DETAILS
     // =========================================================================
     const BACKEND_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
-    const COMPANY_UPI_ID = "YOUR_UPI_ID@okaxis";
+    const COMPANY_UPI_ID = "YOUR_ACTUAL_UPI_ID@okaxis"; // Replace with your live UPI ID
     const COMPANY_NAME = "nineO Mobility";
 
     let selectedPassCode = "PASS_39";
     let selectedAmount = 39;
-    let selectedPassName = "5 KM Daily";
+    let selectedPassName = "5 KM Daily (1 Ride)";
     let exactLat = null;
     let exactLng = null;
 
@@ -491,10 +516,10 @@
     function getPreciseGPS() {
       const p = document.getElementById("pickup");
       const s = document.getElementById("gpsStatus");
-      s.innerText = "Locking GPS satellite...";
+      s.innerText = "Locking GPS satellites...";
 
       if (!navigator.geolocation) {
-        alert("GPS not supported on your device.");
+        alert("GPS is not supported on your device.");
         s.innerText = "";
         return;
       }
@@ -567,6 +592,8 @@
       localStorage.setItem("nineo_phone", phone);
 
       document.getElementById("modalSub").innerText = `${selectedPassName} • ₹${selectedAmount}`;
+      document.getElementById("displayUpiId").innerText = `Payee UPI: ${COMPANY_UPI_ID}`;
+
       const upiUrl = `upi://pay?pa=${COMPANY_UPI_ID}&pn=${encodeURIComponent(COMPANY_NAME)}&am=${selectedAmount}&cu=INR&tn=${encodeURIComponent(selectedPassCode + "-" + phone)}`;
       
       document.getElementById("upiLink").href = upiUrl;
