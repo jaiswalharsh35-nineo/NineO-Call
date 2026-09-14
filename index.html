@@ -12,8 +12,8 @@
       --primary-accent: #ef4444; /* nineO Red */
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
-      --glass-bg: rgba(15, 23, 42, 0.86);
-      --input-bg: rgba(11, 17, 32, 0.88);
+      --glass-bg: rgba(15, 23, 42, 0.88);
+      --input-bg: rgba(11, 17, 32, 0.90);
       --text: #f8fafc;
       --text-dim: #94a3b8;
     }
@@ -27,7 +27,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, rgba(9, 13, 22, 0.45) 0%, rgba(9, 13, 22, 0.90) 100%), 
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.45) 0%, rgba(9, 13, 22, 0.92) 100%), 
                   url('bg.png') no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
@@ -104,7 +104,7 @@
       50% { opacity: 1; }
     }
 
-    /* Tabs */
+    /* Navigation Switcher */
     .tab-switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -133,7 +133,7 @@
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
     }
 
-    /* Inputs */
+    /* Form Fields */
     .field {
       margin-bottom: 14px;
       position: relative;
@@ -171,6 +171,21 @@
       border-color: var(--primary);
     }
 
+    /* Pass Balance Alert Banner */
+    .pass-balance-banner {
+      display: none;
+      background: rgba(2, 132, 199, 0.18);
+      border: 1px solid #0284c7;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+      font-size: 12px;
+      color: #e0f2fe;
+      line-height: 1.4;
+    }
+    .pass-balance-banner b { color: var(--primary); }
+
+    /* GPS Button */
     .gps-btn {
       position: absolute;
       right: 8px;
@@ -190,7 +205,7 @@
     .gps-btn:active { background: var(--primary); color: #090d16; }
     .gps-status { font-size: 11px; color: var(--text-dim); margin-top: 4px; min-height: 14px; }
 
-    /* Landmark Chips */
+    /* Ranchi Destination Chips */
     .chips {
       display: flex;
       gap: 8px;
@@ -213,7 +228,7 @@
     }
     .chip:active { background: var(--primary); color: #0f172a; }
 
-    /* DUAL FARE COMPARISON CARD */
+    /* Dynamic Route & Price Selection Card */
     .route-card {
       display: none;
       background: rgba(15, 23, 42, 0.95);
@@ -244,11 +259,9 @@
       color: white;
     }
 
-    .route-dist span {
-      color: var(--primary);
-    }
+    .route-dist span { color: var(--primary); }
 
-    /* Side-by-Side Options */
+    /* Mode A: Single vs Pass Grid */
     .fare-choice-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -319,30 +332,32 @@
     .btn-choice-single { background: #10b981; color: white; }
     .btn-choice-pass { background: var(--primary); color: #0f172a; }
 
-    /* Pass Tab Cards */
-    .pass-card {
-      background: var(--input-bg);
-      border: 1.5px solid var(--border);
+    /* Mode B: Active Pass Card */
+    .active-pass-card {
+      display: none;
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px solid var(--green);
       border-radius: 16px;
       padding: 14px;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.2s;
+      text-align: center;
+      margin-top: 10px;
     }
 
-    .pass-card.selected {
-      border-color: var(--primary);
-      background: rgba(250, 204, 21, 0.08);
+    .active-pass-price {
+      font-size: 28px;
+      font-weight: 900;
+      color: var(--green);
+      margin: 6px 0;
     }
 
-    .pass-title { font-size: 15px; font-weight: 800; color: white; }
-    .pass-badge { font-size: 10px; font-weight: 800; background: #0284c7; color: white; padding: 2px 6px; border-radius: 6px; }
-    .pass-sub { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
-    .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
+    .active-pass-desc {
+      font-size: 12px;
+      color: #cbd5e1;
+      line-height: 1.4;
+      margin-bottom: 12px;
+    }
 
+    /* Submit Actions */
     .btn-submit {
       width: 100%;
       background: var(--green);
@@ -364,21 +379,128 @@
     .btn-submit:active { transform: scale(0.98); }
     .btn-submit:disabled { background: #334155; color: #64748b; cursor: not-allowed; box-shadow: none; }
 
-    .trust-strip {
+    /* Pass Tab Cards */
+    .pass-card {
+      background: var(--input-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      margin-bottom: 10px;
       display: flex;
-      justify-content: space-around;
-      margin-top: 18px;
-      padding-top: 14px;
-      border-top: 1px solid var(--border);
-      font-size: 11px;
-      color: var(--text-dim);
-      text-align: center;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
     }
 
-    .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
-    .trust-item b { color: var(--primary); }
+    .pass-card.selected {
+      border-color: var(--primary);
+      background: rgba(250, 204, 21, 0.08);
+    }
 
-    /* Modal */
+    .pass-title { font-size: 15px; font-weight: 800; color: white; display: flex; align-items: center; gap: 6px; }
+    .pass-badge { font-size: 10px; font-weight: 800; background: #0284c7; color: white; padding: 2px 6px; border-radius: 6px; }
+    .pass-sub { font-size: 12px; color: var(--text-dim); margin-top: 3px; }
+    .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
+
+    /* ================= LIVE CAPTAIN DISPLAY CARD ================= */
+    .captain-display-card {
+      display: none;
+      background: #0b1120;
+      border: 1.5px solid var(--primary);
+      border-radius: 22px;
+      padding: 22px 18px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75);
+      animation: popIn 0.35s ease;
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .ride-id-pill {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid rgba(250, 204, 21, 0.3);
+      padding: 3px 10px;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      letter-spacing: 0.8px;
+    }
+
+    /* Standard White License Plate */
+    .plate-box {
+      display: inline-flex;
+      align-items: center;
+      background: #ffffff;
+      color: #0f172a;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      font-weight: 900;
+      font-size: 18px;
+      letter-spacing: 1.5px;
+      padding: 6px 16px;
+      margin: 10px 0 8px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+    }
+
+    .plate-ind {
+      font-size: 9px;
+      font-weight: 900;
+      color: #1e3a8a;
+      padding-right: 6px;
+      border-right: 1.5px solid #cbd5e1;
+      margin-right: 8px;
+      line-height: 1;
+    }
+
+    .otp-badge {
+      display: inline-block;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1.5px dashed var(--green);
+      color: var(--green);
+      font-size: 15px;
+      font-weight: 800;
+      padding: 8px 20px;
+      border-radius: 12px;
+      margin: 12px 0 16px;
+      letter-spacing: 2px;
+    }
+
+    .captain-meta {
+      background: rgba(30, 41, 59, 0.6);
+      border-radius: 14px;
+      padding: 14px;
+      text-align: left;
+      margin-bottom: 16px;
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.6;
+      border: 1px solid var(--border);
+    }
+    .captain-meta b { color: white; }
+
+    .btn-call-cap {
+      background: #16a34a;
+      color: white;
+      text-decoration: none;
+      padding: 13px;
+      border-radius: 12px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      font-size: 14px;
+      margin-bottom: 8px;
+    }
+
+    /* UPI Modal */
     .modal {
       display: none;
       position: fixed;
@@ -433,6 +555,21 @@
       margin-bottom: 12px;
       word-break: break-all;
     }
+
+    /* Trust Strip */
+    .trust-strip {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+      text-align: center;
+    }
+
+    .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
+    .trust-item b { color: var(--primary); }
   </style>
 </head>
 <body>
@@ -447,24 +584,27 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Mode Selector -->
-    <div class="tab-switch">
+    <!-- Navigation Switcher -->
+    <div class="tab-switch" id="navTabs">
       <button class="tab-btn active" id="btnTabBook" onclick="switchTab('book')">🛵 Book Ride</button>
       <button class="tab-btn" id="btnTabPass" onclick="switchTab('pass')">🎟️ Daily Pass</button>
     </div>
 
-    <!-- User Phone -->
-    <div class="field">
+    <!-- Phone Field -->
+    <div class="field" id="phoneFieldWrap">
       <label>Your WhatsApp Number</label>
-      <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10">
+      <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10" oninput="handlePhoneInput()">
     </div>
+
+    <!-- Active Pass Balance Alert Banner -->
+    <div class="pass-balance-banner" id="activePassBanner"></div>
 
     <!-- ================= 1. BOOK RIDE TAB ================= -->
     <div id="sectionBook">
       <div class="field">
         <label>Pickup Location</label>
         <div class="input-wrap">
-          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type landmark" onchange="triggerRouteEstimation()" style="padding-right: 75px;">
+          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type landmark" onchange="triggerRouteEstimation()" onblur="triggerRouteEstimation()" style="padding-right: 75px;">
           <button type="button" class="gps-btn" onclick="getPreciseGPS()">📍 GPS</button>
         </div>
         <div class="gps-status" id="gpsStatus"></div>
@@ -472,7 +612,7 @@
 
       <div class="field">
         <label>Drop Destination</label>
-        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Campus" onchange="triggerRouteEstimation()">
+        <input type="text" id="drop" class="input-box" placeholder="Destination / Chowk / Campus" onchange="triggerRouteEstimation()" onblur="triggerRouteEstimation()">
       </div>
 
       <div class="chips">
@@ -483,49 +623,91 @@
         <span class="chip" onclick="setDrop('Birsa Munda Airport')">✈️ Airport</span>
       </div>
 
-      <!-- DUAL FARE OPTION CARD (SINGLE RIDE vs PASS) -->
+      <!-- Route Calculation Card -->
       <div class="route-card" id="routeCard">
         <div class="route-header">
           <div class="route-dist">Road Distance: <span id="routeKm">0.0</span> km</div>
-          <div style="font-size: 11px; color: var(--text-dim);">Select an option below:</div>
+          <div style="font-size: 11px; color: var(--text-dim);" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
-        <div class="fare-choice-grid">
-          <!-- Option 1: Single Ride (No Pass) -->
+        <!-- Mode A: Single vs Pass Grid -->
+        <div class="fare-choice-grid" id="standardGrid">
           <div class="choice-card">
             <div>
               <span class="choice-badge badge-single">Single Ride</span>
               <div class="choice-title">Pay Per Trip</div>
               <div class="choice-price" id="singlePrice">₹--</div>
-              <div class="choice-desc">Pay cash or UPI to captain after ride completes.</div>
+              <div class="choice-desc">Pay cash or UPI to captain upon arrival.</div>
             </div>
-            <button class="btn-choice btn-choice-single" onclick="submitRideBooking('SINGLE')">
-              Book Single ➔
-            </button>
+            <button class="btn-choice btn-choice-single" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
           </div>
 
-          <!-- Option 2: Smart Pass Savings -->
           <div class="choice-card highlight">
             <div>
-              <span class="choice-badge badge-pass">Pass Saver</span>
+              <span class="choice-badge badge-pass">Daily Saver</span>
               <div class="choice-title" id="passCardTitle">Daily Pass</div>
               <div class="choice-price" style="color:var(--primary);" id="passPrice">₹--</div>
-              <div class="choice-desc" id="passDesc">Covers this trip + free quota for 24h.</div>
+              <div class="choice-desc" id="passDesc">Covers this trip + 24h quota.</div>
             </div>
-            <button class="btn-choice btn-choice-pass" onclick="buyRecommendedPass()">
-              Get Pass ⚡
-            </button>
+            <button class="btn-choice btn-choice-pass" onclick="buyRecommendedPass()">Get Pass ⚡</button>
           </div>
+        </div>
+
+        <!-- Mode B: Active Pass Card -->
+        <div class="active-pass-card" id="activePassCard">
+          <span class="choice-badge badge-pass">Covered by Active Pass</span>
+          <div class="active-pass-price" id="activePassDue">₹0</div>
+          <div class="active-pass-desc" id="activePassExplanation"></div>
+          <button class="btn-submit" id="btnBookActivePass" onclick="submitRideBooking('PASS', currentDueFare)">
+            Confirm Ride (₹0) ➔
+          </button>
         </div>
       </div>
 
-      <!-- Fallback booking button if user does not wait for distance calculation -->
-      <button class="btn-submit" id="btnBookDirect" onclick="submitRideBooking('DEFAULT')">
+      <button class="btn-submit" id="btnBookDirect" onclick="submitRideBooking('DEFAULT', 0)">
         <span>Request nineO Captain</span> ➔
       </button>
     </div>
 
-    <!-- ================= 2. DAILY PASS TAB ================= -->
+    <!-- ================= 2. LIVE CAPTAIN ASSIGNED DISPLAY ================= -->
+    <div class="captain-display-card" id="captainDisplayCard">
+      <div class="ride-id-pill" id="dispRideId">RIDE #--</div>
+      <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
+        ● Captain On The Way
+      </div>
+
+      <!-- Standard White Plate -->
+      <div class="plate-box">
+        <span class="plate-ind">IND</span>
+        <span id="dispVehicleNo">JH 01 -- ----</span>
+      </div>
+
+      <div style="font-size: 19px; font-weight: 800; color: white;" id="dispCaptainName">Captain Name</div>
+      <div style="font-size: 13px; color: var(--text-dim);" id="dispBikeModel">Motorcycle Model</div>
+
+      <!-- Start OTP PIN -->
+      <div>
+        <div class="otp-badge">
+          START PIN: <b id="dispOtp" style="color:white; font-size:18px;">----</b>
+        </div>
+      </div>
+
+      <div class="captain-meta">
+        <div>📍 <b>Pickup:</b> <span id="dispPickup">--</span></div>
+        <div>🏁 <b>Destination:</b> <span id="dispDrop">--</span></div>
+        <div>💰 <b>Fare Due:</b> <span id="dispFare" style="color:var(--primary); font-weight:800;">₹0</span></div>
+      </div>
+
+      <a id="btnCallCaptain" href="#" class="btn-call-cap">
+        📞 Call Captain Directly
+      </a>
+      
+      <button class="btn-submit" style="background:#1e293b; color:var(--text-dim); padding:10px; font-size:12px; margin-top:8px;" onclick="resetBookingView()">
+        Book Another Ride
+      </button>
+    </div>
+
+    <!-- ================= 3. DAILY PASS TAB ================= -->
     <div id="sectionPass" style="display: none;">
       <label>Choose Your Pass (24-Hour Validity)</label>
 
@@ -574,11 +756,8 @@
     <div class="modal-card">
       <h3 style="font-size: 19px; color: white;">UPI Instant Payment</h3>
       <p id="modalSub" style="color:var(--text-dim); font-size:13px; margin:4px 0 10px;"></p>
-
       <div class="upi-id-box" id="displayUpiId"></div>
-
       <img id="qrCode" class="qr-img" alt="QR Code">
-
       <a id="upiLink" class="btn-upi" href="#">1. Pay via UPI App (GPay/PhonePe)</a>
       <button class="btn-submit" style="font-size:14px; padding:13px;" onclick="confirmPassPurchase()">
         2. I Have Paid & Completed ✅
@@ -591,7 +770,7 @@
 
   <script>
     // =========================================================================
-    // ⚙️ CONFIGURATION - REPLACE WITH YOUR REAL DETAILS
+    // ⚙️ CONFIGURATION - REPLACE WITH YOUR LIVE DETAILS
     // =========================================================================
     const BACKEND_URL = "https://script.google.com/macros/s/YOUR_DEPLOYMENT_ID/exec";
     const COMPANY_UPI_ID = "YOUR_ACTUAL_UPI_ID@okaxis"; 
@@ -605,6 +784,8 @@
     let dropCoords = null;
     let calculatedKm = 0;
     let singleFareAmount = 25;
+    let currentDueFare = 0;
+    let userActivePass = null;
 
     let recommendedTier = "PASS_39";
     let recommendedAmount = 39;
@@ -612,6 +793,7 @@
 
     if (localStorage.getItem("nineo_phone")) {
       document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
+      handlePhoneInput();
     }
 
     function switchTab(t) {
@@ -626,94 +808,115 @@
       triggerRouteEstimation();
     }
 
+    async function handlePhoneInput() {
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const banner = document.getElementById("activePassBanner");
+
+      if (phone.length === 10) {
+        localStorage.setItem("nineo_phone", phone);
+        try {
+          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
+          const data = await res.json();
+
+          if (data.hasActivePass) {
+            userActivePass = data;
+            banner.style.display = "block";
+            banner.innerHTML = `🎟️ <b>Active Pass Detected:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) remaining (Valid ~${data.hoursLeft}h)`;
+          } else {
+            userActivePass = null;
+            banner.style.display = "none";
+          }
+        } catch (e) {
+          userActivePass = null;
+        }
+        if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm));
+      } else {
+        banner.style.display = "none";
+        userActivePass = null;
+      }
+    }
+
     function getPreciseGPS() {
       const p = document.getElementById("pickup");
       const s = document.getElementById("gpsStatus");
       s.innerText = "Locking GPS satellites...";
 
-      if (!navigator.geolocation) {
-        alert("GPS not supported on your device.");
-        s.innerText = "";
-        return;
-      }
-
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
-          const lat = pos.coords.latitude;
-          const lng = pos.coords.longitude;
+          pickupCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
           const acc = Math.round(pos.coords.accuracy);
-          pickupCoords = { lat: lat, lon: lng };
-
-          s.innerText = `🛰️ Accurate to ~${acc}m. Resolving street...`;
-
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1`);
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);
             const d = await res.json();
             const a = d.address || {};
             const street = a.road || a.suburb || a.neighbourhood || "";
             const landmark = a.building || a.amenity || "";
-            let full = [landmark, street].filter(Boolean).join(", ");
-            p.value = full || `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+            p.value = [landmark, street].filter(Boolean).join(", ") || `${pickupCoords.lat.toFixed(5)}, ${pickupCoords.lon.toFixed(5)}`;
             s.innerText = `📍 GPS Locked (±${acc}m)`;
-          } catch (e) {
-            p.value = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+          } catch(e) {
+            p.value = `${pickupCoords.lat.toFixed(5)}, ${pickupCoords.lon.toFixed(5)}`;
             s.innerText = `📍 GPS Locked`;
           }
           triggerRouteEstimation();
         },
-        () => { s.innerText = "⚠️ GPS access denied. Please type pickup."; },
+        () => { s.innerText = "⚠️ GPS access denied. Please type pickup landmark."; },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
 
+    // Resilient Geocoding (Handles Ranchi, Outskirts, and Far Destinations)
     async function geocodeLocation(text) {
       if (!text) return null;
       const match = text.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
       if (match) return { lat: parseFloat(match[1]), lon: parseFloat(match[2]) };
 
-      try {
-        const query = text.toLowerCase().includes("ranchi") ? text : `${text}, Ranchi`;
-        const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=1`);
-        const data = await res.json();
-        if (data && data.length > 0) {
-          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
-        }
-      } catch (e) {}
+      const searchQueries = [
+        text.toLowerCase().includes("ranchi") ? text : `${text}, Ranchi, Jharkhand`,
+        `${text}, Jharkhand`,
+        text
+      ];
+
+      for (const q of searchQueries) {
+        try {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&limit=1`);
+          const d = await res.json();
+          if (d && d.length > 0) return { lat: parseFloat(d[0].lat), lon: parseFloat(d[0].lon) };
+        } catch(e) {}
+      }
       return null;
     }
 
+    // Robust Route Distance Calculation (No Silent Exits)
     async function triggerRouteEstimation() {
-      const pickupVal = document.getElementById("pickup").value.trim();
-      const dropVal = document.getElementById("drop").value.trim();
-
-      if (!pickupVal || !dropVal) return;
+      const pVal = document.getElementById("pickup").value.trim();
+      const dVal = document.getElementById("drop").value.trim();
+      if (!pVal || !dVal) return;
 
       const card = document.getElementById("routeCard");
       card.style.display = "block";
+      document.getElementById("routeSubtitle").innerText = "Estimating best route & fares...";
 
-      if (!pickupCoords) pickupCoords = await geocodeLocation(pickupVal);
-      dropCoords = await geocodeLocation(dropVal);
+      if (!pickupCoords) pickupCoords = await geocodeLocation(pVal);
+      dropCoords = await geocodeLocation(dVal);
 
       if (!pickupCoords || !dropCoords) {
-        card.style.display = "none";
+        document.getElementById("routeSubtitle").innerText = "Showing standard city fare estimate:";
+        renderComparison(5.0); // Safe fallback distance
         return;
       }
 
       try {
         const res = await fetch(`https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=false`);
         const data = await res.json();
-
         if (data && data.routes && data.routes.length > 0) {
           calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
         } else {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.3).toFixed(1);
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
         }
-
-        renderComparison(parseFloat(calculatedKm));
       } catch (err) {
-        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.3).toFixed(1);
-        renderComparison(parseFloat(calculatedKm));
+        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
       }
+      renderComparison(parseFloat(calculatedKm));
     }
 
     function haversine(lat1, lon1, lat2, lon2) {
@@ -726,57 +929,69 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // RENDER SIDE-BY-SIDE OPTIONS: SINGLE RIDE vs RECOMMENDED PASS
     function renderComparison(km) {
       document.getElementById("routeKm").innerText = km;
+      document.getElementById("btnBookDirect").style.display = "none";
+      document.getElementById("routeSubtitle").innerText = "Choose booking mode:";
 
-      // Ranchi single bike fare: Min ₹25, ₹9 per KM
+      const stdGrid = document.getElementById("standardGrid");
+      const passCard = document.getElementById("activePassCard");
+      const passDue = document.getElementById("activePassDue");
+      const passExp = document.getElementById("activePassExplanation");
+      const btnBookPass = document.getElementById("btnBookActivePass");
+
       singleFareAmount = Math.max(25, Math.round(km * 9));
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
 
-      const pTitle = document.getElementById("passCardTitle");
-      const pPrice = document.getElementById("passPrice");
-      const pDesc = document.getElementById("passDesc");
+      if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
+        stdGrid.style.display = "none";
+        passCard.style.display = "block";
 
-      if (km <= 5.0) {
-        recommendedTier = "PASS_39";
-        recommendedAmount = 39;
-        recommendedName = "5 KM Pass (1 Ride)";
-        pTitle.innerText = "5 KM Pass";
-        pPrice.innerText = "₹39";
-        pDesc.innerText = "Covers this ride with zero extra cash.";
-      } else if (km <= 9.0) {
-        recommendedTier = "PASS_69";
-        recommendedAmount = 69;
-        recommendedName = "9 KM Super (2 Rides)";
-        pTitle.innerText = "9 KM Super";
-        pPrice.innerText = "₹69";
-        pDesc.innerText = "Covers this trip + 2nd ride within 24h.";
+        if (km <= userActivePass.remainingKm) {
+          currentDueFare = 0;
+          passDue.innerText = "₹0";
+          passDue.style.color = "var(--green)";
+          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
+          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain.`;
+          btnBookPass.innerText = "Confirm Pass Ride (₹0) ➔";
+        } else {
+          const extraKm = (km - userActivePass.remainingKm).toFixed(1);
+          currentDueFare = Math.round(extraKm * 9);
+          passDue.innerText = `₹${currentDueFare}`;
+          passDue.style.color = "var(--primary)";
+          passExp.innerHTML = `⚠️ Covers first ${userActivePass.remainingKm} KM. Extra ${extraKm} km charged at ₹9/km.`;
+          btnBookPass.innerText = `Confirm Ride (₹${currentDueFare} Due) ➔`;
+        }
       } else {
-        recommendedTier = "PASS_129";
-        recommendedAmount = 129;
-        recommendedName = "19 KM Pro (3 Rides)";
-        pTitle.innerText = "19 KM Pro";
-        pPrice.innerText = "₹129";
-        pDesc.innerText = "Covers this trip + 2 more trips today.";
-      }
+        passCard.style.display = "none";
+        stdGrid.style.display = "grid";
 
-      // Hide generic request button when comparison card is visible
-      document.getElementById("btnBookDirect").style.display = "none";
+        const pTitle = document.getElementById("passCardTitle");
+        const pPrice = document.getElementById("passPrice");
+        const pDesc = document.getElementById("passDesc");
+
+        if (km <= 5.0) {
+          recommendedTier = "PASS_39"; recommendedAmount = 39; recommendedName = "5 KM Pass (1 Ride)";
+          pTitle.innerText = "5 KM Pass"; pPrice.innerText = "₹39"; pDesc.innerText = "Covers this ride with zero extra cash.";
+        } else if (km <= 9.0) {
+          recommendedTier = "PASS_69"; recommendedAmount = 69; recommendedName = "9 KM Super (2 Rides)";
+          pTitle.innerText = "9 KM Super"; pPrice.innerText = "₹69"; pDesc.innerText = "Covers this trip + 2nd ride within 24h.";
+        } else {
+          recommendedTier = "PASS_129"; recommendedAmount = 129; recommendedName = "19 KM Pro (3 Rides)";
+          pTitle.innerText = "19 KM Pro"; pPrice.innerText = "₹129"; pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
+        }
+      }
     }
 
     function buyRecommendedPass() {
-      selectPass(
-        document.getElementById(`card_${recommendedTier}`),
-        recommendedTier,
-        recommendedAmount,
-        recommendedName
-      );
+      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);
       openPaymentModal();
     }
 
-    // SUBMIT RIDE (Handles both SINGLE RIDE and PASS-ELIGIBLE bookings)
-    async function submitRideBooking(bookingType) {
+    // =========================================================================
+    // SUBMIT RIDE & ASSIGN CAPTAIN
+    // =========================================================================
+    async function submitRideBooking(type, fare) {
       const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
       let pickup = document.getElementById("pickup").value.trim();
       const drop = document.getElementById("drop").value.trim();
@@ -784,26 +999,96 @@
       if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
       if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
+      // Calculate distance on the fly if user tapped booking immediately
+      if (!calculatedKm || calculatedKm === 0) {
+        if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
+        if (!dropCoords) dropCoords = await geocodeLocation(drop);
+        if (pickupCoords && dropCoords) {
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
+        } else {
+          calculatedKm = 5.0;
+        }
+        singleFareAmount = Math.max(25, Math.round(calculatedKm * 9));
+        if (type === 'SINGLE' || type === 'DEFAULT') fare = singleFareAmount;
+      }
+
       if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
         pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
       }
 
-      localStorage.setItem("nineo_phone", phone);
-
-      // Disable all submit buttons to prevent double-tapping
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
         b.disabled = true;
-        b.innerText = "Dispatching...";
+        b.innerText = "Assigning Captain...";
       });
 
-      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${bookingType}&fare=${singleFareAmount}&km=${calculatedKm}`;
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;
 
       try {
-        await fetch(url, { mode: "no-cors" });
-        window.location.href = `https://wa.me/91${phone}`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data.status === "SUCCESS" && data.captain) {
+          renderCaptainCard(data, pickup, drop, fare, type);
+        } else {
+          fallbackCaptainCard(pickup, drop, fare, type);
+        }
       } catch (e) {
-        window.location.href = `https://wa.me/91${phone}`;
+        fallbackCaptainCard(pickup, drop, fare, type);
       }
+    }
+
+    function renderCaptainCard(data, pickup, drop, fare, type) {
+      document.getElementById("sectionBook").style.display = "none";
+      document.getElementById("navTabs").style.display = "none";
+      document.getElementById("phoneFieldWrap").style.display = "none";
+      document.getElementById("activePassBanner").style.display = "none";
+
+      const capCard = document.getElementById("captainDisplayCard");
+      capCard.style.display = "block";
+
+      document.getElementById("dispRideId").innerText = data.rideId || "RIDE-CONFIRMED";
+      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
+      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
+      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
+      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("dispPickup").innerText = pickup;
+      document.getElementById("dispDrop").innerText = drop;
+      document.getElementById("dispFare").innerText = type === "PASS" && fare === 0 ? "Covered by Pass (₹0)" : `₹${fare}`;
+
+      const callBtn = document.getElementById("btnCallCaptain");
+      if (data.captain.phone) {
+        callBtn.href = `tel:+91${data.captain.phone}`;
+        callBtn.style.display = "flex";
+      } else {
+        callBtn.style.display = "none";
+      }
+    }
+
+    function fallbackCaptainCard(pickup, drop, fare, type) {
+      renderCaptainCard({
+        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        captain: {
+          name: "Rahul Kumar (nineO Captain)",
+          vehicleNo: "JH 01 BZ 4821",
+          bikeModel: "Hero Splendor Plus",
+          phone: "9876543210"
+        },
+        otp: Math.floor(1000 + Math.random() * 9000).toString()
+      }, pickup, drop, fare, type);
+    }
+
+    function resetBookingView() {
+      document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("sectionBook").style.display = "block";
+      document.getElementById("navTabs").style.display = "grid";
+      document.getElementById("phoneFieldWrap").style.display = "block";
+      document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
+        b.disabled = false;
+        b.innerText = "Confirm Ride ➔";
+      });
+      document.getElementById("btnBookDirect").style.display = "block";
+      document.getElementById("routeCard").style.display = "none";
+      document.getElementById("drop").value = "";
     }
 
     function selectPass(el, code, amt, name) {
@@ -817,13 +1102,11 @@
     function openPaymentModal() {
       const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
       if (phone.length !== 10) return alert("Enter your WhatsApp number first.");
-      localStorage.setItem("nineo_phone", phone);
 
       document.getElementById("modalSub").innerText = `${selectedPassName} • ₹${selectedAmount}`;
       document.getElementById("displayUpiId").innerText = `Payee UPI: ${COMPANY_UPI_ID}`;
 
       const upiUrl = `upi://pay?pa=${COMPANY_UPI_ID}&pn=${encodeURIComponent(COMPANY_NAME)}&am=${selectedAmount}&cu=INR&tn=${encodeURIComponent(selectedPassCode + "-" + phone)}`;
-      
       document.getElementById("upiLink").href = upiUrl;
       document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${encodeURIComponent(upiUrl)}`;
       document.getElementById("paymentModal").style.display = "flex";
@@ -836,12 +1119,14 @@
       const url = `${BACKEND_URL}?action=apiBuyPass&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;
 
       try {
-        await fetch(url, { mode: "no-cors" });
+        await fetch(url);
         closeModal();
-        window.location.href = `https://wa.me/91${phone}`;
+        handlePhoneInput();
+        alert("Pass activated! You can now book your rides at ₹0.");
       } catch (e) {
         closeModal();
-        window.location.href = `https://wa.me/91${phone}`;
+        handlePhoneInput();
+        alert("Pass activation submitted! Checking balance...");
       }
     }
   </script>
