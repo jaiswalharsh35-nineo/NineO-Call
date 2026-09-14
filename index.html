@@ -228,7 +228,7 @@
     }
     .chip:active { background: var(--primary); color: #0f172a; }
 
-    /* Dynamic Route & Price Selection Card */
+    /* Route Calculation & Selection Card */
     .route-card {
       display: none;
       background: rgba(15, 23, 42, 0.95);
@@ -305,18 +305,19 @@
     }
 
     .choice-price {
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 900;
       margin: 4px 0;
       color: white;
+      line-height: 1.2;
     }
 
     .choice-desc {
-      font-size: 10px;
+      font-size: 10.5px;
       color: #94a3b8;
-      line-height: 1.3;
+      line-height: 1.35;
       margin-bottom: 10px;
-      min-height: 26px;
+      min-height: 28px;
     }
 
     .btn-choice {
@@ -637,14 +638,14 @@
               <span class="choice-badge badge-single">Single Ride</span>
               <div class="choice-title">Pay Per Trip</div>
               <div class="choice-price" id="singlePrice">₹--</div>
-              <div class="choice-desc">Pay cash or UPI to captain upon arrival.</div>
+              <div class="choice-desc" id="singleDesc">Pay cash or UPI to captain upon arrival.</div>
             </div>
             <button class="btn-choice btn-choice-single" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
           </div>
 
           <div class="choice-card highlight">
             <div>
-              <span class="choice-badge badge-pass">Daily Saver</span>
+              <span class="choice-badge badge-pass">Pass Saver</span>
               <div class="choice-title" id="passCardTitle">Daily Pass</div>
               <div class="choice-price" style="color:var(--primary);" id="passPrice">₹--</div>
               <div class="choice-desc" id="passDesc">Covers this trip + 24h quota.</div>
@@ -715,7 +716,7 @@
       <div class="pass-card selected" id="card_PASS_39" onclick="selectPass(this, 'PASS_39', 39, '5 KM Pass (1 Ride)')">
         <div>
           <div class="pass-title">5 KM Pass</div>
-          <div class="pass-sub">5 KM Total • 1 Ride included • 24h</div>
+          <div style="font-size:12px; color:var(--text-dim);">5 KM Total • 1 Ride included • 24h</div>
         </div>
         <div class="pass-price">₹39</div>
       </div>
@@ -724,7 +725,7 @@
       <div class="pass-card" id="card_PASS_69" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
         <div>
           <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
-          <div class="pass-sub">9 KM Total • 2 Rides included • 24h</div>
+          <div style="font-size:12px; color:var(--text-dim);">9 KM Total • 2 Rides included • 24h</div>
         </div>
         <div class="pass-price">₹69</div>
       </div>
@@ -733,7 +734,7 @@
       <div class="pass-card" id="card_PASS_129" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
         <div>
           <div class="pass-title">19 KM Pro Pass</div>
-          <div class="pass-sub">19 KM Total • 3 Rides included • 24h</div>
+          <div style="font-size:12px; color:var(--text-dim);">19 KM Total • 3 Rides included • 24h</div>
         </div>
         <div class="pass-price">₹129</div>
       </div>
@@ -790,6 +791,8 @@
     let recommendedTier = "PASS_39";
     let recommendedAmount = 39;
     let recommendedName = "5 KM Pass";
+    let recommendedOverageFee = 0;
+    let recommendedOverageKm = 0;
 
     if (localStorage.getItem("nineo_phone")) {
       document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
@@ -864,7 +867,7 @@
       );
     }
 
-    // Resilient Geocoding (Handles Ranchi, Outskirts, and Far Destinations)
+    // Resilient Geocoding (Handles Ranchi, Outskirts, and Far Locations)
     async function geocodeLocation(text) {
       if (!text) return null;
       const match = text.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
@@ -886,7 +889,7 @@
       return null;
     }
 
-    // Robust Route Distance Calculation (No Silent Exits)
+    // Robust Route Distance Calculation
     async function triggerRouteEstimation() {
       const pVal = document.getElementById("pickup").value.trim();
       const dVal = document.getElementById("drop").value.trim();
@@ -901,7 +904,7 @@
 
       if (!pickupCoords || !dropCoords) {
         document.getElementById("routeSubtitle").innerText = "Showing standard city fare estimate:";
-        renderComparison(5.0); // Safe fallback distance
+        renderComparison(5.0);
         return;
       }
 
@@ -929,6 +932,7 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
+    // UPDATED: Calculations Including Exact Over-19KM Overage Math
     function renderComparison(km) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -943,6 +947,7 @@
       singleFareAmount = Math.max(25, Math.round(km * 9));
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
 
+      // 1. Rider ALREADY HAS an Active Pass
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
         stdGrid.style.display = "none";
         passCard.style.display = "block";
@@ -955,14 +960,17 @@
           passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain.`;
           btnBookPass.innerText = "Confirm Pass Ride (₹0) ➔";
         } else {
-          const extraKm = (km - userActivePass.remainingKm).toFixed(1);
+          // Active pass overage:
+          const extraKm = parseFloat((km - userActivePass.remainingKm).toFixed(1));
           currentDueFare = Math.round(extraKm * 9);
           passDue.innerText = `₹${currentDueFare}`;
           passDue.style.color = "var(--primary)";
-          passExp.innerHTML = `⚠️ Covers first ${userActivePass.remainingKm} KM. Extra ${extraKm} km charged at ₹9/km.`;
+          passExp.innerHTML = `⚠️ <b>Pass covers first ${userActivePass.remainingKm} KM</b><br>Extra ${extraKm} km charged at ₹9/km overage = <b>₹${currentDueFare}</b> cash/UPI to captain upon drop.`;
           btnBookPass.innerText = `Confirm Ride (₹${currentDueFare} Due) ➔`;
         }
-      } else {
+      } 
+      // 2. Rider has NO active pass -> Show Single vs Recommended Pass
+      else {
         passCard.style.display = "none";
         stdGrid.style.display = "grid";
 
@@ -972,13 +980,35 @@
 
         if (km <= 5.0) {
           recommendedTier = "PASS_39"; recommendedAmount = 39; recommendedName = "5 KM Pass (1 Ride)";
-          pTitle.innerText = "5 KM Pass"; pPrice.innerText = "₹39"; pDesc.innerText = "Covers this ride with zero extra cash.";
+          recommendedOverageKm = 0; recommendedOverageFee = 0;
+          pTitle.innerText = "5 KM Pass"; 
+          pPrice.innerText = "₹39"; 
+          pDesc.innerHTML = "Covers this trip in full. Zero extra cash.";
         } else if (km <= 9.0) {
           recommendedTier = "PASS_69"; recommendedAmount = 69; recommendedName = "9 KM Super (2 Rides)";
-          pTitle.innerText = "9 KM Super"; pPrice.innerText = "₹69"; pDesc.innerText = "Covers this trip + 2nd ride within 24h.";
-        } else {
+          recommendedOverageKm = 0; recommendedOverageFee = 0;
+          pTitle.innerText = "9 KM Super"; 
+          pPrice.innerText = "₹69"; 
+          pDesc.innerHTML = "Covers this trip + 2nd ride within 24h.";
+        } else if (km <= 19.0) {
           recommendedTier = "PASS_129"; recommendedAmount = 129; recommendedName = "19 KM Pro (3 Rides)";
-          pTitle.innerText = "19 KM Pro"; pPrice.innerText = "₹129"; pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
+          recommendedOverageKm = 0; recommendedOverageFee = 0;
+          pTitle.innerText = "19 KM Pro"; 
+          pPrice.innerText = "₹129"; 
+          pDesc.innerHTML = "Covers this trip in full + up to 2 more trips today.";
+        } else {
+          // DISTANCE > 19 KM (Calculates pass + overage + net savings)
+          recommendedTier = "PASS_129";
+          recommendedAmount = 129;
+          recommendedName = "19 KM Pro (3 Rides)";
+          recommendedOverageKm = parseFloat((km - 19.0).toFixed(1));
+          recommendedOverageFee = Math.round(recommendedOverageKm * 9);
+          const totalCostWithPass = 129 + recommendedOverageFee;
+          const savings = singleFareAmount - totalCostWithPass;
+
+          pTitle.innerText = "19 KM Pro + Overage";
+          pPrice.innerHTML = `₹${totalCostWithPass}`;
+          pDesc.innerHTML = `<b>₹129 Pass</b> (19 km) + <b>₹${recommendedOverageFee}</b> extra (${recommendedOverageKm} km @ ₹9/km).<br><span style="color:var(--green); font-weight:800;">Save ₹${savings} with Pass!</span>`;
         }
       }
     }
@@ -1053,7 +1083,13 @@
       document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
       document.getElementById("dispPickup").innerText = pickup;
       document.getElementById("dispDrop").innerText = drop;
-      document.getElementById("dispFare").innerText = type === "PASS" && fare === 0 ? "Covered by Pass (₹0)" : `₹${fare}`;
+
+      // Unambiguous fare display
+      if (type === "PASS") {
+        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Pass Overage - Pay Captain)`;
+      } else {
+        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
+      }
 
       const callBtn = document.getElementById("btnCallCaptain");
       if (data.captain.phone) {
@@ -1103,7 +1139,12 @@
       const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
       if (phone.length !== 10) return alert("Enter your WhatsApp number first.");
 
-      document.getElementById("modalSub").innerText = `${selectedPassName} • ₹${selectedAmount}`;
+      let modalInfo = `${selectedPassName} • ₹${selectedAmount}`;
+      if (selectedPassCode === "PASS_129" && recommendedOverageFee > 0 && calculatedKm > 19.0) {
+        modalInfo += ` (+₹${recommendedOverageFee} overage due to captain at drop)`;
+      }
+
+      document.getElementById("modalSub").innerText = modalInfo;
       document.getElementById("displayUpiId").innerText = `Payee UPI: ${COMPANY_UPI_ID}`;
 
       const upiUrl = `upi://pay?pa=${COMPANY_UPI_ID}&pn=${encodeURIComponent(COMPANY_NAME)}&am=${selectedAmount}&cu=INR&tn=${encodeURIComponent(selectedPassCode + "-" + phone)}`;
