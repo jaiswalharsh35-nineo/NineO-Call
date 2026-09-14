@@ -333,7 +333,7 @@
     .btn-choice-single { background: #10b981; color: white; }
     .btn-choice-pass { background: var(--primary); color: #0f172a; }
 
-    /* Mode B: Active Pass Card */
+    /* Mode B: Active Pass Card & Return Overage */
     .active-pass-card {
       display: none;
       background: rgba(16, 185, 129, 0.08);
@@ -356,6 +356,50 @@
       color: #cbd5e1;
       line-height: 1.4;
       margin-bottom: 12px;
+    }
+
+    /* Smart Pass Upgrade Suggestion Box */
+    .upsell-box {
+      display: none;
+      background: rgba(250, 204, 21, 0.08);
+      border: 1.5px dashed var(--primary);
+      border-radius: 14px;
+      padding: 12px;
+      margin-top: 14px;
+      text-align: left;
+    }
+
+    .upsell-title {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .upsell-text {
+      font-size: 11.5px;
+      color: #cbd5e1;
+      line-height: 1.4;
+    }
+
+    .btn-upsell {
+      display: inline-block;
+      width: 100%;
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+      text-align: center;
     }
 
     /* Submit Actions */
@@ -654,14 +698,24 @@
           </div>
         </div>
 
-        <!-- Mode B: Active Pass Card -->
+        <!-- Mode B: Active Pass Card & Return Trip Overage Handler -->
         <div class="active-pass-card" id="activePassCard">
-          <span class="choice-badge badge-pass">Covered by Active Pass</span>
+          <span class="choice-badge badge-pass">Active Pass Applied</span>
           <div class="active-pass-price" id="activePassDue">₹0</div>
           <div class="active-pass-desc" id="activePassExplanation"></div>
+          
           <button class="btn-submit" id="btnBookActivePass" onclick="submitRideBooking('PASS', currentDueFare)">
             Confirm Ride (₹0) ➔
           </button>
+
+          <!-- Smart Pass Upgrade Box for Return Rides / Overage -->
+          <div class="upsell-box" id="passUpsellBox">
+            <div class="upsell-title">💡 Smart Pass Recommendation</div>
+            <div class="upsell-text" id="passUpsellText"></div>
+            <button type="button" class="btn-upsell" id="btnBuyFreshPass" onclick="buyFreshPassOption()">
+              Get Fresh Pass Instead ⚡
+            </button>
+          </div>
         </div>
       </div>
 
@@ -793,6 +847,11 @@
     let recommendedName = "5 KM Pass";
     let recommendedOverageFee = 0;
     let recommendedOverageKm = 0;
+
+    // Fresh pass upsell variables
+    let freshTier = "PASS_129";
+    let freshAmt = 129;
+    let freshName = "19 KM Pro Pass";
 
     if (localStorage.getItem("nineo_phone")) {
       document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
@@ -932,7 +991,9 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // UPDATED: Calculations Including Exact Over-19KM Overage Math
+    // =========================================================================
+    // DYNAMIC FARE MATRIX (RETURN RIDES, OVERAGE, & UPSELL RECOMMENDATIONS)
+    // =========================================================================
     function renderComparison(km) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -943,33 +1004,69 @@
       const passDue = document.getElementById("activePassDue");
       const passExp = document.getElementById("activePassExplanation");
       const btnBookPass = document.getElementById("btnBookActivePass");
+      const upsellBox = document.getElementById("passUpsellBox");
+      const upsellText = document.getElementById("passUpsellText");
+      const btnUpsell = document.getElementById("btnBuyFreshPass");
 
       singleFareAmount = Math.max(25, Math.round(km * 9));
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
 
-      // 1. Rider ALREADY HAS an Active Pass
+      // -----------------------------------------------------------------------
+      // 1. RIDER ALREADY HAS AN ACTIVE PASS (e.g. Return Trip / 2nd Ride)
+      // -----------------------------------------------------------------------
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
         stdGrid.style.display = "none";
         passCard.style.display = "block";
 
+        // Case A: Return trip is 100% covered by remaining balance
         if (km <= userActivePass.remainingKm) {
           currentDueFare = 0;
           passDue.innerText = "₹0";
           passDue.style.color = "var(--green)";
           const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
-          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain.`;
+          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain for today.`;
           btnBookPass.innerText = "Confirm Pass Ride (₹0) ➔";
-        } else {
-          // Active pass overage:
-          const extraKm = parseFloat((km - userActivePass.remainingKm).toFixed(1));
-          currentDueFare = Math.round(extraKm * 9);
+          upsellBox.style.display = "none";
+        } 
+        // Case B: Trip exceeds remaining pass balance (e.g. 4 km left on 15 km return)
+        else {
+          const coveredKm = userActivePass.remainingKm;
+          const extraKm = parseFloat((km - coveredKm).toFixed(1));
+          currentDueFare = Math.round(extraKm * 9); // Overage calculation
+
           passDue.innerText = `₹${currentDueFare}`;
           passDue.style.color = "var(--primary)";
-          passExp.innerHTML = `⚠️ <b>Pass covers first ${userActivePass.remainingKm} KM</b><br>Extra ${extraKm} km charged at ₹9/km overage = <b>₹${currentDueFare}</b> cash/UPI to captain upon drop.`;
+          passExp.innerHTML = `⚠️ <b>${coveredKm} KM covered free by your pass.</b><br>Remaining <b>${extraKm} KM</b> billed at ₹9/km overage = <b>₹${currentDueFare}</b> cash/UPI to captain upon drop.`;
           btnBookPass.innerText = `Confirm Ride (₹${currentDueFare} Due) ➔`;
+
+          // Determine optimal fresh pass for this distance
+          if (km <= 5.0) {
+            freshTier = "PASS_39"; freshAmt = 39; freshName = "5 KM Pass";
+          } else if (km <= 9.0) {
+            freshTier = "PASS_69"; freshAmt = 69; freshName = "9 KM Super Pass";
+          } else {
+            freshTier = "PASS_129"; freshAmt = 129; freshName = "19 KM Pro Pass";
+          }
+
+          // Compute difference and display smart recommendation
+          const diff = freshAmt - currentDueFare;
+          upsellBox.style.display = "block";
+
+          if (diff <= 0) {
+            // Overages exceed the price of a brand new pass
+            upsellText.innerHTML = `Paying <b>₹${currentDueFare}</b> in overage is higher than a fresh <b>${freshName} (₹${freshAmt})</b>! We recommend activating a new pass.`;
+            btnUpsell.innerText = `Switch to ${freshName} (₹${freshAmt}) ⚡`;
+          } else {
+            // Overage is close to fresh pass price (e.g., ₹99 overage vs ₹129 pass -> ₹30 difference)
+            const remainingOnFresh = Math.max(0, (freshTier === "PASS_129" ? 19 : freshTier === "PASS_69" ? 9 : 5) - km).toFixed(1);
+            upsellText.innerHTML = `Taking another ride today? For just <b>₹${diff} more</b> (₹${freshAmt} total), activate a fresh <b>${freshName}</b>. Covers this entire trip and leaves you with <b>${remainingOnFresh} KM & extra rides</b> for 24h!`;
+            btnUpsell.innerText = `Get Fresh ${freshName} for ₹${freshAmt} ⚡`;
+          }
         }
       } 
-      // 2. Rider has NO active pass -> Show Single vs Recommended Pass
+      // -----------------------------------------------------------------------
+      // 2. RIDER HAS NO ACTIVE PASS (Single Ride vs Pass Recommendation)
+      // -----------------------------------------------------------------------
       else {
         passCard.style.display = "none";
         stdGrid.style.display = "grid";
@@ -997,7 +1094,7 @@
           pPrice.innerText = "₹129"; 
           pDesc.innerHTML = "Covers this trip in full + up to 2 more trips today.";
         } else {
-          // DISTANCE > 19 KM (Calculates pass + overage + net savings)
+          // Trip > 19 km without pass: ₹129 pass + overage
           recommendedTier = "PASS_129";
           recommendedAmount = 129;
           recommendedName = "19 KM Pro (3 Rides)";
@@ -1015,6 +1112,11 @@
 
     function buyRecommendedPass() {
       selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);
+      openPaymentModal();
+    }
+
+    function buyFreshPassOption() {
+      selectPass(document.getElementById(`card_${freshTier}`), freshTier, freshAmt, freshName);
       openPaymentModal();
     }
 
