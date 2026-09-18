@@ -54,7 +54,6 @@
       position: relative;
     }
 
-    /* Header */
     .header {
       display: flex;
       justify-content: space-between;
@@ -107,7 +106,7 @@
       50% { opacity: 1; }
     }
 
-    /* Voice AI Bar (Zero Server Cost) */
+    /* Voice Bar */
     .voice-bar {
       display: flex;
       align-items: center;
@@ -115,12 +114,12 @@
       background: rgba(250, 204, 21, 0.1);
       border: 1px dashed var(--primary);
       border-radius: 14px;
-      padding: 8px 12px;
+      padding: 10px 12px;
       margin-bottom: 14px;
     }
 
     .voice-bar-text {
-      font-size: 11.5px;
+      font-size: 12px;
       color: #fef08a;
       font-weight: 600;
       line-height: 1.3;
@@ -130,13 +129,13 @@
       background: var(--primary);
       color: #0f172a;
       border: none;
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 18px;
+      font-size: 19px;
       cursor: pointer;
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.3);
       flex-shrink: 0;
@@ -155,7 +154,6 @@
       100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
     }
 
-    /* Navigation Switcher */
     .tab-switch {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -184,7 +182,6 @@
       box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
     }
 
-    /* Form Fields */
     .field {
       margin-bottom: 14px;
       position: relative;
@@ -222,7 +219,6 @@
       border-color: var(--primary);
     }
 
-    /* Pass Balance Alert Banner */
     .pass-balance-banner {
       display: none;
       background: rgba(2, 132, 199, 0.18);
@@ -236,7 +232,6 @@
     }
     .pass-balance-banner b { color: var(--primary); }
 
-    /* GPS Button */
     .gps-btn {
       position: absolute;
       right: 8px;
@@ -256,7 +251,6 @@
     .gps-btn:active { background: var(--primary); color: #090d16; }
     .gps-status { font-size: 11px; color: var(--text-dim); margin-top: 4px; min-height: 14px; }
 
-    /* Chips */
     .chips {
       display: flex;
       gap: 8px;
@@ -279,7 +273,6 @@
     }
     .chip:active { background: var(--primary); color: #0f172a; }
 
-    /* Route Calculation & Selection Card */
     .route-card {
       display: none;
       background: rgba(15, 23, 42, 0.95);
@@ -454,7 +447,6 @@
     .pass-badge { font-size: 10px; font-weight: 800; background: #0284c7; color: white; padding: 2px 6px; border-radius: 6px; }
     .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
 
-    /* ================= LIVE CAPTAIN DISPLAY CARD ================= */
     .captain-display-card {
       display: none;
       background: #0b1120;
@@ -550,7 +542,6 @@
       margin-bottom: 8px;
     }
 
-    /* Pass Confirmation Ticket Card */
     .pass-confirm-card {
       display: none;
       background: #0b1120;
@@ -600,7 +591,6 @@
     .ticket-row:last-child { border-bottom: none; }
     .ticket-row b { color: white; font-weight: 700; }
 
-    /* ================= RATING & FEEDBACK ================= */
     .feedback-card {
       display: none;
       background: #0b1120;
@@ -674,7 +664,6 @@
 
     .feedback-textarea:focus { border-color: var(--primary); }
 
-    /* ================= FLOATING CHATBOT WIDGET ================= */
     .chatbot-fab {
       position: fixed;
       bottom: 20px;
@@ -816,7 +805,6 @@
       font-size: 14px;
     }
 
-    /* Trust Strip */
     .trust-strip {
       display: flex;
       justify-content: space-around;
@@ -835,7 +823,6 @@
 <body>
 
   <div class="app">
-    <!-- Header -->
     <div class="header">
       <div style="display:flex; align-items:center;">
         <span class="brand-title">nineO</span>
@@ -844,33 +831,30 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Voice AI Bar (Zero Server Cost: Browser Web Speech API) -->
+    <!-- Voice AI Bar with Auto Dual-Language Support -->
     <div class="voice-bar">
       <div>
         <div class="voice-bar-text" id="voiceStatusText">🎙️ <b>Voice Order:</b> Tap mic & speak</div>
-        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "69 wala pass" or "Lalpur jana hai"</div>
+        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "From Lalpur to Dhurwa" or "Lalpur se Dhurwa jana hai"</div>
       </div>
       <button type="button" class="voice-mic-btn" id="voiceMicBtn" onclick="toggleVoiceRecognition()" title="Speak in Hindi/English">
         🎤
       </button>
     </div>
 
-    <!-- Navigation Switcher -->
     <div class="tab-switch" id="navTabs">
       <button class="tab-btn active" id="btnTabBook" onclick="switchTab('book')">🛵 Book Ride</button>
       <button class="tab-btn" id="btnTabPass" onclick="switchTab('pass')">🎟️ Daily Pass</button>
     </div>
 
-    <!-- Phone Field -->
     <div class="field" id="phoneFieldWrap">
       <label>Your WhatsApp Number</label>
       <input type="tel" id="userPhone" class="input-box" placeholder="10-digit mobile number" maxlength="10" oninput="handlePhoneInput()">
     </div>
 
-    <!-- Active Pass Balance Alert Banner -->
     <div class="pass-balance-banner" id="activePassBanner"></div>
 
-    <!-- ================= 1. BOOK RIDE TAB ================= -->
+    <!-- 1. BOOK RIDE TAB -->
     <div id="sectionBook">
       <div class="field">
         <label>Pickup Location</label>
@@ -894,14 +878,12 @@
         <span class="chip" onclick="setDrop('Birsa Munda Airport')">✈️ Airport</span>
       </div>
 
-      <!-- Route Calculation Card -->
       <div class="route-card" id="routeCard">
         <div class="route-header">
           <div class="route-dist">Road Distance: <span id="routeKm">0.0</span> km</div>
           <div style="font-size: 11px; color: var(--text-dim);" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
-        <!-- Mode A: Single vs Pass Grid -->
         <div class="fare-choice-grid" id="standardGrid">
           <div class="choice-card">
             <div>
@@ -924,7 +906,6 @@
           </div>
         </div>
 
-        <!-- Mode B: Active Pass Card & Return Trip Overage Handler -->
         <div class="active-pass-card" id="activePassCard">
           <span class="choice-badge badge-pass">Active Pass Applied</span>
           <div class="active-pass-price" id="activePassDue">₹0</div>
@@ -934,7 +915,6 @@
             Confirm Ride (₹0) ➔
           </button>
 
-          <!-- Smart Pass Upgrade Box -->
           <div class="upsell-box" id="passUpsellBox">
             <div class="upsell-title">💡 Smart Pass Recommendation</div>
             <div class="upsell-text" id="passUpsellText"></div>
@@ -950,7 +930,7 @@
       </button>
     </div>
 
-    <!-- ================= 2. LIVE CAPTAIN ASSIGNED DISPLAY ================= -->
+    <!-- 2. LIVE CAPTAIN ASSIGNED DISPLAY -->
     <div class="captain-display-card" id="captainDisplayCard">
       <div class="ride-id-pill" id="dispRideId">RIDE #--</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -981,7 +961,6 @@
         📞 Call Captain Directly
       </a>
       
-      <!-- Complete & Rate Button -->
       <button class="btn-submit" style="background:#2563eb; margin-top:8px;" onclick="openFeedbackModal()">
         🏁 End Ride & Rate Captain
       </button>
@@ -991,11 +970,10 @@
       </button>
     </div>
 
-    <!-- ================= 3. DAILY PASS TAB ================= -->
+    <!-- 3. DAILY PASS TAB -->
     <div id="sectionPass" style="display: none;">
       <label>Choose Your Pass (24-Hour Validity)</label>
 
-      <!-- ₹39 Pass -->
       <div class="pass-card selected" id="card_PASS_39" onclick="selectPass(this, 'PASS_39', 39, '5 KM Pass (1 Ride)')">
         <div>
           <div class="pass-title">5 KM Pass</div>
@@ -1004,7 +982,6 @@
         <div class="pass-price">₹39</div>
       </div>
 
-      <!-- ₹69 Pass -->
       <div class="pass-card" id="card_PASS_69" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
         <div>
           <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
@@ -1013,7 +990,6 @@
         <div class="pass-price">₹69</div>
       </div>
 
-      <!-- ₹129 Pass -->
       <div class="pass-card" id="card_PASS_129" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
         <div>
           <div class="pass-title">19 KM Pro Pass</div>
@@ -1027,7 +1003,7 @@
       </button>
     </div>
 
-    <!-- ================= 4. IN-APP PASS CONFIRMATION DISPLAY ================= -->
+    <!-- 4. PASS CONFIRMATION DISPLAY -->
     <div class="pass-confirm-card" id="passConfirmCard">
       <div class="check-icon-circle">✓</div>
       <div style="font-size: 12px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1049,7 +1025,7 @@
       </button>
     </div>
 
-    <!-- ================= 5. CUSTOMER RATING & FEEDBACK CARD ================= -->
+    <!-- 5. FEEDBACK CARD -->
     <div class="feedback-card" id="feedbackCard">
       <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">
         Ride Completed
@@ -1084,7 +1060,6 @@
       </button>
     </div>
 
-    <!-- Trust Strip -->
     <div class="trust-strip">
       <div class="trust-item"><span>🛡️</span><b>Safe & Secure</b></div>
       <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
@@ -1092,7 +1067,7 @@
     </div>
   </div>
 
-  <!-- ================= 6. FLOATING CHATBOT WIDGET ================= -->
+  <!-- 6. CHATBOT WIDGET -->
   <button class="chatbot-fab" id="chatbotFab" onclick="toggleChatDrawer()" title="Help & Support">
     💬
   </button>
@@ -1126,12 +1101,9 @@
   </div>
 
   <script>
-    // =========================================================================
-    // ⚙️ CONFIGURATION & ZERO-COST ARCHITECTURE
-    // =========================================================================
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
     const COMPANY_NAME = "nineO Mobility";
-    const SUPPORT_WHATSAPP = "919525054247";
+    const SUPPORT_WHATSAPP = "919876543210"; // Replace with your support desk number
 
     let selectedPassCode = "PASS_39";
     let selectedAmount = 39;
@@ -1174,6 +1146,13 @@
 
     function setDrop(v) { 
       document.getElementById("drop").value = v;
+      dropCoords = null;
+      triggerRouteEstimation();
+    }
+
+    function setPickup(v) {
+      document.getElementById("pickup").value = v;
+      pickupCoords = null;
       triggerRouteEstimation();
     }
 
@@ -1264,7 +1243,7 @@
       document.getElementById("routeSubtitle").innerText = "Estimating best route & fares...";
 
       if (!pickupCoords) pickupCoords = await geocodeLocation(pVal);
-      dropCoords = await geocodeLocation(dVal);
+      if (!dropCoords) dropCoords = await geocodeLocation(dVal);
 
       if (!pickupCoords || !dropCoords) {
         document.getElementById("routeSubtitle").innerText = "Showing standard city fare estimate:";
@@ -1408,7 +1387,7 @@
     }
 
     // =========================================================================
-    // 🎙️ ZERO-COST VOICE AI ENGINE (WEB SPEECH API & INTENT ENGINE)
+    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (HINDI & ENGLISH)
     // =========================================================================
     let voiceRecognition = null;
     let isVoiceActive = false;
@@ -1422,15 +1401,15 @@
       }
 
       voiceRecognition = new SpeechRecognition();
-      voiceRecognition.lang = 'hi-IN'; // Works for Hindi, Indian English, and Hinglish
+      voiceRecognition.lang = 'hi-IN'; // Robust engine in mobile Chrome for English, Hindi, & Hinglish
       voiceRecognition.interimResults = false;
       voiceRecognition.continuous = false;
 
       voiceRecognition.onstart = () => {
         isVoiceActive = true;
         document.getElementById("voiceMicBtn").classList.add("listening");
-        document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak your command";
-        document.getElementById("voiceSubText").innerText = "e.g. '69 wala pass activate karo'";
+        document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak naturally";
+        document.getElementById("voiceSubText").innerText = "Speak in English or Hindi / Hinglish";
       };
 
       voiceRecognition.onresult = (event) => {
@@ -1462,69 +1441,179 @@
       }
     }
 
-    // Client-side rule-based Intent Extractor (0 Server Cost)
-    function parseVoiceIntent(rawText) {
-      const text = rawText.toLowerCase();
-
-      // 1. Voice Pass Buying Intent
-      if (text.includes("69") || text.includes("super") || text.includes("9 km") || text.includes("9km")) {
-        selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-        speakResponse("9 KM Super Pass select kar diya hai. UPI checkout khol rahe hain.");
-        switchTab('pass');
-        setTimeout(() => openPaymentModal(), 1200);
-      } 
-      else if (text.includes("39") || text.includes("5 km") || text.includes("5km")) {
-        selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
-        speakResponse("5 KM Pass select ho gaya hai. UPI se activate karein.");
-        switchTab('pass');
-        setTimeout(() => openPaymentModal(), 1200);
-      } 
-      else if (text.includes("129") || text.includes("pro") || text.includes("19 km") || text.includes("19km")) {
-        selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
-        speakResponse("19 KM Pro Pass select kiya gaya hai.");
-        switchTab('pass');
-        setTimeout(() => openPaymentModal(), 1200);
-      } 
-      // 2. Voice Drop Setting Intent
-      else if (text.includes("station") || text.includes("railway")) {
-        switchTab('book');
-        setDrop("Ranchi Railway Station");
-        speakResponse("Drop location set to Ranchi Railway Station.");
-      } 
-      else if (text.includes("lalpur")) {
-        switchTab('book');
-        setDrop("Lalpur Chowk");
-        speakResponse("Drop set to Lalpur Chowk.");
-      } 
-      else if (text.includes("airport") || text.includes("birsa")) {
-        switchTab('book');
-        setDrop("Birsa Munda Airport");
-        speakResponse("Drop set to Birsa Munda Airport.");
-      } 
-      else if (text.includes("mesra") || text.includes("bit")) {
-        switchTab('book');
-        setDrop("BIT Mesra Gate");
-        speakResponse("Drop set to BIT Mesra Gate.");
-      } 
-      else if (text.includes("main road") || text.includes("overbridge")) {
-        switchTab('book');
-        setDrop("Main Road Overbridge");
-        speakResponse("Drop set to Main Road Overbridge.");
-      } 
-      else {
-        speakResponse("Command sun liya hai. Ranchi destination type karein ya pass chunein.");
-      }
+    // Helper: Detect whether the spoken phrase is Hindi/Hinglish or English
+    function detectSpokenLanguage(text) {
+      const lower = text.toLowerCase();
+      const hasDevanagari = /[\u0900-\u097F]/.test(text);
+      const hindiKeywords = [
+        'se', 'jana', 'hai', 'karo', 'kardo', 'chahiye', 'wala', 'wali', 
+        'bhaiya', 'chalo', 'mujhe', 'karna', 'mera', 'meri', 'kahan', 
+        'kitna', 'leke', 'chal', 'dijiye', 'krdo', 'h'
+      ];
+      const hasHindiWord = lower.split(/\s+/).some(word => hindiKeywords.includes(word));
+      return (hasDevanagari || hasHindiWord) ? 'hi' : 'en';
     }
 
-    function speakResponse(msg) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(msg);
-        utter.rate = 1.0;
-        utter.pitch = 1.0;
-        utter.lang = 'hi-IN';
-        window.speechSynthesis.speak(utter);
+    function toTitleCase(str) {
+      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+    }
+
+    function cleanLocationString(str) {
+      if (!str) return "";
+      return str
+        .replace(/^(i\s+want\s+to\s+go|i\s+want\s+to\s+book\s+a?\s*ride|book\s+a?\s*ride|take\s+me|from|to|pickup|drop|please)\s+/gi, '')
+        .replace(/\s+(please|now|karo|kardo|chalo|jana\s+hai|chalna\s+hai|chahiye|hai)$/gi, '')
+        .trim();
+    }
+
+    // Comprehensive Intent and Location Extractor
+    function parseVoiceIntent(rawText) {
+      const lang = detectSpokenLanguage(rawText);
+      const text = rawText.trim();
+      const lower = text.toLowerCase();
+
+      // 1. Check Pass Buying Intent
+      const isPassIntent = lower.includes("pass") || lower.includes("card") || lower.includes("daily");
+      if (isPassIntent && (lower.includes("69") || lower.includes("super") || lower.includes("9 km") || lower.includes("9km"))) {
+        selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
+        switchTab('pass');
+        const reply = (lang === 'hi') 
+          ? "9 KM Super Pass select ho gaya hai. UPI se activate karne ke liye pay button dabayein." 
+          : "Selected 9 KM Super Pass for ₹69. Opening UPI payment modal.";
+        speakResponse(reply, lang);
+        setTimeout(() => openPaymentModal(), 1200);
+        return;
       }
+      if (isPassIntent && (lower.includes("39") || lower.includes("5 km") || lower.includes("5km"))) {
+        selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
+        switchTab('pass');
+        const reply = (lang === 'hi') 
+          ? "5 KM Pass select kiya gaya hai. UPI se confirm karein." 
+          : "Selected 5 KM Pass for ₹39. Opening payment.";
+        speakResponse(reply, lang);
+        setTimeout(() => openPaymentModal(), 1200);
+        return;
+      }
+      if (isPassIntent && (lower.includes("129") || lower.includes("pro") || lower.includes("19 km") || lower.includes("19km"))) {
+        selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
+        switchTab('pass');
+        const reply = (lang === 'hi') 
+          ? "19 KM Pro Pass select kar diya hai." 
+          : "Selected 19 KM Pro Pass for ₹129. Opening payment.";
+        speakResponse(reply, lang);
+        setTimeout(() => openPaymentModal(), 1200);
+        return;
+      }
+
+      // 2. Extract Ride Booking Locations (Pickup & Drop)
+      let extractedPickup = "";
+      let extractedDrop = "";
+
+      // Pattern A (English: "from [Pickup] to [Drop]")
+      const fromToMatch = lower.match(/from\s+([a-z0-9\s]+?)\s+to\s+([a-z0-9\s]+)/i);
+      if (fromToMatch) {
+        extractedPickup = cleanLocationString(fromToMatch[1]);
+        extractedDrop = cleanLocationString(fromToMatch[2]);
+      }
+
+      // Pattern B (English: "to [Drop] from [Pickup]")
+      if (!extractedPickup && !extractedDrop) {
+        const toFromMatch = lower.match(/to\s+([a-z0-9\s]+?)\s+from\s+([a-z0-9\s]+)/i);
+        if (toFromMatch) {
+          extractedDrop = cleanLocationString(toFromMatch[1]);
+          extractedPickup = cleanLocationString(toFromMatch[2]);
+        }
+      }
+
+      // Pattern C (Hindi/Hinglish: "[Pickup] se [Drop]" e.g., "lalpur se dhurwa jana hai")
+      if (!extractedPickup && !extractedDrop) {
+        const seMatch = lower.match(/([a-z0-9\s]+?)\s+se\s+([a-z0-9\s]+?)(?:\s+jana\s+hai|\s+chalna|\s+karo|\s+book|\s+chalo|$)/i);
+        if (seMatch) {
+          extractedPickup = cleanLocationString(seMatch[1]);
+          extractedDrop = cleanLocationString(seMatch[2]);
+        }
+      }
+
+      // Pattern D (Single Destination / Drop Only)
+      if (!extractedDrop) {
+        const dropOnlyMatch = lower.match(/(?:to|drop|destination|jana\s+hai|chalna\s+hai)\s+([a-z0-9\s]+)/i) ||
+                              lower.match(/([a-z0-9\s]+?)\s+(?:jana\s+hai|chalna\s+hai)/i);
+        if (dropOnlyMatch) {
+          extractedDrop = cleanLocationString(dropOnlyMatch[1]);
+        }
+      }
+
+      // Fallback Keyword Check for Ranchi Landmarks
+      const knownLandmarks = ["station", "railway station", "lalpur", "dhurwa", "airport", "bit mesra", "main road", "overbridge", "doranda", "hec", "kanke", "morabadi", "harmu", "ratu road"];
+      if (!extractedPickup && !extractedDrop) {
+        for (const lm of knownLandmarks) {
+          if (lower.includes(lm)) {
+            extractedDrop = toTitleCase(lm);
+            break;
+          }
+        }
+      }
+
+      // 3. Apply Extracted Locations & Mirror Spoken Language
+      if (extractedPickup && extractedDrop) {
+        switchTab('book');
+        document.getElementById("pickup").value = toTitleCase(extractedPickup);
+        document.getElementById("drop").value = toTitleCase(extractedDrop);
+        pickupCoords = null;
+        dropCoords = null;
+        triggerRouteEstimation();
+
+        const reply = (lang === 'hi')
+          ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ke liye route aur fare calculate kar rahe hain.`
+          : `Setting pickup at ${toTitleCase(extractedPickup)} and drop at ${toTitleCase(extractedDrop)}. Estimating route.`;
+        speakResponse(reply, lang);
+        return;
+      }
+
+      if (extractedDrop && !extractedPickup) {
+        switchTab('book');
+        document.getElementById("drop").value = toTitleCase(extractedDrop);
+        dropCoords = null;
+
+        // Auto-lock GPS if pickup is empty
+        if (!document.getElementById("pickup").value) {
+          getPreciseGPS();
+          const reply = (lang === 'hi')
+            ? `Destination ${toTitleCase(extractedDrop)} set ho gaya hai. Aapka pickup location GPS se lock ho raha hai.`
+            : `Destination set to ${toTitleCase(extractedDrop)}. Locking your pickup location via GPS.`;
+          speakResponse(reply, lang);
+        } else {
+          triggerRouteEstimation();
+          const reply = (lang === 'hi')
+            ? `Destination ${toTitleCase(extractedDrop)} set kar diya hai.`
+            : `Destination set to ${toTitleCase(extractedDrop)}. Estimating route.`;
+          speakResponse(reply, lang);
+        }
+        return;
+      }
+
+      // Fallback response if neither pass nor route could be parsed
+      const fallbackReply = (lang === 'hi')
+        ? "Command samajh nahi aaya. Ranchi me destination ka naam bolein ya pass chunein."
+        : "Could not catch your route. Please say your pickup and destination or pass tier.";
+      speakResponse(fallbackReply, lang);
+    }
+
+    // Text-to-Speech synthesizer with language selection
+    function speakResponse(msg, lang = 'en') {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const utter = new SpeechSynthesisUtterance(msg);
+      utter.rate = 1.0;
+      utter.pitch = 1.0;
+      utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
+
+      const voices = window.speechSynthesis.getVoices();
+      if (voices.length > 0) {
+        const targetVoice = voices.find(v => v.lang.toLowerCase().startsWith(lang === 'hi' ? 'hi' : 'en'));
+        if (targetVoice) utter.voice = targetVoice;
+      }
+      window.speechSynthesis.speak(utter);
     }
 
     // =========================================================================
@@ -1554,7 +1643,6 @@
         const orderRes = await res.json();
 
         if (orderRes.status !== "SUCCESS") {
-          // Fallback demo transaction verification if backend is offline
           simulateZeroCostPayment(phone);
           return;
         }
@@ -1634,7 +1722,7 @@
       document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";
 
       document.getElementById("passConfirmCard").style.display = "block";
-      speakResponse("Congratulations! Aapka nineO pass successfully activate ho gaya hai.");
+      speakResponse("Your daily pass has been activated successfully.", "en");
     }
 
     function proceedToRideFromConfirmation() {
@@ -1822,7 +1910,7 @@
     }
 
     // =========================================================================
-    // FLOATING CHATBOT WIDGET
+    // CHATBOT SUPPORT
     // =========================================================================
     function toggleChatDrawer() {
       const drawer = document.getElementById("chatDrawer");
@@ -1890,7 +1978,6 @@
       }
     }
 
-    // Auto-init voice recognition on load
     window.addEventListener("DOMContentLoaded", () => {
       initVoiceAI();
     });
