@@ -1103,7 +1103,7 @@
   <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
     const COMPANY_NAME = "nineO Mobility";
-    const SUPPORT_WHATSAPP = "919876543210"; // Replace with your support desk number
+    const SUPPORT_WHATSAPP = "919525054247"; // Replace with your support desk number
 
     let selectedPassCode = "PASS_39";
     let selectedAmount = 39;
@@ -1392,8 +1392,22 @@
  // =========================================================================
     // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (FIXED & RESILIENT)
     // =========================================================================
+// =========================================================================
+    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (COMPLETE & RESILIENT)
+    // =========================================================================
     let voiceRecognition = null;
     let isVoiceActive = false;
+
+    // Conversational noise & filler dictionary (English, Hindi, Hinglish)
+    const FILLER_WORDS = [
+      "hey", "hi", "hello", "bro", "brother", "bhaiya", "bhai", "listen", "suno", 
+      "arre", "actually", "basically", "urgently", "emergency", "please", "can you", 
+      "i want to", "i need to", "i have to", "mujhe", "humko", "mera", "meri",
+      "take me", "book a ride", "book ride", "book bike", "ride", "chalo", "chalna hai",
+      "jana hai", "drop me", "pickup me", "le chalo", "jaldi", "fast", "now",
+      "and then", "then", "fir", "uske baad", "via", "through", "hokar", "hote hue",
+      "karo", "kardo", "dijiye", "chahiye", "h", "hai", "tha", "hoga"
+    ];
 
     function initVoiceAI() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1404,7 +1418,7 @@
       }
 
       voiceRecognition = new SpeechRecognition();
-      // 'en-IN' captures Indian English in Latin script AND Hindi phonetically in Latin script
+      // 'en-IN' captures Indian English as Latin script and Hindi phonetically in Latin script
       voiceRecognition.lang = 'en-IN';
       voiceRecognition.interimResults = false;
       voiceRecognition.continuous = false;
@@ -1445,44 +1459,45 @@
       }
     }
 
-    // Accurate language detector: Checks for distinct Hindi structural words
     function detectSpokenLanguage(text) {
       const lower = text.toLowerCase();
-      
-      // If Devanagari characters are present, it is definitely Hindi
       if (/[\u0900-\u097F]/.test(text)) return 'hi';
 
       const hindiKeywords = [
         'se', 'jana', 'hai', 'karo', 'kardo', 'chahiye', 'chalo', 'mujhe', 
         'karna', 'mera', 'meri', 'kahan', 'kitna', 'leke', 'chal', 'dijiye', 
-        'krdo', 'h', 'pass do', 'activate karo'
+        'krdo', 'h', 'pass do', 'activate karo', 'hokar', 'hote hue', 'fir'
       ];
-      
       const words = lower.split(/\s+/);
-      const isHindi = words.some(w => hindiKeywords.includes(w));
-      return isHindi ? 'hi' : 'en';
+      return words.some(w => hindiKeywords.includes(w)) ? 'hi' : 'en';
     }
 
     function toTitleCase(str) {
       return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
     }
 
-    function cleanLocationString(str) {
-      if (!str) return "";
-      return str
-        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Strip trailing punctuation/dots
-        .replace(/^(i\s+want\s+to\s+go|i\s+want\s+to\s+book\s+a?\s*ride|book\s+a?\s*ride|ride|from|to|pickup|drop|take\s+me|please)\s+/gi, '')
-        .replace(/\s+(please|now|karo|kardo|chalo|jana\s+hai|chalna\s+hai|chahiye|hai)$/gi, '')
-        .trim();
+    function cleanFillerNoise(phrase) {
+      if (!phrase) return "";
+      let words = phrase.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim().split(/\s+/);
+      
+      while (words.length > 0 && FILLER_WORDS.includes(words[0])) {
+        words.shift();
+      }
+      while (words.length > 0 && FILLER_WORDS.includes(words[words.length - 1])) {
+        words.pop();
+      }
+      if (words.length > 4) {
+        words = words.slice(-4);
+      }
+      return words.join(" ").trim();
     }
 
     function parseVoiceIntent(rawText) {
       const lang = detectSpokenLanguage(rawText);
-      // Remove punctuation like commas and periods from speech transcript
-      const cleanText = rawText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
-      const lower = cleanText.toLowerCase();
+      const cleanRaw = rawText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
+      const lower = cleanRaw.toLowerCase();
 
-      // 1. Pass Buying Intent
+      // 1. Pass Buying Intent Check
       const isPassMention = lower.includes("pass") || lower.includes("card") || lower.includes("daily") || lower.includes("super");
       if (isPassMention) {
         if (lower.includes("69") || lower.includes("super") || lower.includes("9 km") || lower.includes("9km") || lower.includes("nine")) {
@@ -1514,45 +1529,81 @@
         }
       }
 
-      // 2. Extract Pickup & Drop
-      let extractedPickup = "";
-      let extractedDrop = "";
+      // 2. Dynamic Grammatical Pivot Extraction
+      let rawPickup = "";
+      let rawWaypoint = "";
+      let rawDrop = "";
 
-      // Pattern A: "from [Pickup] to [Drop]" (e.g., "from Lalpur to Dhurwa")
-      let match = lower.match(/(?:from)\s+(.+?)\s+(?:to)\s+(.+)/i);
-      if (match) {
-        extractedPickup = cleanLocationString(match[1]);
-        extractedDrop = cleanLocationString(match[2]);
+      // Pattern 1 (3-Location): English "from [Loc 1] via/through [Loc 2] to [Loc 3]"
+      let viaEn = lower.match(/from\s+(.+?)\s+(?:via|through)\s+(.+?)\s+to\s+(.+)/i);
+      if (viaEn) {
+        rawPickup = viaEn[1];
+        rawWaypoint = viaEn[2];
+        rawDrop = viaEn[3];
       }
 
-      // Pattern B: "[Pickup] to [Drop]" without "from" (e.g., "book ride Lalpur to Dhurwa")
-      if (!extractedPickup && !extractedDrop) {
-        match = lower.match(/(?:book\s+a?\s*ride|take\s+me|go)?\s*([a-z0-9\s]+?)\s+(?:to)\s+([a-z0-9\s]+)/i);
-        if (match && match[1].trim() && match[2].trim()) {
-          extractedPickup = cleanLocationString(match[1]);
-          extractedDrop = cleanLocationString(match[2]);
+      // Pattern 2 (3-Location): Hindi "[Loc 1] se [Loc 2] hokar/hote hue [Loc 3]"
+      if (!rawPickup && !rawDrop) {
+        let viaHi = lower.match(/(.+?)\s+se\s+(.+?)\s+(?:hokar|hote hue)\s+(.+)/i);
+        if (viaHi) {
+          rawPickup = viaHi[1];
+          rawWaypoint = viaHi[2];
+          rawDrop = viaHi[3];
         }
       }
 
-      // Pattern C: Hindi "[Pickup] se [Drop]" (e.g., "Lalpur se Dhurwa jana hai")
-      if (!extractedPickup && !extractedDrop) {
-        match = lower.match(/(.+?)\s+(?:se)\s+(.+?)(?:\s+jana\s+hai|\s+chalna|\s+karo|\s+book|\s+chalo|$)/i);
+      // Pattern 3 (3-Location): Multi-leg "[Loc 1] to [Loc 2] and then/fir [Loc 3]"
+      if (!rawPickup && !rawDrop) {
+        let multiLeg = lower.match(/(?:from\s+)?(.+?)\s+to\s+(.+?)\s+(?:and then|then|fir|uske baad)\s+(.+)/i);
+        if (multiLeg) {
+          rawPickup = multiLeg[1];
+          rawWaypoint = multiLeg[2];
+          rawDrop = multiLeg[3];
+        }
+      }
+
+      // Pattern 4 (2-Location): English "from [Pickup] to [Drop]"
+      if (!rawPickup && !rawDrop) {
+        let match = lower.match(/from\s+(.+?)\s+to\s+(.+)/i);
         if (match) {
-          extractedPickup = cleanLocationString(match[1]);
-          extractedDrop = cleanLocationString(match[2]);
+          rawPickup = match[1];
+          rawDrop = match[2];
         }
       }
 
-      // Pattern D: Destination only (e.g., "drop to Dhurwa" or "Dhurwa jana hai")
-      if (!extractedPickup && !extractedDrop) {
-        match = lower.match(/(?:to|drop|destination)\s+(.+)/i) || 
-                lower.match(/(.+?)\s+(?:jana\s+hai|chalna\s+hai)/i);
+      // Pattern 5 (2-Location): Hindi "[Pickup] se [Drop]"
+      if (!rawPickup && !rawDrop) {
+        let match = lower.match(/(.+?)\s+se\s+(.+)/i);
         if (match) {
-          extractedDrop = cleanLocationString(match[1]);
+          rawPickup = match[1];
+          rawDrop = match[2];
         }
       }
 
-      // Apply Locations to Form
+      // Pattern 6 (2-Location): English "[Pickup] to [Drop]"
+      if (!rawPickup && !rawDrop) {
+        let match = lower.match(/(.+?)\s+to\s+(.+)/i);
+        if (match) {
+          rawPickup = match[1];
+          rawDrop = match[2];
+        }
+      }
+
+      // Pattern 7 (1-Location): Drop only
+      if (!rawPickup && !rawDrop) {
+        let match = lower.match(/(?:to|drop|destination)\s+(.+)/i) || 
+                    lower.match(/(.+?)\s+(?:jana\s+hai|chalna\s+hai|chalo)/i);
+        if (match) {
+          rawDrop = match[1];
+        }
+      }
+
+      // 3. Clean conversational noise from extracted segments
+      const extractedPickup = cleanFillerNoise(rawPickup);
+      const extractedWaypoint = cleanFillerNoise(rawWaypoint);
+      const extractedDrop = cleanFillerNoise(rawDrop);
+
+      // 4. Apply Locations & Trigger Geocoder
       if (extractedPickup && extractedDrop) {
         switchTab('book');
         document.getElementById("pickup").value = toTitleCase(extractedPickup);
@@ -1561,9 +1612,15 @@
         dropCoords = null;
         triggerRouteEstimation();
 
-        speakResponse(lang === 'hi'
-          ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ka route set kar diya hai.`
-          : `Route set from ${toTitleCase(extractedPickup)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
+        if (extractedWaypoint) {
+          speakResponse(lang === 'hi'
+            ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedWaypoint)} hote hue ${toTitleCase(extractedDrop)} ka route set kar diya hai.`
+            : `Route set from ${toTitleCase(extractedPickup)} via ${toTitleCase(extractedWaypoint)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
+        } else {
+          speakResponse(lang === 'hi'
+            ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ka route check kar rahe hain.`
+            : `Setting route from ${toTitleCase(extractedPickup)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
+        }
         return;
       }
 
@@ -1581,15 +1638,15 @@
           triggerRouteEstimation();
           speakResponse(lang === 'hi'
             ? `Destination ${toTitleCase(extractedDrop)} set ho gaya hai.`
-            : `Destination set to ${toTitleCase(extractedDrop)}. Calculating route.`, lang);
+            : `Destination set to ${toTitleCase(extractedDrop)}. Estimating route.`, lang);
         }
         return;
       }
 
-      // Fallback
+      // 5. Unrecognized Speech Fallback
       speakResponse(lang === 'hi'
         ? "Command samajh nahi aaya. Pickup aur drop location bolein."
-        : "Could not catch your route. Please state your pickup and drop destination.", lang);
+        : "Could not understand your route. Please say your pickup and destination.", lang);
     }
 
     function speakResponse(msg, lang = 'en') {
@@ -1600,7 +1657,6 @@
       utter.pitch = 1.0;
       utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
 
-      // Pick browser voice matching the selected language
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
         const targetVoice = voices.find(v => v.lang.toLowerCase().startsWith(lang === 'hi' ? 'hi' : 'en'));
