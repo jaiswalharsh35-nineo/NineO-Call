@@ -1389,6 +1389,9 @@
     // =========================================================================
     // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (HINDI & ENGLISH)
     // =========================================================================
+ // =========================================================================
+    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (FIXED & RESILIENT)
+    // =========================================================================
     let voiceRecognition = null;
     let isVoiceActive = false;
 
@@ -1401,15 +1404,16 @@
       }
 
       voiceRecognition = new SpeechRecognition();
-      voiceRecognition.lang = 'hi-IN'; // Robust engine in mobile Chrome for English, Hindi, & Hinglish
+      // 'en-IN' captures Indian English in Latin script AND Hindi phonetically in Latin script
+      voiceRecognition.lang = 'en-IN';
       voiceRecognition.interimResults = false;
       voiceRecognition.continuous = false;
 
       voiceRecognition.onstart = () => {
         isVoiceActive = true;
         document.getElementById("voiceMicBtn").classList.add("listening");
-        document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak naturally";
-        document.getElementById("voiceSubText").innerText = "Speak in English or Hindi / Hinglish";
+        document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";
+        document.getElementById("voiceSubText").innerText = "e.g. 'Lalpur to Dhurwa' or '69 wala pass'";
       };
 
       voiceRecognition.onresult = (event) => {
@@ -1441,17 +1445,22 @@
       }
     }
 
-    // Helper: Detect whether the spoken phrase is Hindi/Hinglish or English
+    // Accurate language detector: Checks for distinct Hindi structural words
     function detectSpokenLanguage(text) {
       const lower = text.toLowerCase();
-      const hasDevanagari = /[\u0900-\u097F]/.test(text);
+      
+      // If Devanagari characters are present, it is definitely Hindi
+      if (/[\u0900-\u097F]/.test(text)) return 'hi';
+
       const hindiKeywords = [
-        'se', 'jana', 'hai', 'karo', 'kardo', 'chahiye', 'wala', 'wali', 
-        'bhaiya', 'chalo', 'mujhe', 'karna', 'mera', 'meri', 'kahan', 
-        'kitna', 'leke', 'chal', 'dijiye', 'krdo', 'h'
+        'se', 'jana', 'hai', 'karo', 'kardo', 'chahiye', 'chalo', 'mujhe', 
+        'karna', 'mera', 'meri', 'kahan', 'kitna', 'leke', 'chal', 'dijiye', 
+        'krdo', 'h', 'pass do', 'activate karo'
       ];
-      const hasHindiWord = lower.split(/\s+/).some(word => hindiKeywords.includes(word));
-      return (hasDevanagari || hasHindiWord) ? 'hi' : 'en';
+      
+      const words = lower.split(/\s+/);
+      const isHindi = words.some(w => hindiKeywords.includes(w));
+      return isHindi ? 'hi' : 'en';
     }
 
     function toTitleCase(str) {
@@ -1461,100 +1470,89 @@
     function cleanLocationString(str) {
       if (!str) return "";
       return str
-        .replace(/^(i\s+want\s+to\s+go|i\s+want\s+to\s+book\s+a?\s*ride|book\s+a?\s*ride|take\s+me|from|to|pickup|drop|please)\s+/gi, '')
+        .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // Strip trailing punctuation/dots
+        .replace(/^(i\s+want\s+to\s+go|i\s+want\s+to\s+book\s+a?\s*ride|book\s+a?\s*ride|ride|from|to|pickup|drop|take\s+me|please)\s+/gi, '')
         .replace(/\s+(please|now|karo|kardo|chalo|jana\s+hai|chalna\s+hai|chahiye|hai)$/gi, '')
         .trim();
     }
 
-    // Comprehensive Intent and Location Extractor
     function parseVoiceIntent(rawText) {
       const lang = detectSpokenLanguage(rawText);
-      const text = rawText.trim();
-      const lower = text.toLowerCase();
+      // Remove punctuation like commas and periods from speech transcript
+      const cleanText = rawText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
+      const lower = cleanText.toLowerCase();
 
-      // 1. Check Pass Buying Intent
-      const isPassIntent = lower.includes("pass") || lower.includes("card") || lower.includes("daily");
-      if (isPassIntent && (lower.includes("69") || lower.includes("super") || lower.includes("9 km") || lower.includes("9km"))) {
-        selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-        switchTab('pass');
-        const reply = (lang === 'hi') 
-          ? "9 KM Super Pass select ho gaya hai. UPI se activate karne ke liye pay button dabayein." 
-          : "Selected 9 KM Super Pass for ₹69. Opening UPI payment modal.";
-        speakResponse(reply, lang);
-        setTimeout(() => openPaymentModal(), 1200);
-        return;
-      }
-      if (isPassIntent && (lower.includes("39") || lower.includes("5 km") || lower.includes("5km"))) {
-        selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
-        switchTab('pass');
-        const reply = (lang === 'hi') 
-          ? "5 KM Pass select kiya gaya hai. UPI se confirm karein." 
-          : "Selected 5 KM Pass for ₹39. Opening payment.";
-        speakResponse(reply, lang);
-        setTimeout(() => openPaymentModal(), 1200);
-        return;
-      }
-      if (isPassIntent && (lower.includes("129") || lower.includes("pro") || lower.includes("19 km") || lower.includes("19km"))) {
-        selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
-        switchTab('pass');
-        const reply = (lang === 'hi') 
-          ? "19 KM Pro Pass select kar diya hai." 
-          : "Selected 19 KM Pro Pass for ₹129. Opening payment.";
-        speakResponse(reply, lang);
-        setTimeout(() => openPaymentModal(), 1200);
-        return;
+      // 1. Pass Buying Intent
+      const isPassMention = lower.includes("pass") || lower.includes("card") || lower.includes("daily") || lower.includes("super");
+      if (isPassMention) {
+        if (lower.includes("69") || lower.includes("super") || lower.includes("9 km") || lower.includes("9km") || lower.includes("nine")) {
+          selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
+          switchTab('pass');
+          speakResponse(lang === 'hi' 
+            ? "9 KM Super Pass select kar diya hai. UPI checkout khul raha hai." 
+            : "Selected 9 KM Super Pass for ₹69. Opening UPI checkout.", lang);
+          setTimeout(() => openPaymentModal(), 1200);
+          return;
+        }
+        if (lower.includes("39") || lower.includes("5 km") || lower.includes("5km") || lower.includes("five")) {
+          selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
+          switchTab('pass');
+          speakResponse(lang === 'hi' 
+            ? "5 KM Pass select ho gaya hai. UPI se activate karein." 
+            : "Selected 5 KM Pass for ₹39. Opening checkout.", lang);
+          setTimeout(() => openPaymentModal(), 1200);
+          return;
+        }
+        if (lower.includes("129") || lower.includes("pro") || lower.includes("19 km") || lower.includes("19km")) {
+          selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
+          switchTab('pass');
+          speakResponse(lang === 'hi' 
+            ? "19 KM Pro Pass select kiya gaya hai." 
+            : "Selected 19 KM Pro Pass for ₹129. Opening checkout.", lang);
+          setTimeout(() => openPaymentModal(), 1200);
+          return;
+        }
       }
 
-      // 2. Extract Ride Booking Locations (Pickup & Drop)
+      // 2. Extract Pickup & Drop
       let extractedPickup = "";
       let extractedDrop = "";
 
-      // Pattern A (English: "from [Pickup] to [Drop]")
-      const fromToMatch = lower.match(/from\s+([a-z0-9\s]+?)\s+to\s+([a-z0-9\s]+)/i);
-      if (fromToMatch) {
-        extractedPickup = cleanLocationString(fromToMatch[1]);
-        extractedDrop = cleanLocationString(fromToMatch[2]);
+      // Pattern A: "from [Pickup] to [Drop]" (e.g., "from Lalpur to Dhurwa")
+      let match = lower.match(/(?:from)\s+(.+?)\s+(?:to)\s+(.+)/i);
+      if (match) {
+        extractedPickup = cleanLocationString(match[1]);
+        extractedDrop = cleanLocationString(match[2]);
       }
 
-      // Pattern B (English: "to [Drop] from [Pickup]")
+      // Pattern B: "[Pickup] to [Drop]" without "from" (e.g., "book ride Lalpur to Dhurwa")
       if (!extractedPickup && !extractedDrop) {
-        const toFromMatch = lower.match(/to\s+([a-z0-9\s]+?)\s+from\s+([a-z0-9\s]+)/i);
-        if (toFromMatch) {
-          extractedDrop = cleanLocationString(toFromMatch[1]);
-          extractedPickup = cleanLocationString(toFromMatch[2]);
+        match = lower.match(/(?:book\s+a?\s*ride|take\s+me|go)?\s*([a-z0-9\s]+?)\s+(?:to)\s+([a-z0-9\s]+)/i);
+        if (match && match[1].trim() && match[2].trim()) {
+          extractedPickup = cleanLocationString(match[1]);
+          extractedDrop = cleanLocationString(match[2]);
         }
       }
 
-      // Pattern C (Hindi/Hinglish: "[Pickup] se [Drop]" e.g., "lalpur se dhurwa jana hai")
+      // Pattern C: Hindi "[Pickup] se [Drop]" (e.g., "Lalpur se Dhurwa jana hai")
       if (!extractedPickup && !extractedDrop) {
-        const seMatch = lower.match(/([a-z0-9\s]+?)\s+se\s+([a-z0-9\s]+?)(?:\s+jana\s+hai|\s+chalna|\s+karo|\s+book|\s+chalo|$)/i);
-        if (seMatch) {
-          extractedPickup = cleanLocationString(seMatch[1]);
-          extractedDrop = cleanLocationString(seMatch[2]);
+        match = lower.match(/(.+?)\s+(?:se)\s+(.+?)(?:\s+jana\s+hai|\s+chalna|\s+karo|\s+book|\s+chalo|$)/i);
+        if (match) {
+          extractedPickup = cleanLocationString(match[1]);
+          extractedDrop = cleanLocationString(match[2]);
         }
       }
 
-      // Pattern D (Single Destination / Drop Only)
-      if (!extractedDrop) {
-        const dropOnlyMatch = lower.match(/(?:to|drop|destination|jana\s+hai|chalna\s+hai)\s+([a-z0-9\s]+)/i) ||
-                              lower.match(/([a-z0-9\s]+?)\s+(?:jana\s+hai|chalna\s+hai)/i);
-        if (dropOnlyMatch) {
-          extractedDrop = cleanLocationString(dropOnlyMatch[1]);
-        }
-      }
-
-      // Fallback Keyword Check for Ranchi Landmarks
-      const knownLandmarks = ["station", "railway station", "lalpur", "dhurwa", "airport", "bit mesra", "main road", "overbridge", "doranda", "hec", "kanke", "morabadi", "harmu", "ratu road"];
+      // Pattern D: Destination only (e.g., "drop to Dhurwa" or "Dhurwa jana hai")
       if (!extractedPickup && !extractedDrop) {
-        for (const lm of knownLandmarks) {
-          if (lower.includes(lm)) {
-            extractedDrop = toTitleCase(lm);
-            break;
-          }
+        match = lower.match(/(?:to|drop|destination)\s+(.+)/i) || 
+                lower.match(/(.+?)\s+(?:jana\s+hai|chalna\s+hai)/i);
+        if (match) {
+          extractedDrop = cleanLocationString(match[1]);
         }
       }
 
-      // 3. Apply Extracted Locations & Mirror Spoken Language
+      // Apply Locations to Form
       if (extractedPickup && extractedDrop) {
         switchTab('book');
         document.getElementById("pickup").value = toTitleCase(extractedPickup);
@@ -1563,10 +1561,9 @@
         dropCoords = null;
         triggerRouteEstimation();
 
-        const reply = (lang === 'hi')
-          ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ke liye route aur fare calculate kar rahe hain.`
-          : `Setting pickup at ${toTitleCase(extractedPickup)} and drop at ${toTitleCase(extractedDrop)}. Estimating route.`;
-        speakResponse(reply, lang);
+        speakResponse(lang === 'hi'
+          ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ka route set kar diya hai.`
+          : `Route set from ${toTitleCase(extractedPickup)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
         return;
       }
 
@@ -1575,31 +1572,26 @@
         document.getElementById("drop").value = toTitleCase(extractedDrop);
         dropCoords = null;
 
-        // Auto-lock GPS if pickup is empty
         if (!document.getElementById("pickup").value) {
           getPreciseGPS();
-          const reply = (lang === 'hi')
-            ? `Destination ${toTitleCase(extractedDrop)} set ho gaya hai. Aapka pickup location GPS se lock ho raha hai.`
-            : `Destination set to ${toTitleCase(extractedDrop)}. Locking your pickup location via GPS.`;
-          speakResponse(reply, lang);
+          speakResponse(lang === 'hi'
+            ? `Destination ${toTitleCase(extractedDrop)} set hai. Pickup location GPS se lock ho rahi hai.`
+            : `Drop set to ${toTitleCase(extractedDrop)}. Locking your pickup via GPS.`, lang);
         } else {
           triggerRouteEstimation();
-          const reply = (lang === 'hi')
-            ? `Destination ${toTitleCase(extractedDrop)} set kar diya hai.`
-            : `Destination set to ${toTitleCase(extractedDrop)}. Estimating route.`;
-          speakResponse(reply, lang);
+          speakResponse(lang === 'hi'
+            ? `Destination ${toTitleCase(extractedDrop)} set ho gaya hai.`
+            : `Destination set to ${toTitleCase(extractedDrop)}. Calculating route.`, lang);
         }
         return;
       }
 
-      // Fallback response if neither pass nor route could be parsed
-      const fallbackReply = (lang === 'hi')
-        ? "Command samajh nahi aaya. Ranchi me destination ka naam bolein ya pass chunein."
-        : "Could not catch your route. Please say your pickup and destination or pass tier.";
-      speakResponse(fallbackReply, lang);
+      // Fallback
+      speakResponse(lang === 'hi'
+        ? "Command samajh nahi aaya. Pickup aur drop location bolein."
+        : "Could not catch your route. Please state your pickup and drop destination.", lang);
     }
 
-    // Text-to-Speech synthesizer with language selection
     function speakResponse(msg, lang = 'en') {
       if (!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
@@ -1608,6 +1600,7 @@
       utter.pitch = 1.0;
       utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
 
+      // Pick browser voice matching the selected language
       const voices = window.speechSynthesis.getVoices();
       if (voices.length > 0) {
         const targetVoice = voices.find(v => v.lang.toLowerCase().startsWith(lang === 'hi' ? 'hi' : 'en'));
