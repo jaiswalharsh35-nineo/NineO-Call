@@ -1498,7 +1498,8 @@
    //const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // Ensure this starts with AIzaSy...
 
     async function parseVoiceIntentWithBackend(rawText) {
-      document.getElementById("voiceSubText").innerText = "⚡ AI parsing route...";
+      const subText = document.getElementById("voiceSubText");
+      subText.innerText = "⚡ AI parsing route...";
 
       const prompt = 
         "You are an expert Ranchi transit entity extractor for nineO bike taxi.\n" +
@@ -1511,12 +1512,16 @@
         "Respond ONLY with a valid JSON object in this exact schema:\n" +
         "{\"pickup\": string or null, \"drop\": string or null, \"passTier\": string or null}";
 
-      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+      // Clean endpoint URL without the ?key= parameter
+      const url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent";
 
       try {
         const response = await fetch(url, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: { 
+            "Content-Type": "application/json",
+            "x-goog-api-key": GEMINI_API_KEY.trim() // Required for AQ keys
+          },
           body: JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
             generationConfig: { 
@@ -1527,10 +1532,23 @@
         });
 
         const resData = await response.json();
+
+        // 1. Guard against API auth/quota errors
+        if (resData.error) {
+          subText.innerText = `⚠️ AI Error: ${resData.error.message}`;
+          console.error("Gemini API Error:", resData.error);
+          return;
+        }
+
+        if (!resData.candidates || !resData.candidates[0]) {
+          subText.innerText = "⚠️ No route detected. Tap mic to retry.";
+          return;
+        }
+
         const parsedJson = JSON.parse(resData.candidates[0].content.parts[0].text);
         const { pickup, drop, passTier } = parsedJson;
 
-        // 1. Pass Intent
+        // 2. Pass Selection Intent
         if (passTier) {
           const tierMap = {
             "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
@@ -1545,7 +1563,7 @@
           return;
         }
 
-        // 2. Drop / Route Intent
+        // 3. Drop & Route Intent
         if (drop) {
           switchTab('book');
           document.getElementById("drop").value = drop;
@@ -1557,32 +1575,22 @@
             triggerRouteEstimation();
             speakResponse(`Route set from ${pickup} to ${drop}`, 'en');
           } else {
-            // When only destination is uttered, automatically lock pickup via device GPS
             getPreciseGPS();
-            speakResponse(`Destination set to ${drop}. Locking your current location via GPS.`, 'en');
+            speakResponse(`Destination set to ${drop}. Locking your location via GPS.`, 'en');
           }
-          document.getElementById("voiceSubText").innerText = `✅ Destination: ${drop}`;
+          subText.innerText = `✅ Destination: ${drop}`;
           return;
         }
 
       } catch (err) {
+        subText.innerText = `❌ Network Error: ${err.message}`;
         console.error("Direct Gemini Call Error:", err);
+        return;
       }
 
-      document.getElementById("voiceSubText").innerText = "Could not identify places. Tap mic to retry.";
+      subText.innerText = "Could not identify places. Tap mic to retry.";
       speakResponse("Could not detect location. Please say your destination again.", 'en');
     }
-
-    function speakResponse(msg, lang = 'en') {
-      if (!('speechSynthesis' in window)) return;
-      window.speechSynthesis.cancel();
-      const utter = new SpeechSynthesisUtterance(msg);
-      utter.rate = 1.0;
-      utter.pitch = 1.0;
-      utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
-      window.speechSynthesis.speak(utter);
-    }
-
     // =========================================================================
     // RAZORPAY GATEWAY & IN-APP CONFIRMATION DISPLAY
     // =========================================================================
