@@ -591,6 +591,27 @@
     .ticket-row:last-child { border-bottom: none; }
     .ticket-row b { color: white; font-weight: 700; }
 
+    /* TRIP COMPLETE & 2ND RIDE TRANSITION CARD */
+    .trip-complete-card {
+      display: none;
+      background: #0b1120;
+      border: 1.5px solid var(--green);
+      border-radius: 22px;
+      padding: 24px 18px;
+      text-align: center;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.85);
+      animation: popIn 0.35s ease;
+    }
+
+    .remaining-pass-stat {
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid rgba(56, 189, 248, 0.4);
+      border-radius: 16px;
+      padding: 16px;
+      margin: 16px 0;
+      text-align: center;
+    }
+
     .feedback-card {
       display: none;
       background: #0b1120;
@@ -831,11 +852,11 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Voice AI Bar with Auto Dual-Language Support -->
+    <!-- Voice AI Bar with Gemini Flash Natural Language Parser -->
     <div class="voice-bar">
       <div>
         <div class="voice-bar-text" id="voiceStatusText">🎙️ <b>Voice Order:</b> Tap mic & speak</div>
-        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "From Lalpur to Dhurwa" or "Lalpur se Dhurwa jana hai"</div>
+        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "From Lalpur to Dhurwa" or "69 wala pass lena hai"</div>
       </div>
       <button type="button" class="voice-mic-btn" id="voiceMicBtn" onclick="toggleVoiceRecognition()" title="Speak in Hindi/English">
         🎤
@@ -933,8 +954,8 @@
     <!-- 2. LIVE CAPTAIN ASSIGNED DISPLAY -->
     <div class="captain-display-card" id="captainDisplayCard">
       <div class="ride-id-pill" id="dispRideId">RIDE #--</div>
-      <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
-        ● Captain On The Way
+      <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;" id="dispTripStatusText">
+        ● Captain Assigned
       </div>
 
       <div class="plate-box">
@@ -962,7 +983,7 @@
       </a>
       
       <button class="btn-submit" style="background:#2563eb; margin-top:8px;" onclick="openFeedbackModal()">
-        🏁 End Ride & Rate Captain
+        🏁 Rate Captain & Complete Trip
       </button>
 
       <button class="btn-submit" style="background:#1e293b; color:var(--text-dim); padding:10px; font-size:12px; margin-top:8px;" onclick="resetBookingView()">
@@ -1025,7 +1046,36 @@
       </button>
     </div>
 
-    <!-- 5. FEEDBACK CARD -->
+    <!-- 5. DEDICATED TRIP COMPLETE & 2ND RIDE SCREEN -->
+    <div class="trip-complete-card" id="tripCompleteCard">
+      <div class="check-icon-circle">🏁</div>
+      <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
+        Ride Completed!
+      </div>
+      <div style="font-size: 22px; font-weight: 900; color: white; margin: 6px 0;" id="postTripTitle">
+        Trip Finished
+      </div>
+
+      <div class="remaining-pass-stat" id="postTripPassBox">
+        <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Updated Pass Balance</div>
+        <div style="font-size: 26px; font-weight: 900; color: var(--primary); margin: 6px 0;" id="postTripBalanceKm">
+          -- KM
+        </div>
+        <div style="font-size: 12px; color: #cbd5e1;" id="postTripRidesLeft">
+          Checking multi-ride balance...
+        </div>
+      </div>
+
+      <button class="btn-submit" id="btnBookNextRidePass" onclick="proceedToNextPassRide()" style="background:#10b981; margin-bottom:10px;">
+        <span>🛵 Book Your 2nd Ride (₹0)</span> ➔
+      </button>
+
+      <button class="btn-submit" style="background:#334155; color:#cbd5e1; font-size:13px; padding:12px;" onclick="openFeedbackModal()">
+        ⭐ Leave Rating & Review
+      </button>
+    </div>
+
+    <!-- 6. FEEDBACK CARD -->
     <div class="feedback-card" id="feedbackCard">
       <div style="font-size: 12px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;">
         Ride Completed
@@ -1067,7 +1117,7 @@
     </div>
   </div>
 
-  <!-- 6. CHATBOT WIDGET -->
+  <!-- 7. CHATBOT WIDGET -->
   <button class="chatbot-fab" id="chatbotFab" onclick="toggleChatDrawer()" title="Help & Support">
     💬
   </button>
@@ -1103,7 +1153,7 @@
   <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
     const COMPANY_NAME = "nineO Mobility";
-    const SUPPORT_WHATSAPP = "919525054247"; // Replace with your support desk number
+    const SUPPORT_WHATSAPP = "919525054247";
 
     let selectedPassCode = "PASS_39";
     let selectedAmount = 39;
@@ -1116,6 +1166,8 @@
     let currentDueFare = 0;
     let userActivePass = null;
     let currentRideId = null;
+
+    let rideStatusPollTimer = null;
 
     let selectedRating = 5;
     let selectedFeedbackTags = [];
@@ -1139,6 +1191,7 @@
       document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';
       document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';
       document.getElementById("passConfirmCard").style.display = 'none';
+      document.getElementById("tripCompleteCard").style.display = 'none';
       document.getElementById("feedbackCard").style.display = 'none';
       document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');
       document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
@@ -1210,43 +1263,6 @@
         () => { s.innerText = "⚠️ GPS access denied. Please type pickup landmark."; },
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
-    }
-    // Strict Ranchi Bounding Box: min_lon, max_lat, max_lon, min_lat
-    const RANCHI_VIEWBOX = "85.1800,23.4800,85.4600,23.2600";
-
-    async function geocodeLocation(text) {
-      if (!text) return null;
-
-      const match = text.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
-      if (match) return { lat: parseFloat(match[1]), lon: parseFloat(match[2]) };
-
-      const cleanQuery = text.replace(/,\s*ranchi.*$/i, "").trim();
-
-      const url = `https://nominatim.openstreetmap.org/search?` +
-        `format=json` +
-        `&q=${encodeURIComponent(cleanQuery)}` +
-        `&viewbox=${RANCHI_VIEWBOX}` +
-        `&bounded=1` +
-        `&countrycodes=in` +
-        `&limit=1`;
-
-      try {
-        const res = await fetch(url, {
-          headers: { "Accept-Language": "en" }
-        });
-        const data = await res.json();
-
-        if (data && data.length > 0) {
-          return {
-            lat: parseFloat(data[0].lat),
-            lon: parseFloat(data[0].lon)
-          };
-        }
-      } catch (err) {
-        console.error("Geocoding failed:", err);
-      }
-
-      return null;
     }
 
     async function geocodeLocation(text) {
@@ -1424,27 +1440,10 @@
     }
 
     // =========================================================================
-    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (HINDI & ENGLISH)
-    // =========================================================================
- // =========================================================================
-    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (FIXED & RESILIENT)
-    // =========================================================================
-// =========================================================================
-    // 🎙️ ZERO-COST DUAL-LANGUAGE VOICE AI ENGINE (COMPLETE & RESILIENT)
+    // 🎙️ VOICE AI: CAPTURE & GEMINI FLASH PARSER INTEGRATION
     // =========================================================================
     let voiceRecognition = null;
     let isVoiceActive = false;
-
-    // Conversational noise & filler dictionary (English, Hindi, Hinglish)
-    const FILLER_WORDS = [
-      "hey", "hi", "hello", "bro", "brother", "bhaiya", "bhai", "listen", "suno", 
-      "arre", "actually", "basically", "urgently", "emergency", "please", "can you", 
-      "i want to", "i need to", "i have to", "mujhe", "humko", "mera", "meri",
-      "take me", "book a ride", "book ride", "book bike", "ride", "chalo", "chalna hai",
-      "jana hai", "drop me", "pickup me", "le chalo", "jaldi", "fast", "now",
-      "and then", "then", "fir", "uske baad", "via", "through", "hokar", "hote hue",
-      "karo", "kardo", "dijiye", "chahiye", "h", "hai", "tha", "hoga"
-    ];
 
     function initVoiceAI() {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -1455,7 +1454,6 @@
       }
 
       voiceRecognition = new SpeechRecognition();
-      // 'en-IN' captures Indian English as Latin script and Hindi phonetically in Latin script
       voiceRecognition.lang = 'en-IN';
       voiceRecognition.interimResults = false;
       voiceRecognition.continuous = false;
@@ -1470,10 +1468,10 @@
       voiceRecognition.onresult = (event) => {
         const transcript = event.results[0][0].transcript;
         document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;
-        parseVoiceIntent(transcript);
+        parseVoiceIntentWithBackend(transcript);
       };
 
-      voiceRecognition.onerror = (event) => {
+      voiceRecognition.onerror = () => {
         isVoiceActive = false;
         document.getElementById("voiceMicBtn").classList.remove("listening");
         document.getElementById("voiceStatusText").innerText = "⚠️ Voice error. Tap mic again.";
@@ -1496,194 +1494,66 @@
       }
     }
 
-    function detectSpokenLanguage(text) {
-      const lower = text.toLowerCase();
-      if (/[\u0900-\u097F]/.test(text)) return 'hi';
+    async function parseVoiceIntentWithBackend(rawText) {
+      document.getElementById("voiceSubText").innerText = "🧠 Analyzing with Gemini AI...";
+      try {
+        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;
+        const res = await fetch(url);
+        const json = await res.json();
 
-      const hindiKeywords = [
-        'se', 'jana', 'hai', 'karo', 'kardo', 'chahiye', 'chalo', 'mujhe', 
-        'karna', 'mera', 'meri', 'kahan', 'kitna', 'leke', 'chal', 'dijiye', 
-        'krdo', 'h', 'pass do', 'activate karo', 'hokar', 'hote hue', 'fir'
-      ];
-      const words = lower.split(/\s+/);
-      return words.some(w => hindiKeywords.includes(w)) ? 'hi' : 'en';
+        if (json.status === "SUCCESS" && json.data) {
+          const { pickup, drop, passTier } = json.data;
+
+          if (passTier) {
+            const tierMap = {
+              "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
+              "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },
+              "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }
+            };
+            const p = tierMap[passTier] || tierMap["PASS_69"];
+            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
+            switchTab('pass');
+            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
+            setTimeout(() => openPaymentModal(), 1000);
+            return;
+          }
+
+          if (drop) {
+            switchTab('book');
+            document.getElementById("drop").value = drop;
+            if (pickup) {
+              document.getElementById("pickup").value = pickup;
+            } else if (!document.getElementById("pickup").value) {
+              getPreciseGPS();
+            }
+            triggerRouteEstimation();
+            speakResponse(`Setting destination to ${drop}`, 'en');
+            return;
+          }
+        }
+      } catch (err) {
+        console.warn("AI Backend Parse Fallback:", err);
+      }
+
+      // Local Regex Fallback if network or AI key fails
+      localRegexVoiceFallback(rawText);
     }
 
-    function toTitleCase(str) {
-      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
-    }
-
-    function cleanFillerNoise(phrase) {
-      if (!phrase) return "";
-      let words = phrase.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim().split(/\s+/);
-      
-      while (words.length > 0 && FILLER_WORDS.includes(words[0])) {
-        words.shift();
+    function localRegexVoiceFallback(rawText) {
+      const lower = rawText.toLowerCase();
+      if (lower.includes("69") || lower.includes("super")) {
+        selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
+        switchTab('pass');
+        openPaymentModal();
+        return;
       }
-      while (words.length > 0 && FILLER_WORDS.includes(words[words.length - 1])) {
-        words.pop();
-      }
-      if (words.length > 4) {
-        words = words.slice(-4);
-      }
-      return words.join(" ").trim();
-    }
-
-    function parseVoiceIntent(rawText) {
-      const lang = detectSpokenLanguage(rawText);
-      const cleanRaw = rawText.replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "").trim();
-      const lower = cleanRaw.toLowerCase();
-
-      // 1. Pass Buying Intent Check
-      const isPassMention = lower.includes("pass") || lower.includes("card") || lower.includes("daily") || lower.includes("super");
-      if (isPassMention) {
-        if (lower.includes("69") || lower.includes("super") || lower.includes("9 km") || lower.includes("9km") || lower.includes("nine")) {
-          selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-          switchTab('pass');
-          speakResponse(lang === 'hi' 
-            ? "9 KM Super Pass select kar diya hai. UPI checkout khul raha hai." 
-            : "Selected 9 KM Super Pass for ₹69. Opening UPI checkout.", lang);
-          setTimeout(() => openPaymentModal(), 1200);
-          return;
-        }
-        if (lower.includes("39") || lower.includes("5 km") || lower.includes("5km") || lower.includes("five")) {
-          selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
-          switchTab('pass');
-          speakResponse(lang === 'hi' 
-            ? "5 KM Pass select ho gaya hai. UPI se activate karein." 
-            : "Selected 5 KM Pass for ₹39. Opening checkout.", lang);
-          setTimeout(() => openPaymentModal(), 1200);
-          return;
-        }
-        if (lower.includes("129") || lower.includes("pro") || lower.includes("19 km") || lower.includes("19km")) {
-          selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
-          switchTab('pass');
-          speakResponse(lang === 'hi' 
-            ? "19 KM Pro Pass select kiya gaya hai." 
-            : "Selected 19 KM Pro Pass for ₹129. Opening checkout.", lang);
-          setTimeout(() => openPaymentModal(), 1200);
-          return;
-        }
-      }
-
-      // 2. Dynamic Grammatical Pivot Extraction
-      let rawPickup = "";
-      let rawWaypoint = "";
-      let rawDrop = "";
-
-      // Pattern 1 (3-Location): English "from [Loc 1] via/through [Loc 2] to [Loc 3]"
-      let viaEn = lower.match(/from\s+(.+?)\s+(?:via|through)\s+(.+?)\s+to\s+(.+)/i);
-      if (viaEn) {
-        rawPickup = viaEn[1];
-        rawWaypoint = viaEn[2];
-        rawDrop = viaEn[3];
-      }
-
-      // Pattern 2 (3-Location): Hindi "[Loc 1] se [Loc 2] hokar/hote hue [Loc 3]"
-      if (!rawPickup && !rawDrop) {
-        let viaHi = lower.match(/(.+?)\s+se\s+(.+?)\s+(?:hokar|hote hue)\s+(.+)/i);
-        if (viaHi) {
-          rawPickup = viaHi[1];
-          rawWaypoint = viaHi[2];
-          rawDrop = viaHi[3];
-        }
-      }
-
-      // Pattern 3 (3-Location): Multi-leg "[Loc 1] to [Loc 2] and then/fir [Loc 3]"
-      if (!rawPickup && !rawDrop) {
-        let multiLeg = lower.match(/(?:from\s+)?(.+?)\s+to\s+(.+?)\s+(?:and then|then|fir|uske baad)\s+(.+)/i);
-        if (multiLeg) {
-          rawPickup = multiLeg[1];
-          rawWaypoint = multiLeg[2];
-          rawDrop = multiLeg[3];
-        }
-      }
-
-      // Pattern 4 (2-Location): English "from [Pickup] to [Drop]"
-      if (!rawPickup && !rawDrop) {
-        let match = lower.match(/from\s+(.+?)\s+to\s+(.+)/i);
-        if (match) {
-          rawPickup = match[1];
-          rawDrop = match[2];
-        }
-      }
-
-      // Pattern 5 (2-Location): Hindi "[Pickup] se [Drop]"
-      if (!rawPickup && !rawDrop) {
-        let match = lower.match(/(.+?)\s+se\s+(.+)/i);
-        if (match) {
-          rawPickup = match[1];
-          rawDrop = match[2];
-        }
-      }
-
-      // Pattern 6 (2-Location): English "[Pickup] to [Drop]"
-      if (!rawPickup && !rawDrop) {
-        let match = lower.match(/(.+?)\s+to\s+(.+)/i);
-        if (match) {
-          rawPickup = match[1];
-          rawDrop = match[2];
-        }
-      }
-
-      // Pattern 7 (1-Location): Drop only
-      if (!rawPickup && !rawDrop) {
-        let match = lower.match(/(?:to|drop|destination)\s+(.+)/i) || 
-                    lower.match(/(.+?)\s+(?:jana\s+hai|chalna\s+hai|chalo)/i);
-        if (match) {
-          rawDrop = match[1];
-        }
-      }
-
-      // 3. Clean conversational noise from extracted segments
-      const extractedPickup = cleanFillerNoise(rawPickup);
-      const extractedWaypoint = cleanFillerNoise(rawWaypoint);
-      const extractedDrop = cleanFillerNoise(rawDrop);
-
-      // 4. Apply Locations & Trigger Geocoder
-      if (extractedPickup && extractedDrop) {
+      const match = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
+      if (match) {
         switchTab('book');
-        document.getElementById("pickup").value = toTitleCase(extractedPickup);
-        document.getElementById("drop").value = toTitleCase(extractedDrop);
-        pickupCoords = null;
-        dropCoords = null;
+        document.getElementById("pickup").value = match[1].trim();
+        document.getElementById("drop").value = match[2].trim();
         triggerRouteEstimation();
-
-        if (extractedWaypoint) {
-          speakResponse(lang === 'hi'
-            ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedWaypoint)} hote hue ${toTitleCase(extractedDrop)} ka route set kar diya hai.`
-            : `Route set from ${toTitleCase(extractedPickup)} via ${toTitleCase(extractedWaypoint)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
-        } else {
-          speakResponse(lang === 'hi'
-            ? `${toTitleCase(extractedPickup)} se ${toTitleCase(extractedDrop)} ka route check kar rahe hain.`
-            : `Setting route from ${toTitleCase(extractedPickup)} to ${toTitleCase(extractedDrop)}. Estimating fares.`, lang);
-        }
-        return;
       }
-
-      if (extractedDrop && !extractedPickup) {
-        switchTab('book');
-        document.getElementById("drop").value = toTitleCase(extractedDrop);
-        dropCoords = null;
-
-        if (!document.getElementById("pickup").value) {
-          getPreciseGPS();
-          speakResponse(lang === 'hi'
-            ? `Destination ${toTitleCase(extractedDrop)} set hai. Pickup location GPS se lock ho rahi hai.`
-            : `Drop set to ${toTitleCase(extractedDrop)}. Locking your pickup via GPS.`, lang);
-        } else {
-          triggerRouteEstimation();
-          speakResponse(lang === 'hi'
-            ? `Destination ${toTitleCase(extractedDrop)} set ho gaya hai.`
-            : `Destination set to ${toTitleCase(extractedDrop)}. Estimating route.`, lang);
-        }
-        return;
-      }
-
-      // 5. Unrecognized Speech Fallback
-      speakResponse(lang === 'hi'
-        ? "Command samajh nahi aaya. Pickup aur drop location bolein."
-        : "Could not understand your route. Please say your pickup and destination.", lang);
     }
 
     function speakResponse(msg, lang = 'en') {
@@ -1693,12 +1563,6 @@
       utter.rate = 1.0;
       utter.pitch = 1.0;
       utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
-
-      const voices = window.speechSynthesis.getVoices();
-      if (voices.length > 0) {
-        const targetVoice = voices.find(v => v.lang.toLowerCase().startsWith(lang === 'hi' ? 'hi' : 'en'));
-        if (targetVoice) utter.voice = targetVoice;
-      }
       window.speechSynthesis.speak(utter);
     }
 
@@ -1786,6 +1650,7 @@
       document.getElementById("navTabs").style.display = "none";
       document.getElementById("phoneFieldWrap").style.display = "none";
       document.getElementById("activePassBanner").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
       document.getElementById("feedbackCard").style.display = "none";
 
       const quotaMap = {
@@ -1820,7 +1685,7 @@
     }
 
     // =========================================================================
-    // SUBMIT RIDE & ASSIGN CAPTAIN
+    // SUBMIT RIDE, ASSIGN CAPTAIN & ACTIVE STATUS POLLING
     // =========================================================================
     async function submitRideBooking(type, fare) {
       const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
@@ -1874,11 +1739,14 @@
       document.getElementById("navTabs").style.display = "none";
       document.getElementById("phoneFieldWrap").style.display = "none";
       document.getElementById("activePassBanner").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
+      document.getElementById("feedbackCard").style.display = "none";
 
       const capCard = document.getElementById("captainDisplayCard");
       capCard.style.display = "block";
 
       document.getElementById("dispRideId").innerText = currentRideId;
+      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned";
       document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
       document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
       document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
@@ -1899,6 +1767,8 @@
       } else {
         callBtn.style.display = "none";
       }
+
+      startRidePolling(currentRideId);
     }
 
     function fallbackCaptainCard(pickup, drop, fare, type) {
@@ -1914,12 +1784,75 @@
       }, pickup, drop, fare, type);
     }
 
-    function resetBookingView() {
+    // Polling loop watching for trip completion
+    function startRidePolling(rideId) {
+      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);
+
+      rideStatusPollTimer = setInterval(async () => {
+        try {
+          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);
+          const data = await res.json();
+
+          if (data && data.status === "IN_PROGRESS") {
+            document.getElementById("dispTripStatusText").innerText = "🟢 Ride In Progress";
+          } else if (data && data.status === "COMPLETED") {
+            clearInterval(rideStatusPollTimer);
+            rideStatusPollTimer = null;
+            showTripCompletionTransition();
+          }
+        } catch (e) {}
+      }, 4000);
+    }
+
+    // =========================================================================
+    // MULTI-RIDE TRANSITION & POST-TRIP DASHBOARD
+    // =========================================================================
+    async function showTripCompletionTransition() {
       document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "block";
+
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      
+      try {
+        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
+        const data = await res.json();
+
+        if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0) {
+          userActivePass = data;
+          document.getElementById("postTripTitle").innerText = "First Ride Completed!";
+          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;
+          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;
+          document.getElementById("btnBookNextRidePass").style.display = "flex";
+          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Ride (${data.remainingKm}km free) ➔`;
+        } else {
+          userActivePass = null;
+          document.getElementById("postTripTitle").innerText = "Trip Completed!";
+          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";
+          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";
+          document.getElementById("btnBookNextRidePass").style.display = "none";
+        }
+      } catch (err) {
+        document.getElementById("postTripBalanceKm").innerText = "Active";
+      }
+    }
+
+    function proceedToNextPassRide() {
+      document.getElementById("tripCompleteCard").style.display = "none";
+      resetBookingView();
+    }
+
+    function resetBookingView() {
+      if (rideStatusPollTimer) {
+        clearInterval(rideStatusPollTimer);
+        rideStatusPollTimer = null;
+      }
+      document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
       document.getElementById("feedbackCard").style.display = "none";
       document.getElementById("sectionBook").style.display = "block";
       document.getElementById("navTabs").style.display = "grid";
       document.getElementById("phoneFieldWrap").style.display = "block";
+      
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
         b.disabled = false;
         b.innerText = "Confirm Ride ➔";
@@ -1927,6 +1860,8 @@
       document.getElementById("btnBookDirect").style.display = "block";
       document.getElementById("routeCard").style.display = "none";
       document.getElementById("drop").value = "";
+      
+      handlePhoneInput();
     }
 
     function selectPass(el, code, amt, name) {
@@ -1938,10 +1873,15 @@
     }
 
     // =========================================================================
-    // RATING & FEEDBACK
+    // RATING & FEEDBACK SUBMISSION
     // =========================================================================
     function openFeedbackModal() {
+      if (rideStatusPollTimer) {
+        clearInterval(rideStatusPollTimer);
+        rideStatusPollTimer = null;
+      }
       document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
       const capName = document.getElementById("dispCaptainName").innerText;
       document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;
       document.getElementById("feedbackCard").style.display = "block";
