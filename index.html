@@ -1152,6 +1152,7 @@
 
   <script>
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
+    const GEMINI_API_KEY = "AQ.Ab8RN6Jq65SA7Vzizs12Z98MiuB40YAXFL9N4aPhmtdPXxdtLA";
     const COMPANY_NAME = "nineO Mobility";
     const SUPPORT_WHATSAPP = "919525054247";
 
@@ -1494,66 +1495,82 @@
       }
     }
 
+   //const GEMINI_API_KEY = "YOUR_GEMINI_API_KEY"; // Ensure this starts with AIzaSy...
+
     async function parseVoiceIntentWithBackend(rawText) {
-      document.getElementById("voiceSubText").innerText = "🧠 Analyzing with Gemini AI...";
+      document.getElementById("voiceSubText").innerText = "⚡ AI parsing route...";
+
+      const prompt = 
+        "You are an expert Ranchi transit entity extractor for nineO bike taxi.\n" +
+        "Extract ONLY geographical locations (pickup, drop) or pass tiers from this utterance in Hindi, English, or Hinglish.\n" +
+        "RULES:\n" +
+        "- Strip out all filler words, emotions, slang, urgency (e.g. 'bhaiya', 'chalo', 'jana h', 'jana hai', 'jaldi', 'yaar', 'please', 'mujhe', 'humko').\n" +
+        "- If only a destination is mentioned (e.g. 'kanke jana h', 'station chalo'), set 'pickup' to null and 'drop' to the landmark (e.g. 'Kanke', 'Station').\n" +
+        "- If a pass is requested (e.g. '69 wala pass', 'super pass', '129 wala'), set 'passTier' to 'PASS_39', 'PASS_69', or 'PASS_129'. Otherwise set to null.\n" +
+        "Utterance: \"" + rawText + "\"\n" +
+        "Respond ONLY with a valid JSON object in this exact schema:\n" +
+        "{\"pickup\": string or null, \"drop\": string or null, \"passTier\": string or null}";
+
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+
       try {
-        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;
-        const res = await fetch(url);
-        const json = await res.json();
-
-        if (json.status === "SUCCESS" && json.data) {
-          const { pickup, drop, passTier } = json.data;
-
-          if (passTier) {
-            const tierMap = {
-              "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
-              "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },
-              "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }
-            };
-            const p = tierMap[passTier] || tierMap["PASS_69"];
-            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
-            switchTab('pass');
-            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
-            setTimeout(() => openPaymentModal(), 1000);
-            return;
-          }
-
-          if (drop) {
-            switchTab('book');
-            document.getElementById("drop").value = drop;
-            if (pickup) {
-              document.getElementById("pickup").value = pickup;
-            } else if (!document.getElementById("pickup").value) {
-              getPreciseGPS();
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { 
+              responseMimeType: "application/json",
+              temperature: 0.1 
             }
-            triggerRouteEstimation();
-            speakResponse(`Setting destination to ${drop}`, 'en');
-            return;
-          }
+          })
+        });
+
+        const resData = await response.json();
+        const parsedJson = JSON.parse(resData.candidates[0].content.parts[0].text);
+        const { pickup, drop, passTier } = parsedJson;
+
+        // 1. Pass Intent
+        if (passTier) {
+          const tierMap = {
+            "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
+            "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },
+            "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }
+          };
+          const p = tierMap[passTier] || tierMap["PASS_69"];
+          selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
+          switchTab('pass');
+          speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
+          setTimeout(() => openPaymentModal(), 800);
+          return;
         }
+
+        // 2. Drop / Route Intent
+        if (drop) {
+          switchTab('book');
+          document.getElementById("drop").value = drop;
+          dropCoords = null;
+
+          if (pickup) {
+            document.getElementById("pickup").value = pickup;
+            pickupCoords = null;
+            triggerRouteEstimation();
+            speakResponse(`Route set from ${pickup} to ${drop}`, 'en');
+          } else {
+            // When only destination is uttered, automatically lock pickup via device GPS
+            getPreciseGPS();
+            speakResponse(`Destination set to ${drop}. Locking your current location via GPS.`, 'en');
+          }
+          document.getElementById("voiceSubText").innerText = `✅ Destination: ${drop}`;
+          return;
+        }
+
       } catch (err) {
-        console.warn("AI Backend Parse Fallback:", err);
+        console.error("Direct Gemini Call Error:", err);
       }
 
-      // Local Regex Fallback if network or AI key fails
-      localRegexVoiceFallback(rawText);
-    }
-
-    function localRegexVoiceFallback(rawText) {
-      const lower = rawText.toLowerCase();
-      if (lower.includes("69") || lower.includes("super")) {
-        selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-        switchTab('pass');
-        openPaymentModal();
-        return;
-      }
-      const match = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
-      if (match) {
-        switchTab('book');
-        document.getElementById("pickup").value = match[1].trim();
-        document.getElementById("drop").value = match[2].trim();
-        triggerRouteEstimation();
-      }
+      document.getElementById("voiceSubText").innerText = "Could not identify places. Tap mic to retry.";
+      speakResponse("Could not detect location. Please say your destination again.", 'en');
     }
 
     function speakResponse(msg, lang = 'en') {
