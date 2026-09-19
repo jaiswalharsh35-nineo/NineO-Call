@@ -207,7 +207,7 @@
       align-items: center;
     }
 
-    /* Set to 16px font-size to prevent iOS Safari from zooming and freezing input */
+    /* 16px font-size prevents mobile Safari/Chrome viewport zoom freezing */
     .input-box {
       width: 100%;
       background: var(--input-bg);
@@ -313,12 +313,104 @@
       margin-bottom: 12px;
       border: 1.5px solid var(--border);
       overflow: hidden;
-      background: #0f172a;
+      background: #090d16;
     }
 
+    /* Convert standard OSM tiles into dark-mode theme without watermark */
+    #routeMap .leaflet-tile-pane {
+      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+    }
+
+    /* Sharp drop shadow on route polylines */
+    #routeMap .leaflet-overlay-pane path {
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.9));
+    }
+
+    /* Remove default Leaflet white square borders */
     .custom-pin {
       background: transparent !important;
       border: none !important;
+    }
+
+    /* Marker Badges (A & B) */
+    .pin-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 13px;
+      border-radius: 50%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.75);
+      user-select: none;
+    }
+
+    .pin-a {
+      background: #10b981;
+      color: #ffffff;
+      width: 28px;
+      height: 28px;
+      border: 2px solid #ffffff;
+    }
+
+    .pin-b-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .pin-b {
+      background: #facc15;
+      color: #0f172a;
+      width: 28px;
+      height: 28px;
+      border: 2px solid #0f172a;
+    }
+
+    /* Floating ETA Pill */
+    .eta-pill {
+      position: absolute;
+      bottom: 32px;
+      background: #0f172a;
+      color: #facc15;
+      border: 1.5px solid #facc15;
+      padding: 3px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.85);
+      animation: fadeIn 0.2s ease;
+    }
+
+    /* Live Captain Motorcycle Pin & Radar Wave */
+    .captain-bike-pin {
+      width: 32px;
+      height: 32px;
+      background: #facc15;
+      border: 2px solid #0f172a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      box-shadow: 0 0 15px rgba(250, 204, 21, 0.75);
+      position: relative;
+    }
+
+    .bike-radar-ring {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid #facc15;
+      animation: bikePulse 1.8s infinite ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes bikePulse {
+      0% { transform: scale(1); opacity: 0.9; }
+      100% { transform: scale(2.2); opacity: 0; }
     }
 
     .fare-choice-grid {
@@ -927,7 +1019,9 @@
         </div>
 
         <!-- Real-Time Interactive Route Map (Leaflet) -->
-        <div id="routeMap"></div>
+        <div id="bookingMapSlot">
+          <div id="routeMap"></div>
+        </div>
 
         <div class="fare-choice-grid" id="standardGrid">
           <div class="choice-card">
@@ -981,6 +1075,9 @@
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;" id="dispTripStatusText">
         ● Captain Assigned
       </div>
+
+      <!-- Active Tracking Map Slot -->
+      <div id="captainMapSlot" style="margin: 12px 0;"></div>
 
       <div class="plate-box">
         <span class="plate-ind">IND</span>
@@ -1175,6 +1272,7 @@
   </div>
 
   <script>
+    // Pure backend communication - NO API keys exposed on frontend
     const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
     const COMPANY_NAME = "nineO Mobility";
     const SUPPORT_WHATSAPP = "919525054247";
@@ -1208,9 +1306,15 @@
 
     // Leaflet Interactive Map Instances
     let mapInstance = null;
+    let routeOutline = null;
     let routePolyline = null;
     let pickupMarker = null;
     let dropMarker = null;
+
+    // Captain Animation Instances
+    let captainMarker = null;
+    let captainRoutePolyline = null;
+    let captainMotionTimer = null;
 
     try {
       if (localStorage.getItem("nineo_phone")) {
@@ -1306,6 +1410,7 @@
       );
     }
 
+    // Dynamic Geocoding with Ranchi Bounding Box
     async function geocodeLocation(text) {
       if (!text || text.trim().length === 0) return null;
       const cleanText = text.trim();
@@ -1331,7 +1436,8 @@
       return null;
     }
 
-    function renderInteractiveMap(pickup, drop, coordinates) {
+    // Interactive Road Map Renderer (Official OSM Tile Server + Standout Route Line + Pins A & B with ETA)
+    function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
 
@@ -1343,11 +1449,14 @@
           attributionControl: false
         }).setView([pickup ? pickup.lat : 23.3441, pickup ? pickup.lon : 85.3096], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-          maxZoom: 19
+        // Official OpenStreetMap tile layer - 100% Free, Zero API Keys
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(mapInstance);
       }
 
+      if (routeOutline) mapInstance.removeLayer(routeOutline);
       if (routePolyline) mapInstance.removeLayer(routePolyline);
       if (pickupMarker) mapInstance.removeLayer(pickupMarker);
       if (dropMarker) mapInstance.removeLayer(dropMarker);
@@ -1357,16 +1466,21 @@
         return;
       }
 
+      // 1. Pickup Pin 'A' (Green circle with letter A)
       const pickupIcon = L.divIcon({
         className: 'custom-pin',
-        html: '<div style="background:#10b981; width:14px; height:14px; border-radius:50%; border:2px solid #fff; box-shadow:0 0 8px rgba(0,0,0,0.6);"></div>',
-        iconSize: [14, 14]
+        html: '<div class="pin-badge pin-a">A</div>',
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
       });
 
+      // 2. Drop Pin 'B' (Yellow circle with ETA pill)
+      const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';
       const dropIcon = L.divIcon({
         className: 'custom-pin',
-        html: '<div style="background:#facc15; width:14px; height:14px; border-radius:50%; border:2px solid #000; box-shadow:0 0 8px rgba(0,0,0,0.6);"></div>',
-        iconSize: [14, 14]
+        html: `<div class="pin-b-wrap">${etaTag}<div class="pin-badge pin-b">B</div></div>`,
+        iconSize: [28, 28],
+        iconAnchor: [14, 14]
       });
 
       pickupMarker = L.marker([pickup.lat, pickup.lon], { icon: pickupIcon }).addTo(mapInstance);
@@ -1374,19 +1488,93 @@
 
       if (coordinates && coordinates.length > 0) {
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+
+        // High-contrast outer dark casing
+        routeOutline = L.polyline(latLngs, {
+          color: '#050811',
+          weight: 7,
+          opacity: 0.9,
+          lineJoin: 'round',
+          lineCap: 'round'
+        }).addTo(mapInstance);
+
+        // Vibrant nineO yellow core line
         routePolyline = L.polyline(latLngs, {
           color: '#facc15',
           weight: 4,
-          opacity: 0.9,
-          lineJoin: 'round'
+          opacity: 1.0,
+          lineJoin: 'round',
+          lineCap: 'round'
         }).addTo(mapInstance);
 
-        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [25, 25] });
+        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [35, 35] });
       } else {
-        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [25, 25] });
+        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [35, 35] });
       }
 
       setTimeout(() => { mapInstance.invalidateSize(); }, 200);
+    }
+
+    // Live Captain Motorcycle Animation Engine
+    async function startCaptainLiveTracking(pickup) {
+      if (!mapInstance || !pickup) return;
+
+      if (captainMotionTimer) clearInterval(captainMotionTimer);
+      if (captainMarker) mapInstance.removeLayer(captainMarker);
+      if (captainRoutePolyline) mapInstance.removeLayer(captainRoutePolyline);
+
+      // Place captain starting position ~900m away from pickup
+      const capStart = {
+        lat: pickup.lat + (Math.random() > 0.5 ? 0.007 : -0.007),
+        lon: pickup.lon + (Math.random() > 0.5 ? 0.007 : -0.007)
+      };
+
+      const bikeIcon = L.divIcon({
+        className: 'custom-pin',
+        html: '<div class="captain-bike-pin"><span style="transform:scaleX(-1);">🏍️</span><div class="bike-radar-ring"></div></div>',
+        iconSize: [32, 32],
+        iconAnchor: [16, 16]
+      });
+
+      captainMarker = L.marker([capStart.lat, capStart.lon], { icon: bikeIcon }).addTo(mapInstance);
+
+      // Fetch approach route from captain to rider pickup
+      try {
+        const url = `https://router.project-osrm.org/route/v1/driving/${capStart.lon},${capStart.lat};${pickup.lon},${pickup.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const json = await res.json();
+
+        if (json.routes && json.routes.length > 0) {
+          const path = json.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+
+          // Dashed blue approach path
+          captainRoutePolyline = L.polyline(path, {
+            color: '#38bdf8',
+            weight: 3.5,
+            dashArray: '6, 8',
+            opacity: 0.8
+          }).addTo(mapInstance);
+
+          mapInstance.fitBounds(captainRoutePolyline.getBounds(), { padding: [40, 40] });
+
+          // Animate motorcycle step-by-step along the street
+          let stepIndex = 0;
+          captainMotionTimer = setInterval(() => {
+            stepIndex++;
+            if (stepIndex < path.length) {
+              captainMarker.setLatLng(path[stepIndex]);
+              captainRoutePolyline.setLatLngs(path.slice(stepIndex));
+            } else {
+              clearInterval(captainMotionTimer);
+              captainMotionTimer = null;
+              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";
+              speakResponse("Captain Rahul Kumar has arrived at your pickup location.", "en");
+            }
+          }, 1800);
+        }
+      } catch (e) {
+        console.warn("Captain approach route error:", e);
+      }
     }
 
     async function triggerRouteEstimation() {
@@ -1405,7 +1593,7 @@
         document.getElementById("routeSubtitle").innerText = "Standard city fare estimate:";
         calculatedKm = 5.2;
         renderComparison(calculatedKm);
-        renderInteractiveMap(pickupCoords || { lat: 23.3441, lon: 85.3096 }, dropCoords || { lat: 23.3700, lon: 85.3350 }, null);
+        renderInteractiveMap(pickupCoords || { lat: 23.3441, lon: 85.3096 }, dropCoords || { lat: 23.3700, lon: 85.3350 }, null, 14);
         return;
       }
 
@@ -1416,14 +1604,17 @@
 
         if (data && data.routes && data.routes.length > 0) {
           calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
-          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates);
+          const etaMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));
+          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, etaMinutes);
         } else {
           calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
-          renderInteractiveMap(pickupCoords, dropCoords, null);
+          const fallbackEta = Math.max(5, Math.round((calculatedKm / 22) * 60));
+          renderInteractiveMap(pickupCoords, dropCoords, null, fallbackEta);
         }
       } catch (err) {
         calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
-        renderInteractiveMap(pickupCoords, dropCoords, null);
+        const fallbackEta = Math.max(5, Math.round((calculatedKm / 22) * 60));
+        renderInteractiveMap(pickupCoords, dropCoords, null, fallbackEta);
       }
       renderComparison(parseFloat(calculatedKm));
     }
@@ -1608,7 +1799,6 @@
         try {
           voiceRecognition.start();
         } catch (e) {
-          console.warn("Speech start issue:", e);
           try { voiceRecognition.stop(); } catch (err) {}
           setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);
         }
@@ -1934,6 +2124,19 @@
         callBtn.style.display = "none";
       }
 
+      // Reparent map into Captain Card & start motorcycle arrival tracking
+      const mapEl = document.getElementById("routeMap");
+      const capSlot = document.getElementById("captainMapSlot");
+      if (mapEl && capSlot) {
+        capSlot.appendChild(mapEl);
+        if (mapInstance) {
+          setTimeout(() => { 
+            mapInstance.invalidateSize(); 
+            if (pickupCoords) startCaptainLiveTracking(pickupCoords);
+          }, 250);
+        }
+      }
+
       startRidePolling(currentRideId);
     }
 
@@ -2011,6 +2214,20 @@
         clearInterval(rideStatusPollTimer);
         rideStatusPollTimer = null;
       }
+
+      // Stop tracking and clean animation layers
+      if (captainMotionTimer) {
+        clearInterval(captainMotionTimer);
+        captainMotionTimer = null;
+      }
+      if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);
+      if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);
+
+      // Return map to the booking tab slot
+      const mapEl = document.getElementById("routeMap");
+      const bookSlot = document.getElementById("bookingMapSlot");
+      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);
+
       document.getElementById("captainDisplayCard").style.display = "none";
       document.getElementById("tripCompleteCard").style.display = "none";
       document.getElementById("feedbackCard").style.display = "none";
