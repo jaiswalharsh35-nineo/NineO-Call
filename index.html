@@ -1211,6 +1211,43 @@
         { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
       );
     }
+    // Strict Ranchi Bounding Box: min_lon, max_lat, max_lon, min_lat
+    const RANCHI_VIEWBOX = "85.1800,23.4800,85.4600,23.2600";
+
+    async function geocodeLocation(text) {
+      if (!text) return null;
+
+      const match = text.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (match) return { lat: parseFloat(match[1]), lon: parseFloat(match[2]) };
+
+      const cleanQuery = text.replace(/,\s*ranchi.*$/i, "").trim();
+
+      const url = `https://nominatim.openstreetmap.org/search?` +
+        `format=json` +
+        `&q=${encodeURIComponent(cleanQuery)}` +
+        `&viewbox=${RANCHI_VIEWBOX}` +
+        `&bounded=1` +
+        `&countrycodes=in` +
+        `&limit=1`;
+
+      try {
+        const res = await fetch(url, {
+          headers: { "Accept-Language": "en" }
+        });
+        const data = await res.json();
+
+        if (data && data.length > 0) {
+          return {
+            lat: parseFloat(data[0].lat),
+            lon: parseFloat(data[0].lon)
+          };
+        }
+      } catch (err) {
+        console.error("Geocoding failed:", err);
+      }
+
+      return null;
+    }
 
     async function geocodeLocation(text) {
       if (!text) return null;
