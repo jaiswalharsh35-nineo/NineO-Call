@@ -207,7 +207,6 @@
       align-items: center;
     }
 
-    /* 16px font-size prevents mobile Safari/Chrome viewport zoom freezing */
     .input-box {
       width: 100%;
       background: var(--input-bg);
@@ -222,6 +221,58 @@
 
     .input-box:focus {
       border-color: var(--primary);
+    }
+
+    /* Auto-Suggest Dropdown Styling */
+    .suggestions-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background: #0b1120;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      margin-top: 5px;
+      max-height: 220px;
+      overflow-y: auto;
+      z-index: 99999;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.9);
+    }
+
+    .suggestion-item {
+      padding: 10px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      transition: background 0.15s;
+    }
+
+    .suggestion-item:last-child {
+      border-bottom: none;
+    }
+
+    .suggestion-item:hover, .suggestion-item:active {
+      background: rgba(250, 204, 21, 0.14);
+    }
+
+    .suggestion-title {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: #f8fafc;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .suggestion-desc {
+      font-size: 11px;
+      color: var(--text-dim);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .pass-balance-banner {
@@ -991,15 +1042,17 @@
       <div class="field">
         <label>Pickup Location</label>
         <div class="input-wrap">
-          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type any address" oninput="handlePickupChange()" onchange="triggerRouteEstimation()" style="padding-right: 75px;">
+          <input type="text" id="pickup" class="input-box" placeholder="Tap GPS or type any landmark" oninput="handlePickupChange()" onchange="triggerRouteEstimation()" style="padding-right: 75px;">
           <button type="button" class="gps-btn" onclick="getPreciseGPS()">📍 GPS</button>
         </div>
         <div class="gps-status" id="gpsStatus"></div>
       </div>
 
-      <div class="field">
+      <!-- Drop Destination Field with Dynamic Suggestions -->
+      <div class="field" style="position: relative;">
         <label>Drop Destination</label>
-        <input type="text" id="drop" class="input-box" placeholder="Type any chowk, street, or campus" oninput="handleDropChange()" onchange="triggerRouteEstimation()">
+        <input type="text" id="drop" class="input-box" placeholder="Type chowk, campus, or colony" oninput="handleDropChange()" onchange="triggerRouteEstimation()" autocomplete="off">
+        <div id="dropSuggestions" class="suggestions-dropdown"></div>
       </div>
 
       <div class="chips">
@@ -1007,6 +1060,7 @@
         <span class="chip" onclick="setDrop('Lalpur Chowk')">📍 Lalpur</span>
         <span class="chip" onclick="setDrop('Main Road Overbridge')">🏙️ Main Road</span>
         <span class="chip" onclick="setDrop('BIT Mesra Gate')">🎓 BIT Mesra</span>
+        <span class="chip" onclick="setDrop('IIM Ranchi')">🎓 IIM Ranchi</span>
         <span class="chip" onclick="setDrop('Birsa Munda Airport')">✈️ Airport</span>
       </div>
 
@@ -1029,7 +1083,7 @@
               <div class="choice-price" id="singlePrice">₹--</div>
               <div class="choice-desc" id="singleDesc">Pay cash or UPI to captain upon arrival.</div>
             </div>
-            <button class="btn-choice btn-choice-single" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
+            <button class="btn-choice btn-choice-single" id="btnBookSingle" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
           </div>
 
           <div class="choice-card highlight">
@@ -1039,7 +1093,7 @@
               <div class="choice-price" style="color:var(--primary);" id="passPrice">₹--</div>
               <div class="choice-desc" id="passDesc">Covers this trip + 24h quota.</div>
             </div>
-            <button class="btn-choice btn-choice-pass" onclick="buyRecommendedPass()">Get Pass ⚡</button>
+            <button class="btn-choice btn-choice-pass" id="btnBookPassOffer" onclick="buyRecommendedPass()">Get Pass ⚡</button>
           </div>
         </div>
 
@@ -1270,41 +1324,47 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
-    const COMPANY_NAME = "nineO Mobility";
-    const SUPPORT_WHATSAPP = "919525054247";
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";[cite: 1]
+    const COMPANY_NAME = "nineO Mobility";[cite: 1]
+    const SUPPORT_WHATSAPP = "919525054247";[cite: 1]
 
-    let selectedPassCode = "PASS_39";
-    let selectedAmount = 39;
-    let selectedPassName = "5 KM Pass (1 Ride)";
+    // Ranchi Operational Hub Reference (Albert Ekka Chowk / Firayalal)
+    const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };
+    const RANCHI_MAX_RADIUS_KM = 26.0; // Enforces maximum operational boundary
+
+    let selectedPassCode = "PASS_39";[cite: 1]
+    let selectedAmount = 39;[cite: 1]
+    let selectedPassName = "5 KM Pass (1 Ride)";[cite: 1]
     
-    // Dynamic Coordinates
+    // Dynamic Coordinates State
     let pickupCoords = null;
     let dropCoords = null;
     let lastResolvedPickupText = "";
     let lastResolvedDropText = "";
+    
     let routeDebounceTimer = null;
+    let suggestDebounceTimer = null;
 
-    let calculatedKm = 0;
-    let singleFareAmount = 25;
-    let currentDueFare = 0;
-    let userActivePass = null;
-    let currentRideId = null;
+    let calculatedKm = 0;[cite: 1]
+    let singleFareAmount = 25;[cite: 1]
+    let currentDueFare = 0;[cite: 1]
+    let userActivePass = null;[cite: 1]
+    let currentRideId = null;[cite: 1]
 
-    let rideStatusPollTimer = null;
+    let rideStatusPollTimer = null;[cite: 1]
 
-    let selectedRating = 5;
-    let selectedFeedbackTags = [];
+    let selectedRating = 5;[cite: 1]
+    let selectedFeedbackTags = [];[cite: 1]
 
-    let recommendedTier = "PASS_39";
-    let recommendedAmount = 39;
-    let recommendedName = "5 KM Pass";
-    let recommendedOverageFee = 0;
-    let recommendedOverageKm = 0;
+    let recommendedTier = "PASS_39";[cite: 1]
+    let recommendedAmount = 39;[cite: 1]
+    let recommendedName = "5 KM Pass";[cite: 1]
+    let recommendedOverageFee = 0;[cite: 1]
+    let recommendedOverageKm = 0;[cite: 1]
 
-    let freshTier = "PASS_129";
-    let freshAmt = 129;
-    let freshName = "19 KM Pro Pass";
+    let freshTier = "PASS_129";[cite: 1]
+    let freshAmt = 129;[cite: 1]
+    let freshName = "19 KM Pro Pass";[cite: 1]
 
     // Leaflet Map Instances
     let mapInstance = null;
@@ -1313,36 +1373,112 @@
     let pickupMarker = null;
     let dropMarker = null;
 
-    // Captain Animation Instances
+    // Captain Live Approach Instances
     let captainMarker = null;
     let captainRoutePolyline = null;
     let captainMotionTimer = null;
 
     try {
-      if (localStorage.getItem("nineo_phone")) {
-        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
-        handlePhoneInput();
+      if (localStorage.getItem("nineo_phone")) {[cite: 1]
+        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");[cite: 1]
+        handlePhoneInput();[cite: 1]
       }
     } catch (e) {
       console.warn("Storage restricted:", e);
     }
 
-    function switchTab(t) {
-      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';
-      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';
-      document.getElementById("passConfirmCard").style.display = 'none';
-      document.getElementById("tripCompleteCard").style.display = 'none';
-      document.getElementById("feedbackCard").style.display = 'none';
-      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');
-      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
+    // =========================================================================
+    // GEODETIC BOUNDARY CHECK (RANCHI OPERATIONAL ZONE)
+    // =========================================================================
+    function isWithinRanchiBoundary(coords) {
+      if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;
+      const distFromCenter = haversine(RANCHI_CENTER.lat, RANCHI_CENTER.lon, coords.lat, coords.lon);
+      return distFromCenter <= RANCHI_MAX_RADIUS_KM;
     }
 
-    // Input handlers invalidate stale coordinates immediately upon user modification
+    function switchTab(t) {[cite: 1]
+      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';[cite: 1]
+      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';[cite: 1]
+      document.getElementById("passConfirmCard").style.display = 'none';[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = 'none';[cite: 1]
+      document.getElementById("feedbackCard").style.display = 'none';[cite: 1]
+      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');[cite: 1]
+      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');[cite: 1]
+    }
+
+    // =========================================================================
+    // DROP SUGGESTIONS & AUTOCOMPLETE ENGINE
+    // =========================================================================
     function handleDropChange() {
       dropCoords = null;
       lastResolvedDropText = "";
+      const val = document.getElementById("drop").value.trim();
+      const dropSugBox = document.getElementById("dropSuggestions");
+
+      if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);
+
+      if (val.length < 2) {
+        dropSugBox.style.display = "none";
+        dropSugBox.innerHTML = "";
+      } else {
+        suggestDebounceTimer = setTimeout(() => {
+          fetchDropSuggestions(val);
+        }, 220);
+      }
+
       debounceRouting();
     }
+
+    async function fetchDropSuggestions(query) {
+      const dropSugBox = document.getElementById("dropSuggestions");
+      try {
+        // Photon live search engine biased toward Ranchi coordinates
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=5`;
+        const res = await fetch(url);
+        const data = await res.json();
+
+        if (data && data.features && data.features.length > 0) {
+          dropSugBox.innerHTML = "";
+          data.features.forEach(f => {
+            const [lon, lat] = f.geometry.coordinates;
+            const p = f.properties;
+            const title = p.name || p.street || query;
+            const desc = [p.street, p.district || p.suburb || p.city, "Ranchi"].filter(Boolean).join(", ");
+
+            const item = document.createElement("div");
+            item.className = "suggestion-item";
+            item.innerHTML = `<div class="suggestion-title">📍 ${title}</div><div class="suggestion-desc">${desc}</div>`;
+            item.onclick = () => {
+              selectDropSuggestion(title, desc, lat, lon);
+            };
+            dropSugBox.appendChild(item);
+          });
+          dropSugBox.style.display = "block";
+        } else {
+          dropSugBox.style.display = "none";
+        }
+      } catch (e) {
+        dropSugBox.style.display = "none";
+      }
+    }
+
+    function selectDropSuggestion(title, desc, lat, lon) {
+      const dropInput = document.getElementById("drop");
+      dropInput.value = title;
+      dropCoords = { lat, lon };
+      lastResolvedDropText = title;
+      document.getElementById("dropSuggestions").style.display = "none";
+      triggerRouteEstimation();
+    }
+
+    // Close suggestions dropdown when tapping outside
+    document.addEventListener("click", (e) => {
+      const dropInput = document.getElementById("drop");
+      const dropSugBox = document.getElementById("dropSuggestions");
+      if (dropSugBox && !dropInput.contains(e.target) && !dropSugBox.contains(e.target)) {
+        dropSugBox.style.display = "none";
+      }
+    });
 
     function handlePickupChange() {
       pickupCoords = null;
@@ -1350,58 +1486,59 @@
       debounceRouting();
     }
 
-    function setDrop(v) {
-      document.getElementById("drop").value = v;
+    function setDrop(v) {[cite: 1]
+      document.getElementById("drop").value = v;[cite: 1]
       dropCoords = null;
       lastResolvedDropText = "";
-      triggerRouteEstimation();
+      document.getElementById("dropSuggestions").style.display = "none";
+      triggerRouteEstimation();[cite: 1]
     }
 
-    function setPickup(v) {
-      document.getElementById("pickup").value = v;
+    function setPickup(v) {[cite: 1]
+      document.getElementById("pickup").value = v;[cite: 1]
       pickupCoords = null;
       lastResolvedPickupText = "";
-      triggerRouteEstimation();
+      triggerRouteEstimation();[cite: 1]
     }
 
     function debounceRouting() {
       if (routeDebounceTimer) clearTimeout(routeDebounceTimer);
       routeDebounceTimer = setTimeout(() => {
         triggerRouteEstimation();
-      }, 550);
+      }, 500);
     }
 
-    async function handlePhoneInput() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
-      const banner = document.getElementById("activePassBanner");
+    async function handlePhoneInput() {[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      const banner = document.getElementById("activePassBanner");[cite: 1]
 
-      if (phone.length === 10) {
+      if (phone.length === 10) {[cite: 1]
         try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
         try {
-          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
-          const data = await res.json();
+          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
+          const data = await res.json();[cite: 1]
 
-          if (data.hasActivePass) {
-            userActivePass = data;
-            banner.style.display = "block";
-            banner.innerHTML = `🎟️ <b>Active Pass Detected:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) remaining (Valid ~${data.hoursLeft}h)`;
+          if (data.hasActivePass) {[cite: 1]
+            userActivePass = data;[cite: 1]
+            banner.style.display = "block";[cite: 1]
+            banner.innerHTML = `🎟️ <b>Active Pass Detected:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) remaining (Valid ~${data.hoursLeft}h)`;[cite: 1]
           } else {
-            userActivePass = null;
-            banner.style.display = "none";
+            userActivePass = null;[cite: 1]
+            banner.style.display = "none";[cite: 1]
           }
         } catch (e) {
-          userActivePass = null;
+          userActivePass = null;[cite: 1]
         }
-        if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm));
+        if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm));[cite: 1]
       } else {
-        banner.style.display = "none";
-        userActivePass = null;
+        banner.style.display = "none";[cite: 1]
+        userActivePass = null;[cite: 1]
       }
     }
 
-    function getPreciseGPS() {
-      const p = document.getElementById("pickup");
-      const s = document.getElementById("gpsStatus");
+    function getPreciseGPS() {[cite: 1]
+      const p = document.getElementById("pickup");[cite: 1]
+      const s = document.getElementById("gpsStatus");[cite: 1]
       s.innerText = "📍 Pinning GPS satellites...";
 
       if (!navigator.geolocation) {
@@ -1409,21 +1546,30 @@
         return;
       }
 
-      navigator.geolocation.getCurrentPosition(
-        async (pos) => {
-          pickupCoords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+      navigator.geolocation.getCurrentPosition([cite: 1]
+        async (pos) => {[cite: 1]
+          const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+
+          // Verify if user's current GPS is within Ranchi
+          if (!isWithinRanchiBoundary(coords)) {
+            s.innerHTML = "<b style='color:var(--primary-accent);'>⚠️ GPS shows you are outside Ranchi operational area.</b>";
+            pickupCoords = null;
+            return;
+          }
+
+          pickupCoords = coords;
           lastResolvedPickupText = `${pickupCoords.lat},${pickupCoords.lon}`;
-          const acc = Math.round(pos.coords.accuracy);
-          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;
-          s.innerText = `📍 GPS Locked (±${acc}m)`;
-          triggerRouteEstimation();
+          const acc = Math.round(pos.coords.accuracy);[cite: 1]
+          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;[cite: 1]
+          s.innerText = `📍 GPS Locked in Ranchi (±${acc}m)`;
+          triggerRouteEstimation();[cite: 1]
 
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);
-            const d = await res.json();
-            const a = d.address || {};
-            const street = a.road || a.suburb || a.neighbourhood || "";
-            const landmark = a.building || a.amenity || "";
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);[cite: 1]
+            const d = await res.json();[cite: 1]
+            const a = d.address || {};[cite: 1]
+            const street = a.road || a.suburb || a.neighbourhood || "";[cite: 1]
+            const landmark = a.building || a.amenity || "";[cite: 1]
             const resolvedName = [landmark, street].filter(Boolean).join(", ");
             if (resolvedName) p.value = resolvedName;
           } catch(e) {}
@@ -1435,7 +1581,7 @@
       );
     }
 
-    // Fully Dynamic Geocoder (Photon by Komoot with Ranchi Spatial Biasing + Nominatim Fallback)
+    // Dynamic Geocoder with Priority Spatial Search
     async function geocodeLocation(rawText) {
       if (!rawText || !rawText.trim()) return null;
       const query = rawText.trim();
@@ -1445,20 +1591,18 @@
         return { lat: parseFloat(coordMatch[1]), lon: parseFloat(coordMatch[2]) };
       }
 
-      // 1. Primary: Photon OSM Geocoder (Fast, typotolerant, biased to Ranchi, no 1-req/sec block)
+      // 1. Primary: Photon OSM Geocoder (Biased to Ranchi)
       try {
-        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=23.3441&lon=85.3096&limit=1`;
+        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=1`;
         const res = await fetch(photonUrl);
         const data = await res.json();
         if (data && data.features && data.features.length > 0) {
           const [lon, lat] = data.features[0].geometry.coordinates;
           return { lat, lon };
         }
-      } catch (e) {
-        console.warn("Photon lookup failed:", e);
-      }
+      } catch (e) {}
 
-      // 2. Secondary Fallback: Nominatim bounded to greater Ranchi
+      // 2. Secondary: Nominatim bounded strictly to Ranchi
       try {
         const viewbox = "85.10,23.55,85.55,23.15";
         const nomQuery = query.toLowerCase().includes("ranchi") ? query : `${query}, Ranchi`;
@@ -1468,14 +1612,11 @@
         if (data && data.length > 0) {
           return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
         }
-      } catch (e) {
-        console.warn("Nominatim lookup failed:", e);
-      }
+      } catch (e) {}
 
       return null;
     }
 
-    // Interactive Road Map Renderer (Official OSM Tile Server + Standout Route Line + Pins A & B with ETA)
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
@@ -1486,7 +1627,7 @@
         mapInstance = L.map('routeMap', {
           zoomControl: false,
           attributionControl: false
-        }).setView([pickup ? pickup.lat : 23.3441, pickup ? pickup.lon : 85.3096], 13);
+        }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
@@ -1504,7 +1645,6 @@
         return;
       }
 
-      // 1. Pickup Pin 'A' (Green circle with letter A)
       const pickupIcon = L.divIcon({
         className: 'custom-pin',
         html: '<div class="pin-badge pin-a">A</div>',
@@ -1512,7 +1652,6 @@
         iconAnchor: [14, 14]
       });
 
-      // 2. Drop Pin 'B' (Yellow circle with ETA pill)
       const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';
       const dropIcon = L.divIcon({
         className: 'custom-pin',
@@ -1527,7 +1666,6 @@
       if (coordinates && coordinates.length > 0) {
         const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
 
-        // High-contrast outer dark casing
         routeOutline = L.polyline(latLngs, {
           color: '#050811',
           weight: 7,
@@ -1536,7 +1674,6 @@
           lineCap: 'round'
         }).addTo(mapInstance);
 
-        // Vibrant nineO yellow core line
         routePolyline = L.polyline(latLngs, {
           color: '#facc15',
           weight: 4,
@@ -1553,7 +1690,6 @@
       setTimeout(() => { mapInstance.invalidateSize(); }, 200);
     }
 
-    // Live Captain Motorcycle Animation Engine
     async function startCaptainLiveTracking(pickup) {
       if (!mapInstance || !pickup) return;
 
@@ -1611,22 +1747,19 @@
       }
     }
 
-    // Dynamic Route Engine (Calculates live turn-by-turn road distance on every attempt)
+    // Dynamic Route Engine with Operational Geofence Validation
     async function triggerRouteEstimation() {
       const pVal = document.getElementById("pickup").value.trim();
       const dVal = document.getElementById("drop").value.trim();
       if (!pVal || !dVal) return;
 
       const card = document.getElementById("routeCard");
+      const subtitle = document.getElementById("routeSubtitle");
       card.style.display = "block";
-      document.getElementById("routeSubtitle").innerText = "Finding route & calculating road distance...";
+      subtitle.innerText = "Finding route & calculating road distance...";
 
-      if (pVal !== lastResolvedPickupText) {
-        pickupCoords = null;
-      }
-      if (dVal !== lastResolvedDropText) {
-        dropCoords = null;
-      }
+      if (pVal !== lastResolvedPickupText) pickupCoords = null;
+      if (dVal !== lastResolvedDropText) dropCoords = null;
 
       if (!pickupCoords) {
         pickupCoords = await geocodeLocation(pVal);
@@ -1639,10 +1772,32 @@
 
       if (!pickupCoords || !dropCoords) {
         const missing = !pickupCoords ? `Pickup: "${pVal}"` : `Drop: "${dVal}"`;
-        document.getElementById("routeSubtitle").innerText = `⚠️ Could not pinpoint ${missing}. Check spelling.`;
+        subtitle.innerText = `⚠️ Could not locate ${missing}. Please pick a landmark.`;
         return;
       }
 
+      // 🛑 STRICT RANCHI GEOFENCE CHECK
+      const isPickupInRanchi = isWithinRanchiBoundary(pickupCoords);
+      const isDropInRanchi = isWithinRanchiBoundary(dropCoords);
+
+      if (!isPickupInRanchi || !isDropInRanchi) {
+        const outPlace = !isPickupInRanchi ? "Pickup location" : "Destination";
+        subtitle.innerHTML = `<b style="color:var(--primary-accent);">🚫 Outside Operating Zone:</b> ${outPlace} is beyond Ranchi limits (max 26km from center). nineO operates only within Ranchi.`;
+        document.getElementById("btnBookDirect").disabled = true;
+        document.getElementById("btnBookSingle").disabled = true;
+        document.getElementById("btnBookPassOffer").disabled = true;
+        document.getElementById("routeKm").innerText = "--";
+        document.getElementById("singlePrice").innerText = "₹--";
+        document.getElementById("passPrice").innerText = "₹--";
+        return;
+      }
+
+      // Re-enable booking buttons when locations are valid and within Ranchi
+      document.getElementById("btnBookDirect").disabled = false;
+      document.getElementById("btnBookSingle").disabled = false;
+      document.getElementById("btnBookPassOffer").disabled = false;
+
+      // Calculate live road route via OSRM
       try {
         const routeUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=full&geometries=geojson`;
         const res = await fetch(routeUrl);
@@ -1651,7 +1806,7 @@
         if (data && data.routes && data.routes.length > 0) {
           calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
           const etaMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));
-          document.getElementById("routeSubtitle").innerText = "Live route locked:";
+          subtitle.innerText = "Live route locked in Ranchi:";
           renderComparison(parseFloat(calculatedKm));
           renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, etaMinutes);
         } else {
@@ -1668,185 +1823,185 @@
       }
     }
 
-    function haversine(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    function haversine(lat1, lon1, lat2, lon2) {[cite: 1]
+      const R = 6371;[cite: 1]
+      const dLat = (lat2 - lat1) * Math.PI / 180;[cite: 1]
+      const dLon = (lon2 - lon1) * Math.PI / 180;[cite: 1]
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +[cite: 1]
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *[cite: 1]
+                Math.sin(dLon/2) * Math.sin(dLon/2);[cite: 1]
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));[cite: 1]
     }
 
-    function renderComparison(km) {
-      document.getElementById("routeKm").innerText = km;
-      document.getElementById("btnBookDirect").style.display = "none";
-      document.getElementById("routeSubtitle").innerText = "Choose booking mode:";
+    function renderComparison(km) {[cite: 1]
+      document.getElementById("routeKm").innerText = km;[cite: 1]
+      document.getElementById("btnBookDirect").style.display = "none";[cite: 1]
+      document.getElementById("routeSubtitle").innerText = "Choose booking mode:";[cite: 1]
 
-      const stdGrid = document.getElementById("standardGrid");
-      const passCard = document.getElementById("activePassCard");
-      const passDue = document.getElementById("activePassDue");
-      const passExp = document.getElementById("activePassExplanation");
-      const btnBookPass = document.getElementById("btnBookActivePass");
-      const upsellBox = document.getElementById("passUpsellBox");
-      const upsellText = document.getElementById("passUpsellText");
-      const btnUpsell = document.getElementById("btnBuyFreshPass");
+      const stdGrid = document.getElementById("standardGrid");[cite: 1]
+      const passCard = document.getElementById("activePassCard");[cite: 1]
+      const passDue = document.getElementById("activePassDue");[cite: 1]
+      const passExp = document.getElementById("activePassExplanation");[cite: 1]
+      const btnBookPass = document.getElementById("btnBookActivePass");[cite: 1]
+      const upsellBox = document.getElementById("passUpsellBox");[cite: 1]
+      const upsellText = document.getElementById("passUpsellText");[cite: 1]
+      const btnUpsell = document.getElementById("btnBuyFreshPass");[cite: 1]
 
-      singleFareAmount = Math.max(25, Math.round(km * 9));
-      document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
+      singleFareAmount = Math.max(25, Math.round(km * 9));[cite: 1]
+      document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;[cite: 1]
 
-      if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
-        stdGrid.style.display = "none";
-        passCard.style.display = "block";
+      if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {[cite: 1]
+        stdGrid.style.display = "none";[cite: 1]
+        passCard.style.display = "block";[cite: 1]
 
-        if (km <= userActivePass.remainingKm) {
-          currentDueFare = 0;
-          passDue.innerText = "₹0";
-          passDue.style.color = "var(--green)";
-          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
-          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain for today.`;
-          btnBookPass.innerText = "Confirm Pass Ride (₹0) ➔";
-          upsellBox.style.display = "none";
+        if (km <= userActivePass.remainingKm) {[cite: 1]
+          currentDueFare = 0;[cite: 1]
+          passDue.innerText = "₹0";[cite: 1]
+          passDue.style.color = "var(--green)";[cite: 1]
+          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);[cite: 1]
+          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b> Deducts 1 ride. <b>${leftAfter} KM</b> will remain for today.`;[cite: 1]
+          btnBookPass.innerText = "Confirm Pass Ride (₹0) ➔";[cite: 1]
+          upsellBox.style.display = "none";[cite: 1]
         } else {
-          const coveredKm = userActivePass.remainingKm;
-          const extraKm = parseFloat((km - coveredKm).toFixed(1));
-          currentDueFare = Math.round(extraKm * 9);
+          const coveredKm = userActivePass.remainingKm;[cite: 1]
+          const extraKm = parseFloat((km - coveredKm).toFixed(1));[cite: 1]
+          currentDueFare = Math.round(extraKm * 9);[cite: 1]
 
-          passDue.innerText = `₹${currentDueFare}`;
-          passDue.style.color = "var(--primary)";
-          passExp.innerHTML = `⚠️ <b>${coveredKm} KM covered free by your pass.</b><br>Remaining <b>${extraKm} KM</b> billed at ₹9/km overage = <b>₹${currentDueFare}</b> cash/UPI to captain upon drop.`;
-          btnBookPass.innerText = `Confirm Ride (₹${currentDueFare} Due) ➔`;
+          passDue.innerText = `₹${currentDueFare}`;[cite: 1]
+          passDue.style.color = "var(--primary)";[cite: 1]
+          passExp.innerHTML = `⚠️ <b>${coveredKm} KM covered free by your pass.</b><br>Remaining <b>${extraKm} KM</b> billed at ₹9/km overage = <b>₹${currentDueFare}</b> cash/UPI to captain upon drop.`;[cite: 1]
+          btnBookPass.innerText = `Confirm Ride (₹${currentDueFare} Due) ➔`;[cite: 1]
 
-          if (km <= 5.0) {
-            freshTier = "PASS_39"; freshAmt = 39; freshName = "5 KM Pass";
-          } else if (km <= 9.0) {
-            freshTier = "PASS_69"; freshAmt = 69; freshName = "9 KM Super Pass";
+          if (km <= 5.0) {[cite: 1]
+            freshTier = "PASS_39"; freshAmt = 39; freshName = "5 KM Pass";[cite: 1]
+          } else if (km <= 9.0) {[cite: 1]
+            freshTier = "PASS_69"; freshAmt = 69; freshName = "9 KM Super Pass";[cite: 1]
           } else {
-            freshTier = "PASS_129"; freshAmt = 129; freshName = "19 KM Pro Pass";
+            freshTier = "PASS_129"; freshAmt = 129; freshName = "19 KM Pro Pass";[cite: 1]
           }
 
-          const diff = freshAmt - currentDueFare;
-          upsellBox.style.display = "block";
+          const diff = freshAmt - currentDueFare;[cite: 1]
+          upsellBox.style.display = "block";[cite: 1]
 
-          if (diff <= 0) {
-            upsellText.innerHTML = `Paying <b>₹${currentDueFare}</b> in overage is higher than a fresh <b>${freshName} (₹${freshAmt})</b>! We recommend activating a new pass.`;
-            btnUpsell.innerText = `Switch to ${freshName} (₹${freshAmt}) ⚡`;
+          if (diff <= 0) {[cite: 1]
+            upsellText.innerHTML = `Paying <b>₹${currentDueFare}</b> in overage is higher than a fresh <b>${freshName} (₹${freshAmt})</b>! We recommend activating a new pass.`;[cite: 1]
+            btnUpsell.innerText = `Switch to ${freshName} (₹${freshAmt}) ⚡`;[cite: 1]
           } else {
-            const remainingOnFresh = Math.max(0, (freshTier === "PASS_129" ? 19 : freshTier === "PASS_69" ? 9 : 5) - km).toFixed(1);
-            upsellText.innerHTML = `Taking another ride today? For just <b>₹${diff} more</b> (₹${freshAmt} total), activate a fresh <b>${freshName}</b>. Covers this entire trip and leaves you with <b>${remainingOnFresh} KM & extra rides</b> for 24h!`;
-            btnUpsell.innerText = `Get Fresh ${freshName} for ₹${freshAmt} ⚡`;
+            const remainingOnFresh = Math.max(0, (freshTier === "PASS_129" ? 19 : freshTier === "PASS_69" ? 9 : 5) - km).toFixed(1);[cite: 1]
+            upsellText.innerHTML = `Taking another ride today? For just <b>₹${diff} more</b> (₹${freshAmt} total), activate a fresh <b>${freshName}</b>. Covers this entire trip and leaves you with <b>${remainingOnFresh} KM & extra rides</b> for 24h!`;[cite: 1]
+            btnUpsell.innerText = `Get Fresh ${freshName} for ₹${freshAmt} ⚡`;[cite: 1]
           }
         }
       } else {
-        passCard.style.display = "none";
-        stdGrid.style.display = "grid";
+        passCard.style.display = "none";[cite: 1]
+        stdGrid.style.display = "grid";[cite: 1]
 
-        const pTitle = document.getElementById("passCardTitle");
-        const pPrice = document.getElementById("passPrice");
-        const pDesc = document.getElementById("passDesc");
+        const pTitle = document.getElementById("passCardTitle");[cite: 1]
+        const pPrice = document.getElementById("passPrice");[cite: 1]
+        const pDesc = document.getElementById("passDesc");[cite: 1]
 
-        if (km <= 5.0) {
-          recommendedTier = "PASS_39"; recommendedAmount = 39; recommendedName = "5 KM Pass (1 Ride)";
-          recommendedOverageKm = 0; recommendedOverageFee = 0;
-          pTitle.innerText = "5 KM Pass";
-          pPrice.innerText = "₹39";
-          pDesc.innerHTML = "Covers this trip in full. Zero extra cash.";
-        } else if (km <= 9.0) {
-          recommendedTier = "PASS_69"; recommendedAmount = 69; recommendedName = "9 KM Super (2 Rides)";
-          recommendedOverageKm = 0; recommendedOverageFee = 0;
-          pTitle.innerText = "9 KM Super";
-          pPrice.innerText = "₹69";
-          pDesc.innerHTML = "Covers this trip + 2nd ride within 24h.";
-        } else if (km <= 19.0) {
-          recommendedTier = "PASS_129"; recommendedAmount = 129; recommendedName = "19 KM Pro (3 Rides)";
-          recommendedOverageKm = 0; recommendedOverageFee = 0;
-          pTitle.innerText = "19 KM Pro";
-          pPrice.innerText = "₹129";
-          pDesc.innerHTML = "Covers this trip in full + up to 2 more trips today.";
+        if (km <= 5.0) {[cite: 1]
+          recommendedTier = "PASS_39"; recommendedAmount = 39; recommendedName = "5 KM Pass (1 Ride)";[cite: 1]
+          recommendedOverageKm = 0; recommendedOverageFee = 0;[cite: 1]
+          pTitle.innerText = "5 KM Pass";[cite: 1]
+          pPrice.innerText = "₹39";[cite: 1]
+          pDesc.innerHTML = "Covers this trip in full. Zero extra cash.";[cite: 1]
+        } else if (km <= 9.0) {[cite: 1]
+          recommendedTier = "PASS_69"; recommendedAmount = 69; recommendedName = "9 KM Super (2 Rides)";[cite: 1]
+          recommendedOverageKm = 0; recommendedOverageFee = 0;[cite: 1]
+          pTitle.innerText = "9 KM Super";[cite: 1]
+          pPrice.innerText = "₹69";[cite: 1]
+          pDesc.innerHTML = "Covers this trip + 2nd ride within 24h.";[cite: 1]
+        } else if (km <= 19.0) {[cite: 1]
+          recommendedTier = "PASS_129"; recommendedAmount = 129; recommendedName = "19 KM Pro (3 Rides)";[cite: 1]
+          recommendedOverageKm = 0; recommendedOverageFee = 0;[cite: 1]
+          pTitle.innerText = "19 KM Pro";[cite: 1]
+          pPrice.innerText = "₹129";[cite: 1]
+          pDesc.innerHTML = "Covers this trip in full + up to 2 more trips today.";[cite: 1]
         } else {
-          recommendedTier = "PASS_129";
-          recommendedAmount = 129;
-          recommendedName = "19 KM Pro (3 Rides)";
-          recommendedOverageKm = parseFloat((km - 19.0).toFixed(1));
-          recommendedOverageFee = Math.round(recommendedOverageKm * 9);
-          const totalCostWithPass = 129 + recommendedOverageFee;
-          const savings = singleFareAmount - totalCostWithPass;
+          recommendedTier = "PASS_129";[cite: 1]
+          recommendedAmount = 129;[cite: 1]
+          recommendedName = "19 KM Pro (3 Rides)";[cite: 1]
+          recommendedOverageKm = parseFloat((km - 19.0).toFixed(1));[cite: 1]
+          recommendedOverageFee = Math.round(recommendedOverageKm * 9);[cite: 1]
+          const totalCostWithPass = 129 + recommendedOverageFee;[cite: 1]
+          const savings = singleFareAmount - totalCostWithPass;[cite: 1]
 
-          pTitle.innerText = "19 KM Pro + Overage";
-          pPrice.innerHTML = `₹${totalCostWithPass}`;
-          pDesc.innerHTML = `<b>₹129 Pass</b> (19 km) + <b>₹${recommendedOverageFee}</b> extra (${recommendedOverageKm} km @ ₹9/km).<br><span style="color:var(--green); font-weight:800;">Save ₹${savings} with Pass!</span>`;
+          pTitle.innerText = "19 KM Pro + Overage";[cite: 1]
+          pPrice.innerHTML = `₹${totalCostWithPass}`;[cite: 1]
+          pDesc.innerHTML = `<b>₹129 Pass</b> (19 km) + <b>₹${recommendedOverageFee}</b> extra (${recommendedOverageKm} km @ ₹9/km).<br><span style="color:var(--green); font-weight:800;">Save ₹${savings} with Pass!</span>`;[cite: 1]
         }
       }
     }
 
-    function buyRecommendedPass() {
-      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);
-      openPaymentModal();
+    function buyRecommendedPass() {[cite: 1]
+      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);[cite: 1]
+      openPaymentModal();[cite: 1]
     }
 
-    function buyFreshPassOption() {
-      selectPass(document.getElementById(`card_${freshTier}`), freshTier, freshAmt, freshName);
-      openPaymentModal();
+    function buyFreshPassOption() {[cite: 1]
+      selectPass(document.getElementById(`card_${freshTier}`), freshTier, freshAmt, freshName);[cite: 1]
+      openPaymentModal();[cite: 1]
     }
 
     // =========================================================================
-    // 🎙️ VOICE AI ENGINE (INDIAN ENGLISH / HINGLISH)
+    // 🎙️ VOICE AI ENGINE (INDIAN ENGLISH / HINGLISH)[cite: 1]
     // =========================================================================
-    let voiceRecognition = null;
-    let isVoiceActive = false;
+    let voiceRecognition = null;[cite: 1]
+    let isVoiceActive = false;[cite: 1]
 
-    function initVoiceAI() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
+    function initVoiceAI() {[cite: 1]
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;[cite: 1]
+      if (!SpeechRecognition) {[cite: 1]
         document.getElementById("voiceStatusText").innerText = "⚠️ Voice input not supported on this browser";
         document.getElementById("voiceSubText").innerText = "Use Google Chrome on Android or Safari on iOS";
         return;
       }
 
       try {
-        voiceRecognition = new SpeechRecognition();
-        voiceRecognition.lang = 'en-IN';
-        voiceRecognition.interimResults = false;
-        voiceRecognition.continuous = false;
+        voiceRecognition = new SpeechRecognition();[cite: 1]
+        voiceRecognition.lang = 'en-IN';[cite: 1]
+        voiceRecognition.interimResults = false;[cite: 1]
+        voiceRecognition.continuous = false;[cite: 1]
 
-        voiceRecognition.onstart = () => {
-          isVoiceActive = true;
-          document.getElementById("voiceMicBtn").classList.add("listening");
+        voiceRecognition.onstart = () => {[cite: 1]
+          isVoiceActive = true;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.add("listening");[cite: 1]
           document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";
           document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";
         };
 
-        voiceRecognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;
-          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;
-          parseVoiceIntentWithBackend(transcript);
+        voiceRecognition.onresult = (event) => {[cite: 1]
+          const transcript = event.results[0][0].transcript;[cite: 1]
+          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;[cite: 1]
+          parseVoiceIntentWithBackend(transcript);[cite: 1]
         };
 
-        voiceRecognition.onerror = (event) => {
-          isVoiceActive = false;
-          document.getElementById("voiceMicBtn").classList.remove("listening");
-          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");
-          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";
+        voiceRecognition.onerror = (event) => {[cite: 1]
+          isVoiceActive = false;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
+          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");[cite: 1]
+          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";[cite: 1]
         };
 
-        voiceRecognition.onend = () => {
-          isVoiceActive = false;
-          document.getElementById("voiceMicBtn").classList.remove("listening");
+        voiceRecognition.onend = () => {[cite: 1]
+          isVoiceActive = false;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
         };
       } catch (err) {
         console.error("Speech init error:", err);
       }
     }
 
-    function toggleVoiceRecognition() {
-      if (!voiceRecognition) initVoiceAI();
-      if (!voiceRecognition) return;
+    function toggleVoiceRecognition() {[cite: 1]
+      if (!voiceRecognition) initVoiceAI();[cite: 1]
+      if (!voiceRecognition) return;[cite: 1]
 
-      if (isVoiceActive) {
-        try { voiceRecognition.stop(); } catch (e) {}
+      if (isVoiceActive) {[cite: 1]
+        try { voiceRecognition.stop(); } catch (e) {}[cite: 1]
       } else {
         try {
-          voiceRecognition.start();
+          voiceRecognition.start();[cite: 1]
         } catch (e) {
           try { voiceRecognition.stop(); } catch (err) {}
           setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);
@@ -1854,22 +2009,22 @@
       }
     }
 
-    async function parseVoiceIntentWithBackend(rawText) {
-      const subText = document.getElementById("voiceSubText");
+    async function parseVoiceIntentWithBackend(rawText) {[cite: 1]
+      const subText = document.getElementById("voiceSubText");[cite: 1]
       const lower = rawText.toLowerCase().trim();
 
-      if (lower.includes("pass") || lower.includes("card")) {
-        if (lower.includes("69") || lower.includes("super")) {
-          selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-          switchTab('pass'); openPaymentModal(); return;
+      if (lower.includes("pass") || lower.includes("card")) {[cite: 1]
+        if (lower.includes("69") || lower.includes("super")) {[cite: 1]
+          selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
-        if (lower.includes("129") || lower.includes("pro")) {
-          selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
-          switchTab('pass'); openPaymentModal(); return;
+        if (lower.includes("129") || lower.includes("pro")) {[cite: 1]
+          selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
-        if (lower.includes("39")) {
-          selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
-          switchTab('pass'); openPaymentModal(); return;
+        if (lower.includes("39")) {[cite: 1]
+          selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
       }
 
@@ -1888,28 +2043,28 @@
 
       subText.innerText = "🧠 Analyzing transit route...";
       try {
-        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;
-        const res = await fetch(url);
-        const json = await res.json();
+        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;[cite: 1]
+        const res = await fetch(url);[cite: 1]
+        const json = await res.json();[cite: 1]
 
-        if (json.status === "SUCCESS" && json.data) {
-          const { pickup, drop, passTier } = json.data;
+        if (json.status === "SUCCESS" && json.data) {[cite: 1]
+          const { pickup, drop, passTier } = json.data;[cite: 1]
 
-          if (passTier) {
-            const tierMap = {
-              "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
-              "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },
-              "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }
+          if (passTier) {[cite: 1]
+            const tierMap = {[cite: 1]
+              "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },[cite: 1]
+              "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },[cite: 1]
+              "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }[cite: 1]
             };
-            const p = tierMap[passTier] || tierMap["PASS_69"];
-            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
-            switchTab('pass');
-            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
-            setTimeout(() => openPaymentModal(), 800);
-            return;
+            const p = tierMap[passTier] || tierMap["PASS_69"];[cite: 1]
+            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);[cite: 1]
+            switchTab('pass');[cite: 1]
+            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');[cite: 1]
+            setTimeout(() => openPaymentModal(), 800);[cite: 1]
+            return;[cite: 1]
           }
 
-          if (drop) {
+          if (drop) {[cite: 1]
             applyTransitLocations(pickup, drop);
             return;
           }
@@ -1934,242 +2089,247 @@
     }
 
     function applyTransitLocations(pickup, drop) {
-      switchTab('book');
+      switchTab('book');[cite: 1]
       const dTitle = toTitleCase(drop);
-      document.getElementById("drop").value = dTitle;
+      document.getElementById("drop").value = dTitle;[cite: 1]
       dropCoords = null;
       lastResolvedDropText = "";
 
-      if (pickup) {
+      if (pickup) {[cite: 1]
         const pTitle = toTitleCase(pickup);
-        document.getElementById("pickup").value = pTitle;
+        document.getElementById("pickup").value = pTitle;[cite: 1]
         pickupCoords = null;
         lastResolvedPickupText = "";
-        triggerRouteEstimation();
-        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');
+        triggerRouteEstimation();[cite: 1]
+        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');[cite: 1]
       } else {
-        getPreciseGPS();
+        getPreciseGPS();[cite: 1]
         speakResponse(`Destination set to ${dTitle}. Locking your current location.`, 'en');
       }
-      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;
+      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;[cite: 1]
     }
 
     function toTitleCase(str) {
       return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
     }
 
-    function speakResponse(msg, lang = 'en') {
-      if (!('speechSynthesis' in window)) return;
+    function speakResponse(msg, lang = 'en') {[cite: 1]
+      if (!('speechSynthesis' in window)) return;[cite: 1]
       try {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(msg);
-        utter.rate = 1.0;
-        utter.pitch = 1.0;
-        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
-        window.speechSynthesis.speak(utter);
+        window.speechSynthesis.cancel();[cite: 1]
+        const utter = new SpeechSynthesisUtterance(msg);[cite: 1]
+        utter.rate = 1.0;[cite: 1]
+        utter.pitch = 1.0;[cite: 1]
+        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';[cite: 1]
+        window.speechSynthesis.speak(utter);[cite: 1]
       } catch (e) {}
     }
 
     // =========================================================================
-    // RAZORPAY GATEWAY & IN-APP CONFIRMATION DISPLAY
+    // RAZORPAY GATEWAY & IN-APP CONFIRMATION DISPLAY[cite: 1]
     // =========================================================================
-    async function openPaymentModal() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
-      if (phone.length !== 10) {
-        alert("Please enter a valid 10-digit WhatsApp number first.");
-        document.getElementById("userPhone").focus();
-        return;
+    async function openPaymentModal() {[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      if (phone.length !== 10) {[cite: 1]
+        alert("Please enter a valid 10-digit WhatsApp number first.");[cite: 1]
+        document.getElementById("userPhone").focus();[cite: 1]
+        return;[cite: 1]
       }
 
       try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
 
-      const triggerBtn = document.getElementById("btnActivatePassGateway");
-      let originalBtnText = "Activate Pass with UPI ⚡";
-      if (triggerBtn) {
-        originalBtnText = triggerBtn.innerText;
-        triggerBtn.disabled = true;
-        triggerBtn.innerText = "Connecting Secure Gateway...";
+      const triggerBtn = document.getElementById("btnActivatePassGateway");[cite: 1]
+      let originalBtnText = "Activate Pass with UPI ⚡";[cite: 1]
+      if (triggerBtn) {[cite: 1]
+        originalBtnText = triggerBtn.innerText;[cite: 1]
+        triggerBtn.disabled = true;[cite: 1]
+        triggerBtn.innerText = "Connecting Secure Gateway...";[cite: 1]
       }
 
       try {
-        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;
-        const res = await fetch(orderUrl);
-        const orderRes = await res.json();
+        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;[cite: 1]
+        const res = await fetch(orderUrl);[cite: 1]
+        const orderRes = await res.json();[cite: 1]
 
-        if (orderRes.status !== "SUCCESS") {
-          simulateZeroCostPayment(phone);
-          return;
+        if (orderRes.status !== "SUCCESS") {[cite: 1]
+          simulateZeroCostPayment(phone);[cite: 1]
+          return;[cite: 1]
         }
 
-        const options = {
-          key: orderRes.keyId,
-          amount: orderRes.amountPaise,
-          currency: "INR",
-          name: COMPANY_NAME,
-          description: `${selectedPassName} (24h Validity)`,
-          image: "https://nineo.in/favicon.ico",
-          order_id: orderRes.orderId,
-          prefill: { contact: phone },
-          theme: { color: "#facc15" },
-          handler: async function (response) {
+        const options = {[cite: 1]
+          key: orderRes.keyId,[cite: 1]
+          amount: orderRes.amountPaise,[cite: 1]
+          currency: "INR",[cite: 1]
+          name: COMPANY_NAME,[cite: 1]
+          description: `${selectedPassName} (24h Validity)`,[cite: 1]
+          image: "https://nineo.in/favicon.ico",[cite: 1]
+          order_id: orderRes.orderId,[cite: 1]
+          prefill: { contact: phone },[cite: 1]
+          theme: { color: "#facc15" },[cite: 1]
+          handler: async function (response) {[cite: 1]
             try {
-              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;
-              await fetch(verifyUrl);
+              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;[cite: 1]
+              await fetch(verifyUrl);[cite: 1]
             } catch (e) {}
 
-            await handlePhoneInput();
-            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);
+            await handlePhoneInput();[cite: 1]
+            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);[cite: 1]
           },
-          modal: {
-            ondismiss: function() {
-              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
+          modal: {[cite: 1]
+            ondismiss: function() {[cite: 1]
+              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
             }
           }
         };
 
-        const rzp = new Razorpay(options);
-        rzp.open();
+        const rzp = new Razorpay(options);[cite: 1]
+        rzp.open();[cite: 1]
 
-      } catch (err) {
-        simulateZeroCostPayment(phone);
+      } catch (err) {[cite: 1]
+        simulateZeroCostPayment(phone);[cite: 1]
       } finally {
-        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
+        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
       }
     }
 
-    function simulateZeroCostPayment(phone) {
-      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);
-      userActivePass = {
-        hasActivePass: true,
-        remainingKm: selectedPassCode === 'PASS_129' ? 19.0 : selectedPassCode === 'PASS_69' ? 9.0 : 5.0,
-        remainingRides: selectedPassCode === 'PASS_129' ? 3 : selectedPassCode === 'PASS_69' ? 2 : 1,
-        hoursLeft: 24
+    function simulateZeroCostPayment(phone) {[cite: 1]
+      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);[cite: 1]
+      userActivePass = {[cite: 1]
+        hasActivePass: true,[cite: 1]
+        remainingKm: selectedPassCode === 'PASS_129' ? 19.0 : selectedPassCode === 'PASS_69' ? 9.0 : 5.0,[cite: 1]
+        remainingRides: selectedPassCode === 'PASS_129' ? 3 : selectedPassCode === 'PASS_69' ? 2 : 1,[cite: 1]
+        hoursLeft: 24[cite: 1]
       };
-      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);
+      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);[cite: 1]
     }
 
-    function showPassConfirmationCard(paymentId, phone, passCode, amount) {
-      document.getElementById("sectionPass").style.display = "none";
-      document.getElementById("sectionBook").style.display = "none";
-      document.getElementById("navTabs").style.display = "none";
-      document.getElementById("phoneFieldWrap").style.display = "none";
-      document.getElementById("activePassBanner").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
+    function showPassConfirmationCard(paymentId, phone, passCode, amount) {[cite: 1]
+      document.getElementById("sectionPass").style.display = "none";[cite: 1]
+      document.getElementById("sectionBook").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "none";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
+      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
 
-      const quotaMap = {
-        "PASS_39": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },
-        "PASS_69": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },
-        "PASS_129": { title: "19 KM Pro Pass", km: "19.0 KM", rides: "3 Rides Included" }
+      const quotaMap = {[cite: 1]
+        "PASS_39": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },[cite: 1]
+        "PASS_69": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },[cite: 1]
+        "PASS_129": { title: "19 KM Pro Pass", km: "19.0 KM", rides: "3 Rides Included" }[cite: 1]
       };
 
-      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };
+      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };[cite: 1]
 
-      document.getElementById("confPassTitle").innerText = passInfo.title;
-      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;
-      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;
-      document.getElementById("confPassKm").innerText = passInfo.km;
-      document.getElementById("confPassRides").innerText = passInfo.rides;
+      document.getElementById("confPassTitle").innerText = passInfo.title;[cite: 1]
+      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;[cite: 1]
+      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;[cite: 1]
+      document.getElementById("confPassKm").innerText = passInfo.km;[cite: 1]
+      document.getElementById("confPassRides").innerText = passInfo.rides;[cite: 1]
       
-      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;
-      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";
+      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);[cite: 1]
+      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });[cite: 1]
+      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;[cite: 1]
+      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";[cite: 1]
 
-      document.getElementById("passConfirmCard").style.display = "block";
-      speakResponse("Your daily pass has been activated successfully.", "en");
+      document.getElementById("passConfirmCard").style.display = "block";[cite: 1]
+      speakResponse("Your daily pass has been activated successfully.", "en");[cite: 1]
     }
 
-    function proceedToRideFromConfirmation() {
-      document.getElementById("passConfirmCard").style.display = "none";
-      document.getElementById("navTabs").style.display = "grid";
-      document.getElementById("phoneFieldWrap").style.display = "block";
-      switchTab('book');
-      handlePhoneInput();
+    function proceedToRideFromConfirmation() {[cite: 1]
+      document.getElementById("passConfirmCard").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "grid";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
+      switchTab('book');[cite: 1]
+      handlePhoneInput();[cite: 1]
     }
 
     // =========================================================================
-    // SUBMIT RIDE, ASSIGN CAPTAIN & ACTIVE STATUS POLLING
+    // SUBMIT RIDE, ASSIGN CAPTAIN & ACTIVE STATUS POLLING[cite: 1]
     // =========================================================================
-    async function submitRideBooking(type, fare) {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
-      let pickup = document.getElementById("pickup").value.trim();
-      const drop = document.getElementById("drop").value.trim();
+    async function submitRideBooking(type, fare) {[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      let pickup = document.getElementById("pickup").value.trim();[cite: 1]
+      const drop = document.getElementById("drop").value.trim();[cite: 1]
 
-      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
-      if (!pickup || !drop) return alert("Please specify both pickup and destination.");
+      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");[cite: 1]
+      if (!pickup || !drop) return alert("Please specify both pickup and destination.");[cite: 1]
 
-      if (!calculatedKm || calculatedKm === 0) {
-        if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
-        if (!dropCoords) dropCoords = await geocodeLocation(drop);
-        if (pickupCoords && dropCoords) {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
+      // Guard geofence check before submitting booking
+      if (!isWithinRanchiBoundary(pickupCoords) || !isWithinRanchiBoundary(dropCoords)) {
+        return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
+      }
+
+      if (!calculatedKm || calculatedKm === 0) {[cite: 1]
+        if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);[cite: 1]
+        if (!dropCoords) dropCoords = await geocodeLocation(drop);[cite: 1]
+        if (pickupCoords && dropCoords) {[cite: 1]
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
         } else {
-          calculatedKm = 5.0;
+          calculatedKm = 5.0;[cite: 1]
         }
-        singleFareAmount = Math.max(25, Math.round(calculatedKm * 9));
-        if (type === 'SINGLE' || type === 'DEFAULT') fare = singleFareAmount;
+        singleFareAmount = Math.max(25, Math.round(calculatedKm * 9));[cite: 1]
+        if (type === 'SINGLE' || type === 'DEFAULT') fare = singleFareAmount;[cite: 1]
       }
 
-      if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
-        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
+      if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {[cite: 1]
+        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;[cite: 1]
       }
 
-      document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = true;
-        b.innerText = "Assigning Captain...";
+      document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {[cite: 1]
+        b.disabled = true;[cite: 1]
+        b.innerText = "Assigning Captain...";[cite: 1]
       });
 
-      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;[cite: 1]
 
       try {
-        const res = await fetch(url);
-        const data = await res.json();
+        const res = await fetch(url);[cite: 1]
+        const data = await res.json();[cite: 1]
 
-        if (data.status === "SUCCESS" && data.captain) {
-          renderCaptainCard(data, pickup, drop, fare, type);
+        if (data.status === "SUCCESS" && data.captain) {[cite: 1]
+          renderCaptainCard(data, pickup, drop, fare, type);[cite: 1]
         } else {
-          fallbackCaptainCard(pickup, drop, fare, type);
+          fallbackCaptainCard(pickup, drop, fare, type);[cite: 1]
         }
       } catch (e) {
-        fallbackCaptainCard(pickup, drop, fare, type);
+        fallbackCaptainCard(pickup, drop, fare, type);[cite: 1]
       }
     }
 
-    function renderCaptainCard(data, pickup, drop, fare, type) {
-      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());
+    function renderCaptainCard(data, pickup, drop, fare, type) {[cite: 1]
+      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());[cite: 1]
 
-      document.getElementById("sectionBook").style.display = "none";
-      document.getElementById("navTabs").style.display = "none";
-      document.getElementById("phoneFieldWrap").style.display = "none";
-      document.getElementById("activePassBanner").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
+      document.getElementById("sectionBook").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "none";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
+      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
 
-      const capCard = document.getElementById("captainDisplayCard");
-      capCard.style.display = "block";
+      const capCard = document.getElementById("captainDisplayCard");[cite: 1]
+      capCard.style.display = "block";[cite: 1]
 
-      document.getElementById("dispRideId").innerText = currentRideId;
-      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned";
-      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
-      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
-      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
-      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
-      document.getElementById("dispPickup").innerText = pickup;
-      document.getElementById("dispDrop").innerText = drop;
+      document.getElementById("dispRideId").innerText = currentRideId;[cite: 1]
+      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned";[cite: 1]
+      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";[cite: 1]
+      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";[cite: 1]
+      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";[cite: 1]
+      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);[cite: 1]
+      document.getElementById("dispPickup").innerText = pickup;[cite: 1]
+      document.getElementById("dispDrop").innerText = drop;[cite: 1]
 
-      if (type === "PASS") {
-        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Pass Overage - Pay Captain)`;
+      if (type === "PASS") {[cite: 1]
+        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Pass Overage - Pay Captain)`;[cite: 1]
       } else {
-        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
+        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;[cite: 1]
       }
 
-      const callBtn = document.getElementById("btnCallCaptain");
-      if (data.captain.phone) {
-        callBtn.href = `tel:+91${data.captain.phone}`;
-        callBtn.style.display = "flex";
+      const callBtn = document.getElementById("btnCallCaptain");[cite: 1]
+      if (data.captain.phone) {[cite: 1]
+        callBtn.href = `tel:+91${data.captain.phone}`;[cite: 1]
+        callBtn.style.display = "flex";[cite: 1]
       } else {
-        callBtn.style.display = "none";
+        callBtn.style.display = "none";[cite: 1]
       }
 
       const mapEl = document.getElementById("routeMap");
@@ -2184,82 +2344,82 @@
         }
       }
 
-      startRidePolling(currentRideId);
+      startRidePolling(currentRideId);[cite: 1]
     }
 
-    function fallbackCaptainCard(pickup, drop, fare, type) {
-      renderCaptainCard({
-        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
-        captain: {
-          name: "Rahul Kumar (nineO Captain)",
-          vehicleNo: "JH 01 BZ 4821",
-          bikeModel: "Hero Splendor Plus",
-          phone: "9876543210"
+    function fallbackCaptainCard(pickup, drop, fare, type) {[cite: 1]
+      renderCaptainCard({[cite: 1]
+        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),[cite: 1]
+        captain: {[cite: 1]
+          name: "Rahul Kumar (nineO Captain)",[cite: 1]
+          vehicleNo: "JH 01 BZ 4821",[cite: 1]
+          bikeModel: "Hero Splendor Plus",[cite: 1]
+          phone: "9876543210"[cite: 1]
         },
-        otp: Math.floor(1000 + Math.random() * 9000).toString()
-      }, pickup, drop, fare, type);
+        otp: Math.floor(1000 + Math.random() * 9000).toString()[cite: 1]
+      }, pickup, drop, fare, type);[cite: 1]
     }
 
-    function startRidePolling(rideId) {
-      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);
+    function startRidePolling(rideId) {[cite: 1]
+      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);[cite: 1]
 
-      rideStatusPollTimer = setInterval(async () => {
+      rideStatusPollTimer = setInterval(async () => {[cite: 1]
         try {
-          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);
-          const data = await res.json();
+          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);[cite: 1]
+          const data = await res.json();[cite: 1]
 
-          if (data && data.status === "IN_PROGRESS") {
-            document.getElementById("dispTripStatusText").innerText = "🟢 Ride In Progress";
-          } else if (data && data.status === "COMPLETED") {
-            clearInterval(rideStatusPollTimer);
-            rideStatusPollTimer = null;
-            showTripCompletionTransition();
+          if (data && data.status === "IN_PROGRESS") {[cite: 1]
+            document.getElementById("dispTripStatusText").innerText = "🟢 Ride In Progress";[cite: 1]
+          } else if (data && data.status === "COMPLETED") {[cite: 1]
+            clearInterval(rideStatusPollTimer);[cite: 1]
+            rideStatusPollTimer = null;[cite: 1]
+            showTripCompletionTransition();[cite: 1]
           }
-        } catch (e) {}
-      }, 4000);
+        } catch (e) {}[cite: 1]
+      }, 4000);[cite: 1]
     }
 
     // =========================================================================
-    // MULTI-RIDE TRANSITION & POST-TRIP DASHBOARD
+    // MULTI-RIDE TRANSITION & POST-TRIP DASHBOARD[cite: 1]
     // =========================================================================
-    async function showTripCompletionTransition() {
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "block";
+    async function showTripCompletionTransition() {[cite: 1]
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "block";[cite: 1]
 
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
       
       try {
-        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
-        const data = await res.json();
+        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
+        const data = await res.json();[cite: 1]
 
-        if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0) {
-          userActivePass = data;
-          document.getElementById("postTripTitle").innerText = "First Ride Completed!";
-          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;
-          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;
-          document.getElementById("btnBookNextRidePass").style.display = "flex";
-          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Ride (${data.remainingKm}km free) ➔`;
+        if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0) {[cite: 1]
+          userActivePass = data;[cite: 1]
+          document.getElementById("postTripTitle").innerText = "First Ride Completed!";[cite: 1]
+          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;[cite: 1]
+          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;[cite: 1]
+          document.getElementById("btnBookNextRidePass").style.display = "flex";[cite: 1]
+          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Ride (${data.remainingKm}km free) ➔`;[cite: 1]
         } else {
-          userActivePass = null;
-          document.getElementById("postTripTitle").innerText = "Trip Completed!";
-          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";
-          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";
-          document.getElementById("btnBookNextRidePass").style.display = "none";
+          userActivePass = null;[cite: 1]
+          document.getElementById("postTripTitle").innerText = "Trip Completed!";[cite: 1]
+          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";[cite: 1]
+          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";[cite: 1]
+          document.getElementById("btnBookNextRidePass").style.display = "none";[cite: 1]
         }
-      } catch (err) {
-        document.getElementById("postTripBalanceKm").innerText = "Active";
+      } catch (err) {[cite: 1]
+        document.getElementById("postTripBalanceKm").innerText = "Active";[cite: 1]
       }
     }
 
-    function proceedToNextPassRide() {
-      document.getElementById("tripCompleteCard").style.display = "none";
-      resetBookingView();
+    function proceedToNextPassRide() {[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      resetBookingView();[cite: 1]
     }
 
-    function resetBookingView() {
-      if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);
-        rideStatusPollTimer = null;
+    function resetBookingView() {[cite: 1]
+      if (rideStatusPollTimer) {[cite: 1]
+        clearInterval(rideStatusPollTimer);[cite: 1]
+        rideStatusPollTimer = null;[cite: 1]
       }
 
       if (captainMotionTimer) {
@@ -2273,168 +2433,169 @@
       const bookSlot = document.getElementById("bookingMapSlot");
       if (mapEl && bookSlot) bookSlot.appendChild(mapEl);
 
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
-      document.getElementById("sectionBook").style.display = "block";
-      document.getElementById("navTabs").style.display = "grid";
-      document.getElementById("phoneFieldWrap").style.display = "block";
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
+      document.getElementById("sectionBook").style.display = "block";[cite: 1]
+      document.getElementById("navTabs").style.display = "grid";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
       
-      document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = false;
-        b.innerText = "Confirm Ride ➔";
+      document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {[cite: 1]
+        b.disabled = false;[cite: 1]
+        b.innerText = "Confirm Ride ➔";[cite: 1]
       });
-      document.getElementById("btnBookDirect").style.display = "block";
-      document.getElementById("routeCard").style.display = "none";
-      document.getElementById("drop").value = "";
-      dropCoords = null;
+      document.getElementById("btnBookDirect").style.display = "block";[cite: 1]
+      document.getElementById("routeCard").style.display = "none";[cite: 1]
+      document.getElementById("drop").value = "";[cite: 1]
+      dropCoords = null;[cite: 1]
       lastResolvedDropText = "";
+      document.getElementById("dropSuggestions").style.display = "none";
       
-      handlePhoneInput();
+      handlePhoneInput();[cite: 1]
     }
 
-    function selectPass(el, code, amt, name) {
-      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));
-      if (el) el.classList.add("selected");
-      selectedPassCode = code;
-      selectedAmount = amt;
-      selectedPassName = name;
+    function selectPass(el, code, amt, name) {[cite: 1]
+      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));[cite: 1]
+      if (el) el.classList.add("selected");[cite: 1]
+      selectedPassCode = code;[cite: 1]
+      selectedAmount = amt;[cite: 1]
+      selectedPassName = name;[cite: 1]
     }
 
     // =========================================================================
-    // RATING & FEEDBACK SUBMISSION
+    // RATING & FEEDBACK SUBMISSION[cite: 1]
     // =========================================================================
-    function openFeedbackModal() {
-      if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);
-        rideStatusPollTimer = null;
+    function openFeedbackModal() {[cite: 1]
+      if (rideStatusPollTimer) {[cite: 1]
+        clearInterval(rideStatusPollTimer);[cite: 1]
+        rideStatusPollTimer = null;[cite: 1]
       }
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      const capName = document.getElementById("dispCaptainName").innerText;
-      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;
-      document.getElementById("feedbackCard").style.display = "block";
-      setRating(5);
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      const capName = document.getElementById("dispCaptainName").innerText;[cite: 1]
+      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;[cite: 1]
+      document.getElementById("feedbackCard").style.display = "block";[cite: 1]
+      setRating(5);[cite: 1]
     }
 
-    function setRating(num) {
-      selectedRating = num;
-      const stars = document.querySelectorAll("#starRatingBox .star-btn");
-      stars.forEach(s => {
-        const val = parseInt(s.getAttribute("data-rating"));
-        if (val <= num) {
-          s.classList.add("active");
+    function setRating(num) {[cite: 1]
+      selectedRating = num;[cite: 1]
+      const stars = document.querySelectorAll("#starRatingBox .star-btn");[cite: 1]
+      stars.forEach(s => {[cite: 1]
+        const val = parseInt(s.getAttribute("data-rating"));[cite: 1]
+        if (val <= num) {[cite: 1]
+          s.classList.add("active");[cite: 1]
         } else {
-          s.classList.remove("active");
+          s.classList.remove("active");[cite: 1]
         }
       });
     }
 
-    function toggleTag(el) {
-      el.classList.toggle("active");
-      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();
-      if (el.classList.contains("active")) {
-        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);
+    function toggleTag(el) {[cite: 1]
+      el.classList.toggle("active");[cite: 1]
+      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();[cite: 1]
+      if (el.classList.contains("active")) {[cite: 1]
+        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);[cite: 1]
       } else {
-        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);
+        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);[cite: 1]
       }
     }
 
-    async function submitFeedback() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";
-      const comment = document.getElementById("feedbackComment").value.trim();
-      const btn = document.getElementById("btnSubmitFeedback");
+    async function submitFeedback() {[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";[cite: 1]
+      const comment = document.getElementById("feedbackComment").value.trim();[cite: 1]
+      const btn = document.getElementById("btnSubmitFeedback");[cite: 1]
 
-      btn.disabled = true;
-      btn.innerText = "Submitting Review...";
+      btn.disabled = true;[cite: 1]
+      btn.innerText = "Submitting Review...";[cite: 1]
 
       try {
-        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;
-        await fetch(feedUrl);
-      } catch (e) {}
+        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;[cite: 1]
+        await fetch(feedUrl);[cite: 1]
+      } catch (e) {}[cite: 1]
 
-      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);
+      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);[cite: 1]
       
-      document.getElementById("feedbackComment").value = "";
-      selectedFeedbackTags = [];
-      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));
-      btn.disabled = false;
-      btn.innerText = "Submit Rating & Done ➔";
+      document.getElementById("feedbackComment").value = "";[cite: 1]
+      selectedFeedbackTags = [];[cite: 1]
+      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));[cite: 1]
+      btn.disabled = false;[cite: 1]
+      btn.innerText = "Submit Rating & Done ➔";[cite: 1]
 
-      resetBookingView();
+      resetBookingView();[cite: 1]
     }
 
     // =========================================================================
-    // CHATBOT SUPPORT
+    // CHATBOT SUPPORT[cite: 1]
     // =========================================================================
-    function toggleChatDrawer() {
-      const drawer = document.getElementById("chatDrawer");
-      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";
-      if (drawer.style.display === "flex") {
-        document.getElementById("chatInput").focus();
+    function toggleChatDrawer() {[cite: 1]
+      const drawer = document.getElementById("chatDrawer");[cite: 1]
+      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";[cite: 1]
+      if (drawer.style.display === "flex") {[cite: 1]
+        document.getElementById("chatInput").focus();[cite: 1]
       }
     }
 
-    function appendUserMessage(text) {
-      const body = document.getElementById("chatBody");
-      const div = document.createElement("div");
-      div.className = "chat-msg user";
-      div.innerText = text;
-      body.appendChild(div);
-      body.scrollTop = body.scrollHeight;
+    function appendUserMessage(text) {[cite: 1]
+      const body = document.getElementById("chatBody");[cite: 1]
+      const div = document.createElement("div");[cite: 1]
+      div.className = "chat-msg user";[cite: 1]
+      div.innerText = text;[cite: 1]
+      body.appendChild(div);[cite: 1]
+      body.scrollTop = body.scrollHeight;[cite: 1]
     }
 
-    function appendBotMessage(html) {
-      const body = document.getElementById("chatBody");
-      const div = document.createElement("div");
-      div.className = "chat-msg bot";
-      div.innerHTML = html;
-      body.appendChild(div);
-      body.scrollTop = body.scrollHeight;
+    function appendBotMessage(html) {[cite: 1]
+      const body = document.getElementById("chatBody");[cite: 1]
+      const div = document.createElement("div");[cite: 1]
+      div.className = "chat-msg bot";[cite: 1]
+      div.innerHTML = html;[cite: 1]
+      body.appendChild(div);[cite: 1]
+      body.scrollTop = body.scrollHeight;[cite: 1]
     }
 
-    function sendChatMessage() {
-      const input = document.getElementById("chatInput");
-      const q = input.value.trim();
-      if (!q) return;
+    function sendChatMessage() {[cite: 1]
+      const input = document.getElementById("chatInput");[cite: 1]
+      const q = input.value.trim();[cite: 1]
+      if (!q) return;[cite: 1]
       
-      appendUserMessage(q);
-      input.value = "";
+      appendUserMessage(q);[cite: 1]
+      input.value = "";[cite: 1]
 
-      setTimeout(() => {
-        resolveBotQuery(q);
-      }, 350);
+      setTimeout(() => {[cite: 1]
+        resolveBotQuery(q);[cite: 1]
+      }, 350);[cite: 1]
     }
 
-    function handleQuickPill(text) {
-      appendUserMessage(text);
-      setTimeout(() => {
-        resolveBotQuery(text);
-      }, 350);
+    function handleQuickPill(text) {[cite: 1]
+      appendUserMessage(text);[cite: 1]
+      setTimeout(() => {[cite: 1]
+        resolveBotQuery(text);[cite: 1]
+      }, 350);[cite: 1]
     }
 
-    function resolveBotQuery(query) {
-      const q = query.toLowerCase();
+    function resolveBotQuery(query) {[cite: 1]
+      const q = query.toLowerCase();[cite: 1]
 
-      if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
-        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
+      if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {[cite: 1]
+        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");[cite: 1]
       } 
-      else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
-        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
+      else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {[cite: 1]
+        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");[cite: 1]
       }
-      else if (q.includes("overage") || q.includes("fare") || q.includes("price") || q.includes("extra")) {
-        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Regular ride: ₹9/km (₹25 base minimum).<br>• Passes cover full distance quota (5km, 9km, 19km). Extra kilometers are charged at just ₹9/km upon destination drop.");
+      else if (q.includes("overage") || q.includes("fare") || q.includes("price") || q.includes("extra")) {[cite: 1]
+        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Regular ride: ₹9/km (₹25 base minimum).<br>• Passes cover full distance quota (5km, 9km, 19km). Extra kilometers are charged at just ₹9/km upon destination drop.");[cite: 1]
       }
-      else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {
-        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);
+      else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {[cite: 1]
+        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);[cite: 1]
       }
       else {
-        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
+        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);[cite: 1]
       }
     }
 
-    window.addEventListener("DOMContentLoaded", () => {
-      initVoiceAI();
+    window.addEventListener("DOMContentLoaded", () => {[cite: 1]
+      initVoiceAI();[cite: 1]
     });
   </script>
 </body>
