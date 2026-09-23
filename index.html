@@ -1835,6 +1835,7 @@
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
         stdGrid.style.display = "none";
         passCard.style.display = "block";
+        document.getElementById("btnBookDirect").style.display = "none";
 
         if (km <= userActivePass.remainingKm) {
           currentDueFare = 0;
@@ -2010,16 +2011,20 @@
         }
       }
 
-      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
-      const singleDrop = lower.match(/(?:take me to|drop me at|to|destination)\s+(.+)/i) ||
+      // Check single destination phrases first
+      const singleDrop = lower.match(/(?:take\s+me\s+to|drop\s+me\s+at|drop\s+at|destination|le\s*chalo|chalo)\s+(.+)/i) ||
                          lower.match(/(?:mujhe|humko)?\s*(.+?)\s*(?:jana\s*h|jana\s*hai|chalna\s*hai|chalo)/i);
 
-      if (twoPoint && !lower.includes("jana") && !lower.includes("chalo")) {
+      // Check two-point route
+      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
+
+      if (singleDrop) {
+        const d = cleanPlace(singleDrop[1]);
+        if (d) { applyTransitLocations(null, d); return; }
+      } else if (twoPoint && !lower.includes("jana") && !lower.includes("chalo")) {
         const p = cleanPlace(twoPoint[1]);
         const d = cleanPlace(twoPoint[2]);
-        if (d) { applyTransitLocations(p, d); return; }
-      } else if (singleDrop) {
-        const d = cleanPlace(singleDrop[1]);
+        if (d && p && p !== "me") { applyTransitLocations(p, d); return; }
         if (d) { applyTransitLocations(null, d); return; }
       }
 
@@ -2065,7 +2070,7 @@
 
     function cleanPlace(str) {
       if (!str) return "";
-      return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take)\b/gi, " ")
+      return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take|me)\b/gi, " ")
                 .replace(/\s+/g, " ")
                 .trim();
     }
@@ -2236,6 +2241,17 @@
       if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
       if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
+      // Auto-switch DEFAULT action to PASS if user has an active pass with available quota
+      if (type === 'DEFAULT') {
+        if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
+          type = 'PASS';
+          fare = currentDueFare;
+        } else {
+          type = 'SINGLE';
+          fare = singleFareAmount;
+        }
+      }
+
       if (!isWithinRanchiBoundary(pickupCoords) || !isWithinRanchiBoundary(dropCoords)) {
         return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
       }
@@ -2249,7 +2265,7 @@
           calculatedKm = 5.0;
         }
         singleFareAmount = Math.max(25, Math.round(calculatedKm * 9));
-        if (type === 'SINGLE' || type === 'DEFAULT') fare = singleFareAmount;
+        if (type === 'SINGLE') fare = singleFareAmount;
       }
 
       if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
@@ -2269,6 +2285,13 @@
 
         if (data.status === "SUCCESS" && data.captain) {
           renderCaptainCard(data, pickup, drop, fare, type);
+        } else if (data.status === "ERROR") {
+          alert("⚠️ " + (data.message || "Booking request could not be completed."));
+          document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
+            b.disabled = false;
+          });
+          const directBtn = document.getElementById("btnBookDirect");
+          if (directBtn) directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";
         } else {
           fallbackCaptainCard(pickup, drop, fare, type);
         }
@@ -2421,16 +2444,23 @@
       document.getElementById("navTabs").style.display = "grid";
       document.getElementById("phoneFieldWrap").style.display = "block";
       
+      // Re-enable interactive buttons without overriding custom inner labels
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
         b.disabled = false;
-        b.innerText = "Confirm Ride ➔";
       });
-      document.getElementById("btnBookDirect").style.display = "block";
+
+      const directBtn = document.getElementById("btnBookDirect");
+      if (directBtn) {
+        directBtn.style.display = "block";
+        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";
+      }
+
       document.getElementById("routeCard").style.display = "none";
       document.getElementById("drop").value = "";
       dropCoords = null;
       lastResolvedDropText = "";
-      document.getElementById("dropSuggestions").style.display = "none";
+      const dropSug = document.getElementById("dropSuggestions");
+      if (dropSug) dropSug.style.display = "none";
       
       handlePhoneInput();
     }
