@@ -2241,7 +2241,7 @@
       if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
       if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
-      // Auto-switch DEFAULT action to PASS if user has an active pass with available quota
+      // Automatically convert DEFAULT to PASS if an active pass exists
       if (type === 'DEFAULT') {
         if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
           type = 'PASS';
@@ -2251,10 +2251,15 @@
           fare = singleFareAmount;
         }
       }
+      
+      // Ensure coordinates are resolved before running geofence check
+      if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
+      if (!dropCoords) dropCoords = await geocodeLocation(drop);
 
       if (!isWithinRanchiBoundary(pickupCoords) || !isWithinRanchiBoundary(dropCoords)) {
         return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
       }
+      // ... rest of submitRideBooking
 
       if (!calculatedKm || calculatedKm === 0) {
         if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
