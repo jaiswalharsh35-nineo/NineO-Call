@@ -571,7 +571,7 @@
       background: #0b1120;
       border: 1.5px solid var(--primary);
       border-radius: 22px;
-      padding: 22px 18px;
+      padding: 20px 16px;
       text-align: center;
       box-shadow: 0 20px 45px rgba(0, 0, 0, 0.75);
       animation: popIn 0.35s ease;
@@ -591,7 +591,7 @@
       border: 1px solid rgba(250, 204, 21, 0.3);
       padding: 3px 10px;
       border-radius: 12px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       letter-spacing: 0.8px;
     }
 
@@ -629,16 +629,71 @@
       font-weight: 800;
       padding: 8px 20px;
       border-radius: 12px;
-      margin: 12px 0 16px;
+      margin: 10px 0 14px;
       letter-spacing: 2px;
+    }
+
+    /* Live Pass Allowance Dashboard on In-Progress Screen */
+    .in-trip-pass-box {
+      display: none;
+      background: rgba(15, 23, 42, 0.95);
+      border: 1.5px solid var(--primary);
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin: 10px 0 14px;
+      text-align: left;
+    }
+
+    .in-trip-pass-header {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      border-bottom: 1px dashed rgba(255, 255, 255, 0.12);
+      padding-bottom: 6px;
+    }
+
+    .in-trip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+
+    .in-trip-stat {
+      background: rgba(30, 41, 59, 0.6);
+      padding: 8px 10px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .in-trip-stat-label {
+      font-size: 10px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .in-trip-stat-val {
+      font-size: 16px;
+      font-weight: 900;
+      color: white;
+      margin-top: 2px;
+    }
+
+    .in-trip-stat-val span {
+      color: var(--primary);
     }
 
     .captain-meta {
       background: rgba(30, 41, 59, 0.6);
       border-radius: 14px;
-      padding: 14px;
+      padding: 12px 14px;
       text-align: left;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       font-size: 13px;
       color: #cbd5e1;
       line-height: 1.6;
@@ -1071,7 +1126,7 @@
       </button>
     </div>
 
-    <!-- 2. LIVE CAPTAIN ASSIGNED DISPLAY -->
+    <!-- 2. LIVE CAPTAIN ASSIGNED & IN-TRIP DISPLAY -->
     <div class="captain-display-card" id="captainDisplayCard">
       <div class="ride-id-pill" id="dispRideId">RIDE #--</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;" id="dispTripStatusText">
@@ -1081,6 +1136,37 @@
       <!-- Active Tracking Map Slot -->
       <div id="captainMapSlot" style="margin: 12px 0;"></div>
 
+      <!-- Start PIN Box (Visible during arrival, HIDDEN once OTP shared & ride starts) -->
+      <div id="dispOtpWrap">
+        <div class="otp-badge">
+          START PIN: <b id="dispOtp" style="color:white; font-size:18px;">----</b>
+        </div>
+        <div style="font-size:11px; color:var(--text-dim); margin-top:-6px; margin-bottom:10px;">
+          Share this 4-digit PIN with captain upon arrival to begin trip
+        </div>
+      </div>
+
+      <!-- In-Trip Pass Allowance Card (Appears after OTP shared for 69rs / 129rs passes) -->
+      <div class="in-trip-pass-box" id="inTripPassBox">
+        <div class="in-trip-pass-header">
+          <span id="dispPassTierTitle">🎟️ Pass Active</span>
+          <span id="dispPassValidityTag" style="color:var(--green);">Valid 24h</span>
+        </div>
+        <div class="in-trip-grid">
+          <div class="in-trip-stat">
+            <div class="in-trip-stat-label">Leftover Distance</div>
+            <div class="in-trip-stat-val"><span id="dispPassKmLeft">--</span> KM</div>
+          </div>
+          <div class="in-trip-stat">
+            <div class="in-trip-stat-label">Rides Available</div>
+            <div class="in-trip-stat-val"><span id="dispPassRidesLeft">--</span> Trips</div>
+          </div>
+        </div>
+        <div style="font-size:10.5px; color:#cbd5e1; margin-top:8px;" id="dispPassExpiryFull">
+          ⏳ Valid till: Tomorrow
+        </div>
+      </div>
+
       <div class="plate-box">
         <span class="plate-ind">IND</span>
         <span id="dispVehicleNo">JH 01 -- ----</span>
@@ -1089,15 +1175,10 @@
       <div style="font-size: 19px; font-weight: 800; color: white;" id="dispCaptainName">Captain Name</div>
       <div style="font-size: 13px; color: var(--text-dim);" id="dispBikeModel">Motorcycle Model</div>
 
-      <div>
-        <div class="otp-badge">
-          START PIN: <b id="dispOtp" style="color:white; font-size:18px;">----</b>
-        </div>
-      </div>
-
       <div class="captain-meta">
         <div>📍 <b>Pickup:</b> <span id="dispPickup">--</span></div>
         <div>🏁 <b>Destination:</b> <span id="dispDrop">--</span></div>
+        <div>📏 <b>Booked Distance:</b> <span id="dispTripKm" style="color:var(--primary); font-weight:800;">0.0 KM</span></div>
         <div>💰 <b>Fare Due:</b> <span id="dispFare" style="color:var(--primary); font-weight:800;">₹0</span></div>
       </div>
 
@@ -1106,10 +1187,10 @@
       </a>
       
       <button class="btn-submit" style="background:#2563eb; margin-top:8px;" onclick="openFeedbackModal()">
-        🏁 Rate Captain & Complete Trip
+        🏁 Complete Trip & Rate
       </button>
 
-      <button class="btn-submit" style="background:#1e293b; color:var(--text-dim); padding:10px; font-size:12px; margin-top:8px;" onclick="resetBookingView()">
+      <button class="btn-submit" id="btnCancelBooking" style="background:#1e293b; color:var(--text-dim); padding:10px; font-size:12px; margin-top:8px;" onclick="resetBookingView()">
         Cancel / New Booking
       </button>
     </div>
@@ -1173,7 +1254,7 @@
       </button>
     </div>
 
-    <!-- 5. DEDICATED TRIP COMPLETE & 2ND RIDE SCREEN -->
+    <!-- 5. DEDICATED TRIP COMPLETE SCREEN -->
     <div class="trip-complete-card" id="tripCompleteCard">
       <div class="check-icon-circle">🏁</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1278,7 +1359,7 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzCn2fke3YKPcAfB33EFxY31TTCuNKCNCEtG4r2lMWb5JEKwYx_FoTlyzkSLJwXs8ic/exec";
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
     const COMPANY_NAME = "nineO Mobility";
     const SUPPORT_WHATSAPP = "919525054247";
 
@@ -1294,6 +1375,10 @@
     let lastResolvedPickupText = "";
     let lastResolvedDropText = "";
     
+    let currentPickupText = "";
+    let currentDropText = "";
+    let activeCaptainDetails = null;
+
     let routeDebounceTimer = null;
     let suggestDebounceTimer = null;
     let autoRedirectTimer = null;
@@ -1677,7 +1762,7 @@
               clearInterval(captainMotionTimer);
               captainMotionTimer = null;
               document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";
-              speakResponse("Captain Rahul Kumar has arrived at your pickup location.", "en");
+              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");
             }
           }, 1800);
         }
@@ -1774,7 +1859,6 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // Dynamic UI Engine: Eliminates comparison grid completely for active pass holders and enforces KM limit
     function renderComparison(km) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -1794,7 +1878,6 @@
         passCard.style.display = "block";
         document.getElementById("routeSubtitle").innerText = "Pass Booking Mode:";
 
-        // Check if trip is within remaining pass quota
         if (km <= userActivePass.remainingKm) {
           passDue.innerText = "₹0";
           passDue.style.color = "var(--green)";
@@ -1803,7 +1886,6 @@
           btnBookPass.disabled = false;
           btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";
         } else {
-          // RESTRICT TO PASS RANGE
           passDue.innerText = "🚫 Limit Exceeded";
           passDue.style.color = "var(--primary-accent)";
           passExp.innerHTML = `<span style="color:var(--primary-accent); font-weight:700;">Trip exceeds active pass range:</span><br>This route is <b>${km} KM</b>, but your pass has <b>${userActivePass.remainingKm} KM</b> remaining.<br><span style="font-size:11px; color:#94a3b8;">Please enter a drop within your remaining <b>${userActivePass.remainingKm} KM</b> pass limit.</span>`;
@@ -1811,7 +1893,6 @@
           btnBookPass.innerText = `🚫 Drop Must Be Within ${userActivePass.remainingKm} KM`;
         }
       } else {
-        // NON-PASS RIDER: Show single ride vs daily pass comparison
         passCard.style.display = "none";
         stdGrid.style.display = "grid";
         document.getElementById("routeSubtitle").innerText = "Choose booking mode:";
@@ -2069,7 +2150,6 @@
           prefill: { contact: phone },
           theme: { color: "#facc15" },
           handler: async function (response) {
-            // Immediately lock userActivePass in memory
             const tierMap = {
               "PASS_39": { km: 5.0, rides: 1, name: "5 KM Pass" },
               "PASS_69": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
@@ -2151,7 +2231,6 @@
       document.getElementById("passConfirmCard").style.display = "block";
       speakResponse("Daily pass activated. Redirecting you to book your ride.", "en");
 
-      // Auto-redirect timer to Book screen
       let countdown = 2;
       const timerLabel = document.getElementById("confRedirectTimer");
       if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;
@@ -2178,7 +2257,6 @@
       document.getElementById("phoneFieldWrap").style.display = "block";
       switchTab('book');
 
-      // Update banner immediately with active pass state
       const banner = document.getElementById("activePassBanner");
       if (userActivePass) {
         banner.style.display = "block";
@@ -2201,7 +2279,6 @@
       if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
       if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
-      // Enforce Pass mode if rider holds an active pass
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0) {
         type = 'PASS';
         fare = 0;
@@ -2229,6 +2306,9 @@
         if (type === 'SINGLE') fare = singleFareAmount;
       }
 
+      currentPickupText = pickup;
+      currentDropText = drop;
+
       if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
         pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
       }
@@ -2245,7 +2325,7 @@
         const data = await res.json();
 
         if (data.status === "SUCCESS" && data.captain) {
-          renderCaptainCard(data, pickup, drop, fare, type);
+          renderCaptainCard(data, currentPickupText, currentDropText, fare, type);
         } else if (data.status === "ERROR") {
           alert("⚠️ " + (data.message || "Booking request could not be completed."));
           document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
@@ -2254,15 +2334,16 @@
           const btnActive = document.getElementById("btnBookActivePass");
           if (btnActive) btnActive.innerText = "Request nineO Captain (₹0) ➔";
         } else {
-          fallbackCaptainCard(pickup, drop, fare, type);
+          fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
         }
       } catch (e) {
-        fallbackCaptainCard(pickup, drop, fare, type);
+        fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
       }
     }
 
     function renderCaptainCard(data, pickup, drop, fare, type) {
       currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());
+      activeCaptainDetails = data.captain;
 
       document.getElementById("sectionBook").style.display = "none";
       document.getElementById("navTabs").style.display = "none";
@@ -2275,13 +2356,19 @@
       capCard.style.display = "block";
 
       document.getElementById("dispRideId").innerText = currentRideId;
-      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned";
+      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";
       document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
       document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
       document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
+      
+      // Show Start PIN before trip begins
+      document.getElementById("dispOtpWrap").style.display = "block";
       document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("inTripPassBox").style.display = "none";
+
       document.getElementById("dispPickup").innerText = pickup;
       document.getElementById("dispDrop").innerText = drop;
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
 
       if (type === "PASS") {
         document.getElementById("dispFare").innerText = "Covered by Pass (₹0)";
@@ -2334,14 +2421,63 @@
           const data = await res.json();
 
           if (data && data.status === "IN_PROGRESS") {
-            document.getElementById("dispTripStatusText").innerText = "🟢 Ride In Progress";
+            transitionToInTripView();
           } else if (data && data.status === "COMPLETED") {
             clearInterval(rideStatusPollTimer);
             rideStatusPollTimer = null;
             showTripCompletionTransition();
           }
         } catch (e) {}
-      }, 4000);
+      }, 3500);
+    }
+
+    // =========================================================================
+    // IN-PROGRESS VIEW: TRIGGERED ONCE OTP IS VERIFIED
+    // =========================================================================
+    function transitionToInTripView() {
+      // 1. Update Status Header
+      document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";
+      
+      // 2. Hide OTP Box (Already verified at pickup)
+      document.getElementById("dispOtpWrap").style.display = "none";
+      const cancelBtn = document.getElementById("btnCancelBooking");
+      if (cancelBtn) cancelBtn.style.display = "none";
+
+      // 3. Render Route cleanly from Pickup to Drop on Map
+      if (pickupCoords && dropCoords && mapInstance) {
+        renderInteractiveMap(pickupCoords, dropCoords, null, null);
+      }
+
+      // 4. Update route parameters
+      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;
+      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
+
+      // 5. Display Live Pass Quota Details for 69rs & 129rs passes
+      const passBox = document.getElementById("inTripPassBox");
+      if (userActivePass) {
+        passBox.style.display = "block";
+        const tierName = userActivePass.passTier === "PASS_129" ? "19 KM Pro Pass (₹129)" 
+                       : userActivePass.passTier === "PASS_69" ? "9 KM Super Pass (₹69)" 
+                       : "5 KM Pass (₹39)";
+        
+        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;
+        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;
+        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;
+        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;
+        
+        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);
+        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;
+      } else {
+        passBox.style.display = "none";
+      }
+
+      // 6. Ensure Captain Details & Call button remain active
+      if (activeCaptainDetails) {
+        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";
+        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";
+        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";
+      }
     }
 
     // =========================================================================
