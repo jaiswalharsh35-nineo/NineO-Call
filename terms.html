@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Terms of Service - nineO Mobility</title>
+  <meta name="theme-color" content="#090d16">
+
+  <style>
+    :root {
+      --primary: #facc15;        /* nineO Yellow */
+      --primary-accent: #ef4444; /* nineO Red */
+      --green: #10b981;
+      --border: rgba(255, 255, 255, 0.12);
+      --glass-bg: rgba(15, 23, 42, 0.92);
+      --card-bg: #0b1120;
+      --text: #f8fafc;
+      --text-dim: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.65) 0%, rgba(9, 13, 22, 0.96) 100%), 
+                  url('bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 16px 12px 40px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 680px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid var(--border);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7);
+      padding: 24px 20px;
+    }
+
+    /* Sticky Top Header */
+    .top-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 20px;
+    }
+
+    .brand-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-title {
+      font-size: 24px;
+      font-weight: 900;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+
+    .brand-tag {
+      font-size: 10px;
+      font-weight: 800;
+      background: var(--primary-accent);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 5px;
+      text-transform: uppercase;
+    }
+
+    .btn-back {
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid var(--primary);
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 800;
+      padding: 8px 14px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s ease;
+    }
+
+    .btn-back:hover, .btn-back:active {
+      background: var(--primary);
+      color: #090d16;
+    }
+
+    .doc-header {
+      margin-bottom: 22px;
+    }
+
+    .doc-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 6px;
+    }
+
+    .doc-meta {
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    /* Warning Banner */
+    .preamble-box {
+      background: rgba(250, 204, 21, 0.08);
+      border: 1.5px dashed var(--primary);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 24px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fef08a;
+      line-height: 1.5;
+    }
+
+    /* Table of Contents */
+    .toc-box {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 26px;
+    }
+
+    .toc-title {
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 12px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 480px) {
+      .toc-grid { grid-template-columns: 1fr; }
+    }
+
+    .toc-grid a {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.15s;
+    }
+
+    .toc-grid a:hover {
+      color: var(--primary);
+    }
+
+    /* Legal Sections */
+    .section-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px 18px 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-num {
+      background: var(--primary);
+      color: #090d16;
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 900;
+      flex-shrink: 0;
+    }
+
+    .section-body {
+      font-size: 13px;
+      color: #cbd5e1;
+      line-height: 1.65;
+    }
+
+    .section-body p {
+      margin-bottom: 8px;
+    }
+
+    .section-body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .section-body ul, .section-body ol {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .section-body li {
+      margin-bottom: 6px;
+    }
+
+    .section-body b {
+      color: #ffffff;
+    }
+
+    .caps-notice {
+      background: rgba(30, 41, 59, 0.7);
+      border-left: 3px solid var(--primary-accent);
+      padding: 10px 12px;
+      border-radius: 6px;
+      font-size: 11.5px;
+      line-height: 1.5;
+      color: #e2e8f0;
+      margin-top: 8px;
+    }
+
+    .contact-card {
+      background: rgba(16, 185, 129, 0.08);
+      border: 1.5px solid var(--green);
+      border-radius: 16px;
+      padding: 18px;
+      margin-top: 24px;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+
+    .contact-card b {
+      color: #ffffff;
+    }
+
+    .contact-card a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 700;
+    }
+
+    /* Footer */
+    .page-footer {
+      text-align: center;
+      margin-top: 26px;
+      padding-top: 18px;
+      border-top: 1px solid var(--border);
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Navigation Bar -->
+    <div class="top-nav">
+      <div class="brand-wrap">
+        <span class="brand-title">nineO</span>
+        <span class="brand-tag">Ranchi</span>
+      </div>
+      <a href="index.html" class="btn-back">← Back to App</a>
+    </div>
+
+    <!-- Title and Preamble -->
+    <div class="doc-header">
+      <h1 class="doc-title">Terms of Service</h1>
+      <div class="doc-meta">Applicable to all riders, passes, and transit dispatches in Ranchi</div>
+    </div>
+
+    <div class="preamble-box">
+      BY ACCESSING OR USING THE PLATFORM, YOU AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE, DO NOT ACCESS OR USE THE PLATFORM.
+    </div>
+
+    <!-- Quick Table of Contents -->
+    <div class="toc-box">
+      <div class="toc-title">Quick Navigation</div>
+      <div class="toc-grid">
+        <a href="#sec1">1. The Nature of the Platform</a>
+        <a href="#sec2">2. Eligibility & Account Security</a>
+        <a href="#sec3">3. Location Tracking & Telemetry</a>
+        <a href="#sec4">4. Pricing, Passes & Overages</a>
+        <a href="#sec5">5. Cancellations & Wait-Times</a>
+        <a href="#sec6">6. Masked Communications</a>
+        <a href="#sec7">7. User Conduct & Safety Mandates</a>
+        <a href="#sec8">8. Intellectual Property</a>
+        <a href="#sec9">9. Disclaimer of Warranties</a>
+        <a href="#sec10">10. Limitation of Liability</a>
+        <a href="#sec11">11. Indemnification</a>
+        <a href="#sec12">12. Governing Law & Jurisdiction</a>
+        <a href="#sec13">13. Modifications to Terms</a>
+        <a href="#sec14">14. Legal & Compliance Contacts</a>
+      </div>
+    </div>
+
+    <!-- Section 1 -->
+    <div class="section-card" id="sec1">
+      <div class="section-title"><span class="section-num">1</span> The Nature of the Platform</div>
+      <div class="section-body">
+        <p><b>NINEO</b> provides a technology platform that connects individual riders ("Riders") with independent third-party transport operators or drivers ("Captains" or "Drivers").</p>
+        <p>Unless explicitly stated otherwise in writing, NINEO is a technology services provider and does not directly operate transportation services, nor does it function as a common carrier. Independent Drivers are solely responsible for providing transportation services requested through the Platform.</p>
+      </div>
+    </div>
+
+    <!-- Section 2 -->
+    <div class="section-card" id="sec2">
+      <div class="section-title"><span class="section-num">2</span> User Eligibility and Account Registration</div>
+      <div class="section-body">
+        <ul>
+          <li><b>Age Requirement:</b> You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to create an account and use the Platform.</li>
+          <li><b>Account Security:</b> Registration requires providing accurate, up-to-date personal details, including a valid mobile phone number. Verification is conducted via One-Time Passwords (OTP), PINs, or digital credentials.</li>
+          <li><b>Account Ownership:</b> You may not assign, transfer, or authorize any third party to use your account. You are strictly responsible for all activity conducted under your account credentials.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 3 -->
+    <div class="section-card" id="sec3">
+      <div class="section-title"><span class="section-num">3</span> Location Tracking and Telemetry</div>
+      <div class="section-body">
+        <p>To deliver essential transit routing, dispatching, and pricing services:</p>
+        <ul>
+          <li>You grant NINEO permission to access and monitor your device's <b>precise GPS location data</b> while using the Platform.</li>
+          <li>Location data is recorded to match you with nearby Drivers, calculate transit distances, determine fare tiers or overage charges, and provide real-time trip monitoring for safety.</li>
+          <li>Disabling device location permissions will render the Platform's core dispatch and transport functionalities inoperable. For details on telemetry storage, refer to our Privacy Policy.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 4 -->
+    <div class="section-card" id="sec4">
+      <div class="section-title"><span class="section-num">4</span> Pricing, Passes, and Payment Terms</div>
+      <div class="section-body">
+        <ul>
+          <li><b>Fares and Structured Passes:</b> Fares may be charged per individual trip or via pre-purchased ride passes (e.g., promotional fixed-distance or fixed-time allotments). All applicable fares and pass terms are displayed prior to booking or purchase.</li>
+          <li><b>Distance Overages and Surcharges:</b> Any trip exceeding the pre-purchased pass distance or standard quota will incur additional per-kilometer overage charges (₹9/km), calculated automatically by our GPS telemetry engine.</li>
+          <li><b>Taxes and Fees:</b> You agree to pay all applicable fares, toll fees, dynamic peak-pricing surcharges, and local statutory taxes associated with your booking.</li>
+          <li><b>Payment Processing:</b> Payments are processed through secure, PCI-DSS-compliant third-party payment gateways. You authorize NINEO and its payment partners to charge your designated payment method for all incurred amounts.</li>
+          <li><b>Refund Policy:</b> Pre-purchased passes, promotional packages, and completed trips are strictly non-refundable except where required by applicable consumer protection laws or due to a documented technical failure verified by our support team.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 5 -->
+    <div class="section-card" id="sec5">
+      <div class="section-title"><span class="section-num">5</span> Cancellations and Wait-Time Fees</div>
+      <div class="section-body">
+        <ul>
+          <li><b>Cancellation Windows:</b> You may cancel a booking request free of charge within 2 minutes of a Driver accepting the request. Cancellations made after this grace period may incur a standard cancellation fee.</li>
+          <li><b>No-Show and Wait Time:</b> If a Driver arrives at the designated pickup location and you fail to board within 5 minutes, the Driver may cancel the ride, and a no-show cancellation fee will be billed to your account.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 6 -->
+    <div class="section-card" id="sec6">
+      <div class="section-title"><span class="section-num">6</span> Masked Communications and Messaging</div>
+      <div class="section-body">
+        <ul>
+          <li>To protect the personal privacy of both parties, the Platform utilizes call and SMS masking proxies.</li>
+          <li>When you communicate with a Driver regarding a booking, your personal telephone number is concealed behind a temporary virtual relay.</li>
+          <li>By using the Platform, you consent to receive operational communications, ride receipts, system alerts, and security verification codes via SMS, automated push notifications, and telephone calls.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 7 -->
+    <div class="section-card" id="sec7">
+      <div class="section-title"><span class="section-num">7</span> User Conduct and Safety Obligations</div>
+      <div class="section-body">
+        <p>You agree to maintain safety and decorum at all times while using the Platform. You shall NOT:</p>
+        <ol>
+          <li>Impair or attempt to impair the safe operation of any vehicle.</li>
+          <li>Refuse to comply with local road safety mandates, including mandatory helmet regulations for two-wheeler transport.</li>
+          <li>Carry hazardous, flammable, illicit, or oversized goods that violate vehicle capacity limits.</li>
+          <li>Verbally abuse, harass, intimidate, or physically harm any Driver, passenger, or Platform representative.</li>
+          <li>Tamper with the Platform's digital systems, reverse-engineer proprietary algorithms, or manipulate GPS coordinates (spoofing).</li>
+        </ol>
+        <p style="color:var(--primary-accent); font-weight:700; margin-top:8px;">Violation of these standards will result in immediate and permanent account termination, forfeiture of unused passes, and potential reporting to local law enforcement.</p>
+      </div>
+    </div>
+
+    <!-- Section 8 -->
+    <div class="section-card" id="sec8">
+      <div class="section-title"><span class="section-num">8</span> Intellectual Property Rights</div>
+      <div class="section-body">
+        <p>All software, trademarks, logos, system algorithms, user interface designs, and intellectual assets associated with the Platform are the exclusive property of NINEO or its licensors. You are granted a limited, revocable, non-exclusive, non-transferable license strictly to access the mobile application for personal, non-commercial use.</p>
+      </div>
+    </div>
+
+    <!-- Section 9 -->
+    <div class="section-card" id="sec9">
+      <div class="section-title"><span class="section-num">9</span> Disclaimer of Warranties</div>
+      <div class="section-body">
+        <div class="caps-notice">
+          THE PLATFORM IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, NINEO EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT GUARANTEE THAT THE PLATFORM WILL OPERATE UNINTERRUPTED, SECURE, OR ERROR-FREE, NOR DO WE WARRANT THE RELIABILITY, TIMELINESS, OR SAFETY OF ANY THIRD-PARTY TRANSPORT OPERATOR.
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 10 -->
+    <div class="section-card" id="sec10">
+      <div class="section-title"><span class="section-num">10</span> Limitation of Liability</div>
+      <div class="section-body">
+        <div class="caps-notice">
+          TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL NINEO, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA LOSS, PERSONAL INJURY, OR PROPERTY DAMAGE ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE PLATFORM OR ANY RIDE TRANSACTIONS, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+          <br><br>
+          OUR TOTAL AGGREGATE LIABILITY TO YOU FOR ALL CLAIMS ARISING UNDER THESE TERMS SHALL NOT EXCEED THE TOTAL AMOUNT PAID BY YOU TO NINEO IN THE THREE (3) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY, OR ₹1,000, WHICHEVER IS LESS.
+        </div>
+      </div>
+    </div>
+
+    <!-- Section 11 -->
+    <div class="section-card" id="sec11">
+      <div class="section-title"><span class="section-num">11</span> Indemnification</div>
+      <div class="section-body">
+        <p>You agree to defend, indemnify, and hold harmless Nineo, its officers, affiliates, and employees from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable legal fees) arising from:</p>
+        <ul>
+          <li>Your violation of these Terms or applicable laws;</li>
+          <li>Your interaction with, transport by, or disputes with any third-party Driver;</li>
+          <li>Your infringement of any third-party rights, including privacy or intellectual property rights.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 12 -->
+    <div class="section-card" id="sec12">
+      <div class="section-title"><span class="section-num">12</span> Governing Law and Dispute Resolution</div>
+      <div class="section-body">
+        <ul>
+          <li><b>Governing Law:</b> These Terms shall be governed by, interpreted, and construed in accordance with the laws of India, without regard to conflict of law principles.</li>
+          <li><b>Dispute Escalation:</b> Before initiating formal legal proceedings, you agree to submit any claim or dispute to informal resolution by contacting our legal department at <a href="mailto:harshjaiswal@nineo.in" style="color:var(--primary);">harshjaiswal@nineo.in</a>.</li>
+          <li><b>Jurisdiction:</b> Any unresolved dispute, controversy, or claim arising out of these Terms shall be subject to the exclusive jurisdiction of the competent courts located in <b>Ranchi, Jharkhand</b>.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Section 13 -->
+    <div class="section-card" id="sec13">
+      <div class="section-title"><span class="section-num">13</span> Modifications to the Terms</div>
+      <div class="section-body">
+        <p>We reserve the right to amend or update these Terms at any time. Material changes will be communicated via in-app notification, email, or by revising the terms on the Platform. Your continued use of the Platform following published changes signifies your legal acceptance of the revised Terms.</p>
+      </div>
+    </div>
+
+    <!-- Section 14: Contact Info -->
+    <div class="contact-card" id="sec14">
+      <div style="font-size: 15px; font-weight: 800; color: #10b981; margin-bottom: 8px;">
+        14. Contact & Legal Notices
+      </div>
+      <div><b>Entity Name:</b> Nineo Mobility</div>
+      <div><b>Attn:</b> Legal & Compliance Department</div>
+      <div><b>Physical Address:</b> Prasad Hostel, Ranchi, Jharkhand</div>
+      <div><b>Support Email:</b> <a href="mailto:harshjaiswal@nineo.in">harshjaiswal@nineo.in</a></div>
+      <div><b>Customer Support Contact:</b> <a href="tel:+919525054247">+91-9525054247</a></div>
+    </div>
+
+    <!-- Page Footer -->
+    <div class="page-footer">
+      <div>© 2026 nineO Mobility. All rights reserved.</div>
+      <div style="margin-top: 6px;">Operating safely and affordably across Ranchi, Jharkhand.</div>
+    </div>
+  </div>
+
+</body>
+</html>
