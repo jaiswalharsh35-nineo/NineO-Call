@@ -9,14 +9,14 @@
   <!-- Razorpay Checkout SDK -->
   <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <!-- Leaflet CSS & JS (Free, Open-Source Map Engine) -->
+  <!-- Leaflet CSS & JS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
   <style>
     :root {
-      --primary: #facc15;        /* nineO Yellow */
-      --primary-accent: #ef4444; /* nineO Red */
+      --primary: #facc15;
+      --primary-accent: #ef4444;
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
       --glass-bg: rgba(15, 23, 42, 0.88);
@@ -110,7 +110,6 @@
       50% { opacity: 1; }
     }
 
-    /* Voice Bar */
     .voice-bar {
       display: flex;
       align-items: center;
@@ -1054,7 +1053,6 @@
     .trust-item { display: flex; flex-direction: column; align-items: center; gap: 3px; }
     .trust-item b { color: var(--primary); }
 
-    /* Terms and Conditions Legal Link & Footer */
     .legal-footer {
       margin-top: 14px;
       text-align: center;
@@ -1075,7 +1073,6 @@
       opacity: 0.85;
     }
 
-    /* Terms Modal Styles */
     .terms-overlay {
       display: none;
       position: fixed;
@@ -1166,7 +1163,7 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Voice AI Bar -->
+    <!-- Voice Bar -->
     <div class="voice-bar">
       <div>
         <div class="voice-bar-text" id="voiceStatusText">🎙️ <b>Voice Order:</b> Tap mic & speak</div>
@@ -1200,7 +1197,6 @@
         <div class="gps-status" id="gpsStatus"></div>
       </div>
 
-      <!-- Drop Destination Field with Dynamic Suggestions -->
       <div class="field" style="position: relative;">
         <label>Drop Destination</label>
         <input type="text" id="drop" class="input-box" placeholder="Type chowk, campus, or colony" oninput="handleDropChange()" onchange="triggerRouteEstimation()" autocomplete="off">
@@ -1222,12 +1218,10 @@
           <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
-        <!-- Real-Time Interactive Route Map (Leaflet) -->
         <div id="bookingMapSlot">
           <div id="routeMap"></div>
         </div>
 
-        <!-- Fare Choice Grid: Clean Fare Display with Intelligent Recommendation -->
         <div class="fare-choice-grid" id="standardGrid">
           <div class="choice-card" id="cardSingleRide">
             <div>
@@ -1250,7 +1244,6 @@
           </div>
         </div>
 
-        <!-- Dedicated Pass Card (Shown for Active Pass Holders) -->
         <div class="active-pass-card" id="activePassCard">
           <span class="choice-badge badge-pass">Active Pass Applied</span>
           <div class="active-pass-price" id="activePassDue">₹0</div>
@@ -1276,10 +1269,8 @@
         ● Captain Assigned
       </div>
 
-      <!-- Active Tracking Map Slot -->
       <div id="captainMapSlot" style="margin: 12px 0;"></div>
 
-      <!-- Start PIN Box -->
       <div id="dispOtpWrap">
         <div class="otp-badge">
           START PIN: <b id="dispOtp" style="color:white; font-size:18px;">----</b>
@@ -1289,7 +1280,6 @@
         </div>
       </div>
 
-      <!-- In-Trip Pass Allowance Card -->
       <div class="in-trip-pass-box" id="inTripPassBox">
         <div class="in-trip-pass-header">
           <span id="dispPassTierTitle">🎟️ Pass Active</span>
@@ -1338,7 +1328,7 @@
       </button>
     </div>
 
-    <!-- 3. DAILY PASS TAB (Only Clean Fares Shown) -->
+    <!-- 3. DAILY PASS TAB -->
     <div id="sectionPass" style="display: none;">
       <label>Choose Your Pass (24-Hour Validity)</label>
 
@@ -1448,7 +1438,7 @@
 
       <div class="feedback-tags" id="feedbackTags">
         <span class="tag-chip" onclick="toggleTag(this)">⚡ Polite Captain</span>
-        <span class="tag-chip" onclick="toggleTag(this)">🛡️ Safe Driving</span>
+        <span class="tag-chip" onclick="toggleTag(this)">🛡️️ Safe Driving</span>
         <span class="tag-chip" onclick="toggleTag(this)">⏱️ On-time Pickup</span>
         <span class="tag-chip" onclick="toggleTag(this)">🏍️ Clean Helmet</span>
         <span class="tag-chip" onclick="toggleTag(this)">📍 Route Issue</span>
@@ -1461,14 +1451,12 @@
       </button>
     </div>
 
-    <!-- Trust Strip -->
     <div class="trust-strip">
       <div class="trust-item"><span>🛡️</span><b>Safe & Secure</b></div>
       <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
       <div class="trust-item"><span>🌱</span><b>Cleaner Cities</b></div>
     </div>
 
-    <!-- Clickable Terms and Conditions Footer -->
     <div class="legal-footer">
       By booking or purchasing a pass, you agree to our<br>
       <span class="legal-link" onclick="openTermsModal()">Terms & Conditions Applied</span>
@@ -1532,19 +1520,17 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";[cite: 1]
-    const COMPANY_NAME = "nineO Mobility";[cite: 1]
-    const SUPPORT_WHATSAPP = "919525054247";[cite: 1]
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
+    const COMPANY_NAME = "nineO Mobility";
+    const SUPPORT_WHATSAPP = "919525054247";
 
-    const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };[cite: 1]
-    const RANCHI_MAX_RADIUS_KM = 26.0;[cite: 1]
+    const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };
+    const RANCHI_MAX_RADIUS_KM = 26.0;
 
-    // Nearest 9 Unit Digit Rounding
     function roundToNearestNine(val) {
       return Math.round((val - 9) / 10) * 10 + 9;
     }
 
-    // Dynamic Single Ride Fare Engine (Base ₹21, ₹6.75/km, ₹0.30/min, tiered fees + 5% GST)
     function calculateSingleRideFare(km, minutes) {
       const dist = parseFloat(km) || 0;
       const duration = (minutes && minutes > 0) ? minutes : Math.max(5, Math.round((dist / 22) * 60));
@@ -1576,318 +1562,318 @@
     let selectedAmount = 89;
     let selectedPassName = "9 KM Super Pass (2 Rides)";
     
-    let pickupCoords = null;[cite: 1]
-    let dropCoords = null;[cite: 1]
-    let lastResolvedPickupText = "";[cite: 1]
-    let lastResolvedDropText = "";[cite: 1]
+    let pickupCoords = null;
+    let dropCoords = null;
+    let lastResolvedPickupText = "";
+    let lastResolvedDropText = "";
     
-    let currentPickupText = "";[cite: 1]
-    let currentDropText = "";[cite: 1]
-    let activeCaptainDetails = null;[cite: 1]
+    let currentPickupText = "";
+    let currentDropText = "";
+    let activeCaptainDetails = null;
 
-    let routeDebounceTimer = null;[cite: 1]
-    let suggestDebounceTimer = null;[cite: 1]
-    let autoRedirectTimer = null;[cite: 1]
+    let routeDebounceTimer = null;
+    let suggestDebounceTimer = null;
+    let autoRedirectTimer = null;
 
-    let calculatedKm = 0;[cite: 1]
+    let calculatedKm = 0;
     let calculatedMinutes = 0;
     let singleFareAmount = 40;
-    let currentDueFare = 0;[cite: 1]
-    let userActivePass = null;[cite: 1]
-    let currentRideId = null;[cite: 1]
-    let rideStatusPollTimer = null;[cite: 1]
+    let currentDueFare = 0;
+    let userActivePass = null;
+    let currentRideId = null;
+    let rideStatusPollTimer = null;
 
-    let selectedRating = 5;[cite: 1]
-    let selectedFeedbackTags = [];[cite: 1]
+    let selectedRating = 5;
+    let selectedFeedbackTags = [];
 
     let recommendedTier = "PASS_89";
     let recommendedAmount = 89;
     let recommendedName = "9 KM Super Pass";
 
-    let mapInstance = null;[cite: 1]
-    let routeOutline = null;[cite: 1]
-    let routePolyline = null;[cite: 1]
-    let pickupMarker = null;[cite: 1]
-    let dropMarker = null;[cite: 1]
+    let mapInstance = null;
+    let routeOutline = null;
+    let routePolyline = null;
+    let pickupMarker = null;
+    let dropMarker = null;
 
-    let captainMarker = null;[cite: 1]
-    let captainRoutePolyline = null;[cite: 1]
-    let captainMotionTimer = null;[cite: 1]
+    let captainMarker = null;
+    let captainRoutePolyline = null;
+    let captainMotionTimer = null;
 
     function openTermsModal() {
-      document.getElementById("termsModalOverlay").style.display = "flex";[cite: 1]
-      document.body.style.overflow = "hidden";[cite: 1]
+      document.getElementById("termsModalOverlay").style.display = "flex";
+      document.body.style.overflow = "hidden";
     }
 
     function closeTermsModal() {
-      document.getElementById("termsModalOverlay").style.display = "none";[cite: 1]
-      document.body.style.overflow = "auto";[cite: 1]
+      document.getElementById("termsModalOverlay").style.display = "none";
+      document.body.style.overflow = "auto";
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeTermsModal();[cite: 1]
+      if (e.key === "Escape") closeTermsModal();
     });
 
     try {
       if (localStorage.getItem("nineo_phone")) {
-        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");[cite: 1]
-        handlePhoneInput();[cite: 1]
+        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
+        handlePhoneInput();
       }
     } catch (e) {
-      console.warn("Storage restricted:", e);[cite: 1]
+      console.warn("Storage restricted:", e);
     }
 
     function isWithinRanchiBoundary(coords) {
-      if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;[cite: 1]
-      const distFromCenter = haversine(RANCHI_CENTER.lat, RANCHI_CENTER.lon, coords.lat, coords.lon);[cite: 1]
-      return distFromCenter <= RANCHI_MAX_RADIUS_KM;[cite: 1]
+      if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;
+      const distFromCenter = haversine(RANCHI_CENTER.lat, RANCHI_CENTER.lon, coords.lat, coords.lon);
+      return distFromCenter <= RANCHI_MAX_RADIUS_KM;
     }
 
     function switchTab(t) {
       if (autoRedirectTimer) {
-        clearInterval(autoRedirectTimer);[cite: 1]
-        autoRedirectTimer = null;[cite: 1]
+        clearInterval(autoRedirectTimer);
+        autoRedirectTimer = null;
       }
-      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';[cite: 1]
-      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';[cite: 1]
-      document.getElementById("passConfirmCard").style.display = 'none';[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = 'none';[cite: 1]
-      document.getElementById("feedbackCard").style.display = 'none';[cite: 1]
-      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');[cite: 1]
-      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');[cite: 1]
+      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';
+      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';
+      document.getElementById("passConfirmCard").style.display = 'none';
+      document.getElementById("tripCompleteCard").style.display = 'none';
+      document.getElementById("feedbackCard").style.display = 'none';
+      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');
+      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
 
       if (t === 'book' && mapInstance) {
-        setTimeout(() => mapInstance.invalidateSize(), 200);[cite: 1]
+        setTimeout(() => mapInstance.invalidateSize(), 200);
       }
     }
 
     function handleDropChange() {
-      dropCoords = null;[cite: 1]
-      lastResolvedDropText = "";[cite: 1]
-      const val = document.getElementById("drop").value.trim();[cite: 1]
-      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
+      dropCoords = null;
+      lastResolvedDropText = "";
+      const val = document.getElementById("drop").value.trim();
+      const dropSugBox = document.getElementById("dropSuggestions");
 
-      if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);[cite: 1]
+      if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);
 
       if (val.length < 2) {
-        dropSugBox.style.display = "none";[cite: 1]
-        dropSugBox.innerHTML = "";[cite: 1]
+        dropSugBox.style.display = "none";
+        dropSugBox.innerHTML = "";
       } else {
         suggestDebounceTimer = setTimeout(() => {
-          fetchDropSuggestions(val);[cite: 1]
+          fetchDropSuggestions(val);
         }, 220);
       }
 
-      debounceRouting();[cite: 1]
+      debounceRouting();
     }
 
     async function fetchDropSuggestions(query) {
-      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
+      const dropSugBox = document.getElementById("dropSuggestions");
       try {
-        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=5`;[cite: 1]
-        const res = await fetch(url);[cite: 1]
-        const data = await res.json();[cite: 1]
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=5`;
+        const res = await fetch(url);
+        const data = await res.json();
 
         if (data && data.features && data.features.length > 0) {
-          dropSugBox.innerHTML = "";[cite: 1]
+          dropSugBox.innerHTML = "";
           data.features.forEach(f => {
-            const [lon, lat] = f.geometry.coordinates;[cite: 1]
-            const p = f.properties;[cite: 1]
-            const title = p.name || p.street || query;[cite: 1]
-            const desc = [p.street, p.district || p.suburb || p.city, "Ranchi"].filter(Boolean).join(", ");[cite: 1]
+            const [lon, lat] = f.geometry.coordinates;
+            const p = f.properties;
+            const title = p.name || p.street || query;
+            const desc = [p.street, p.district || p.suburb || p.city, "Ranchi"].filter(Boolean).join(", ");
 
-            const item = document.createElement("div");[cite: 1]
-            item.className = "suggestion-item";[cite: 1]
-            item.innerHTML = `<div class="suggestion-title">📍 ${title}</div><div class="suggestion-desc">${desc}</div>`;[cite: 1]
+            const item = document.createElement("div");
+            item.className = "suggestion-item";
+            item.innerHTML = `<div class="suggestion-title">📍 ${title}</div><div class="suggestion-desc">${desc}</div>`;
             item.onclick = () => {
-              selectDropSuggestion(title, desc, lat, lon);[cite: 1]
+              selectDropSuggestion(title, desc, lat, lon);
             };
-            dropSugBox.appendChild(item);[cite: 1]
+            dropSugBox.appendChild(item);
           });
-          dropSugBox.style.display = "block";[cite: 1]
+          dropSugBox.style.display = "block";
         } else {
-          dropSugBox.style.display = "none";[cite: 1]
+          dropSugBox.style.display = "none";
         }
       } catch (e) {
-        dropSugBox.style.display = "none";[cite: 1]
+        dropSugBox.style.display = "none";
       }
     }
 
     function selectDropSuggestion(title, desc, lat, lon) {
-      const dropInput = document.getElementById("drop");[cite: 1]
-      dropInput.value = title;[cite: 1]
-      dropCoords = { lat, lon };[cite: 1]
-      lastResolvedDropText = title;[cite: 1]
-      document.getElementById("dropSuggestions").style.display = "none";[cite: 1]
-      triggerRouteEstimation();[cite: 1]
+      const dropInput = document.getElementById("drop");
+      dropInput.value = title;
+      dropCoords = { lat, lon };
+      lastResolvedDropText = title;
+      document.getElementById("dropSuggestions").style.display = "none";
+      triggerRouteEstimation();
     }
 
     document.addEventListener("click", (e) => {
-      const dropInput = document.getElementById("drop");[cite: 1]
-      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
+      const dropInput = document.getElementById("drop");
+      const dropSugBox = document.getElementById("dropSuggestions");
       if (dropSugBox && !dropInput.contains(e.target) && !dropSugBox.contains(e.target)) {
-        dropSugBox.style.display = "none";[cite: 1]
+        dropSugBox.style.display = "none";
       }
     });
 
     function handlePickupChange() {
-      pickupCoords = null;[cite: 1]
-      lastResolvedPickupText = "";[cite: 1]
-      debounceRouting();[cite: 1]
+      pickupCoords = null;
+      lastResolvedPickupText = "";
+      debounceRouting();
     }
 
     function setDrop(v) {
-      document.getElementById("drop").value = v;[cite: 1]
-      dropCoords = null;[cite: 1]
-      lastResolvedDropText = "";[cite: 1]
-      document.getElementById("dropSuggestions").style.display = "none";[cite: 1]
-      triggerRouteEstimation();[cite: 1]
+      document.getElementById("drop").value = v;
+      dropCoords = null;
+      lastResolvedDropText = "";
+      document.getElementById("dropSuggestions").style.display = "none";
+      triggerRouteEstimation();
     }
 
     function setPickup(v) {
-      document.getElementById("pickup").value = v;[cite: 1]
-      pickupCoords = null;[cite: 1]
-      lastResolvedPickupText = "";[cite: 1]
-      triggerRouteEstimation();[cite: 1]
+      document.getElementById("pickup").value = v;
+      pickupCoords = null;
+      lastResolvedPickupText = "";
+      triggerRouteEstimation();
     }
 
     function debounceRouting() {
-      if (routeDebounceTimer) clearTimeout(routeDebounceTimer);[cite: 1]
+      if (routeDebounceTimer) clearTimeout(routeDebounceTimer);
       routeDebounceTimer = setTimeout(() => {
-        triggerRouteEstimation();[cite: 1]
+        triggerRouteEstimation();
       }, 500);
     }
 
     async function handlePhoneInput() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
-      const banner = document.getElementById("activePassBanner");[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const banner = document.getElementById("activePassBanner");
 
       if (phone.length === 10) {
-        try { localStorage.setItem("nineo_phone", phone); } catch (e) {}[cite: 1]
+        try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
         try {
-          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
-          const data = await res.json();[cite: 1]
+          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
+          const data = await res.json();
 
           if (data.hasActivePass) {
-            userActivePass = data;[cite: 1]
-            banner.style.display = "block";[cite: 1]
-            banner.innerHTML = `🎟️ <b>Active Pass:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) available today`;[cite: 1]
+            userActivePass = data;
+            banner.style.display = "block";
+            banner.innerHTML = `🎟️ <b>Active Pass:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) available today`;
           } else {
-            userActivePass = null;[cite: 1]
-            banner.style.display = "none";[cite: 1]
+            userActivePass = null;
+            banner.style.display = "none";
           }
         } catch (e) {
-          userActivePass = null;[cite: 1]
+          userActivePass = null;
         }
         if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm), calculatedMinutes);
       } else {
-        banner.style.display = "none";[cite: 1]
-        userActivePass = null;[cite: 1]
+        banner.style.display = "none";
+        userActivePass = null;
       }
     }
 
     function getPreciseGPS() {
-      const p = document.getElementById("pickup");[cite: 1]
-      const s = document.getElementById("gpsStatus");[cite: 1]
-      s.innerText = "📍 Pinning GPS satellites...";[cite: 1]
+      const p = document.getElementById("pickup");
+      const s = document.getElementById("gpsStatus");
+      s.innerText = "📍 Pinning GPS satellites...";
 
       if (!navigator.geolocation) {
-        s.innerText = "⚠️ Geolocation not supported on browser.";[cite: 1]
+        s.innerText = "⚠️ Geolocation not supported on browser.";
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
-          const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };[cite: 1]
+          const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
 
           if (!isWithinRanchiBoundary(coords)) {
-            s.innerHTML = "<b style='color:var(--primary-accent);'>⚠️ GPS shows you are outside Ranchi operational area.</b>";[cite: 1]
-            pickupCoords = null;[cite: 1]
+            s.innerHTML = "<b style='color:var(--primary-accent);'>⚠️ GPS shows you are outside Ranchi operational area.</b>";
+            pickupCoords = null;
             return;
           }
 
-          pickupCoords = coords;[cite: 1]
-          lastResolvedPickupText = `${pickupCoords.lat},${pickupCoords.lon}`;[cite: 1]
-          const acc = Math.round(pos.coords.accuracy);[cite: 1]
-          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;[cite: 1]
-          s.innerText = `📍 GPS Locked in Ranchi (±${acc}m)`;[cite: 1]
-          triggerRouteEstimation();[cite: 1]
+          pickupCoords = coords;
+          lastResolvedPickupText = `${pickupCoords.lat},${pickupCoords.lon}`;
+          const acc = Math.round(pos.coords.accuracy);
+          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;
+          s.innerText = `📍 GPS Locked in Ranchi (±${acc}m)`;
+          triggerRouteEstimation();
 
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);[cite: 1]
-            const d = await res.json();[cite: 1]
-            const a = d.address || {};[cite: 1]
-            const street = a.road || a.suburb || a.neighbourhood || "";[cite: 1]
-            const landmark = a.building || a.amenity || "";[cite: 1]
-            const resolvedName = [landmark, street].filter(Boolean).join(", ");[cite: 1]
-            if (resolvedName) p.value = resolvedName;[cite: 1]
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);
+            const d = await res.json();
+            const a = d.address || {};
+            const street = a.road || a.suburb || a.neighbourhood || "";
+            const landmark = a.building || a.amenity || "";
+            const resolvedName = [landmark, street].filter(Boolean).join(", ");
+            if (resolvedName) p.value = resolvedName;
           } catch(e) {}
         },
         (err) => {
-          s.innerText = "⚠️ GPS access denied. Please type pickup landmark.";[cite: 1]
+          s.innerText = "⚠️ GPS access denied. Please type pickup landmark.";
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }[cite: 1]
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
       );
     }
 
     async function geocodeLocation(rawText) {
-      if (!rawText || !rawText.trim()) return null;[cite: 1]
-      const query = rawText.trim();[cite: 1]
+      if (!rawText || !rawText.trim()) return null;
+      const query = rawText.trim();
 
-      const coordMatch = query.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);[cite: 1]
+      const coordMatch = query.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
       if (coordMatch) {
-        return { lat: parseFloat(coordMatch[1]), lon: parseFloat(coordMatch[2]) };[cite: 1]
+        return { lat: parseFloat(coordMatch[1]), lon: parseFloat(coordMatch[2]) };
       }
 
       try {
-        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=1`;[cite: 1]
-        const res = await fetch(photonUrl);[cite: 1]
-        const data = await res.json();[cite: 1]
+        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=1`;
+        const res = await fetch(photonUrl);
+        const data = await res.json();
         if (data && data.features && data.features.length > 0) {
-          const [lon, lat] = data.features[0].geometry.coordinates;[cite: 1]
-          return { lat, lon };[cite: 1]
+          const [lon, lat] = data.features[0].geometry.coordinates;
+          return { lat, lon };
         }
       } catch (e) {}
 
       try {
-        const viewbox = "85.10,23.55,85.55,23.15";[cite: 1]
-        const nomQuery = query.toLowerCase().includes("ranchi") ? query : `${query}, Ranchi`;[cite: 1]
-        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nomQuery)}&viewbox=${viewbox}&limit=1`;[cite: 1]
-        const res = await fetch(nomUrl, { headers: { "Accept-Language": "en" } });[cite: 1]
-        const data = await res.json();[cite: 1]
+        const viewbox = "85.10,23.55,85.55,23.15";
+        const nomQuery = query.toLowerCase().includes("ranchi") ? query : `${query}, Ranchi`;
+        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nomQuery)}&viewbox=${viewbox}&limit=1`;
+        const res = await fetch(nomUrl, { headers: { "Accept-Language": "en" } });
+        const data = await res.json();
         if (data && data.length > 0) {
-          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };[cite: 1]
+          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
         }
       } catch (e) {}
 
-      return null;[cite: 1]
+      return null;
     }
 
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
-      const mapContainer = document.getElementById("routeMap");[cite: 1]
-      if (!mapContainer) return;[cite: 1]
+      const mapContainer = document.getElementById("routeMap");
+      if (!mapContainer) return;
 
-      mapContainer.style.display = "block";[cite: 1]
+      mapContainer.style.display = "block";
 
       if (!mapInstance) {
         mapInstance = L.map('routeMap', {
           zoomControl: false,
           attributionControl: false
-        }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);[cite: 1]
+        }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapInstance);[cite: 1]
+        }).addTo(mapInstance);
       }
 
-      if (routeOutline) mapInstance.removeLayer(routeOutline);[cite: 1]
-      if (routePolyline) mapInstance.removeLayer(routePolyline);[cite: 1]
-      if (pickupMarker) mapInstance.removeLayer(pickupMarker);[cite: 1]
-      if (dropMarker) mapInstance.removeLayer(dropMarker);[cite: 1]
+      if (routeOutline) mapInstance.removeLayer(routeOutline);
+      if (routePolyline) mapInstance.removeLayer(routePolyline);
+      if (pickupMarker) mapInstance.removeLayer(pickupMarker);
+      if (dropMarker) mapInstance.removeLayer(dropMarker);
 
       if (!pickup || !drop) {
-        setTimeout(() => { mapInstance.invalidateSize(); }, 200);[cite: 1]
+        setTimeout(() => { mapInstance.invalidateSize(); }, 200);
         return;
       }
 
@@ -1896,21 +1882,21 @@
         html: '<div class="pin-badge pin-a">A</div>',
         iconSize: [28, 28],
         iconAnchor: [14, 14]
-      });[cite: 1]
+      });
 
-      const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';[cite: 1]
+      const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';
       const dropIcon = L.divIcon({
         className: 'custom-pin',
         html: `<div class="pin-b-wrap">${etaTag}<div class="pin-badge pin-b">B</div></div>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14]
-      });[cite: 1]
+      });
 
-      pickupMarker = L.marker([pickup.lat, pickup.lon], { icon: pickupIcon }).addTo(mapInstance);[cite: 1]
-      dropMarker = L.marker([drop.lat, drop.lon], { icon: dropIcon }).addTo(mapInstance);[cite: 1]
+      pickupMarker = L.marker([pickup.lat, pickup.lon], { icon: pickupIcon }).addTo(mapInstance);
+      dropMarker = L.marker([drop.lat, drop.lon], { icon: dropIcon }).addTo(mapInstance);
 
       if (coordinates && coordinates.length > 0) {
-        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);[cite: 1]
+        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
 
         routeOutline = L.polyline(latLngs, {
           color: '#050811',
@@ -1918,7 +1904,7 @@
           opacity: 0.9,
           lineJoin: 'round',
           lineCap: 'round'
-        }).addTo(mapInstance);[cite: 1]
+        }).addTo(mapInstance);
 
         routePolyline = L.polyline(latLngs, {
           color: '#facc15',
@@ -1926,144 +1912,144 @@
           opacity: 1.0,
           lineJoin: 'round',
           lineCap: 'round'
-        }).addTo(mapInstance);[cite: 1]
+        }).addTo(mapInstance);
 
-        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [35, 35] });[cite: 1]
+        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [35, 35] });
       } else {
-        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [35, 35] });[cite: 1]
+        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [35, 35] });
       }
 
-      setTimeout(() => { mapInstance.invalidateSize(); }, 200);[cite: 1]
+      setTimeout(() => { mapInstance.invalidateSize(); }, 200);
     }
 
     async function startCaptainLiveTracking(pickup) {
-      if (!mapInstance || !pickup) return;[cite: 1]
+      if (!mapInstance || !pickup) return;
 
-      if (captainMotionTimer) clearInterval(captainMotionTimer);[cite: 1]
-      if (captainMarker) mapInstance.removeLayer(captainMarker);[cite: 1]
-      if (captainRoutePolyline) mapInstance.removeLayer(captainRoutePolyline);[cite: 1]
+      if (captainMotionTimer) clearInterval(captainMotionTimer);
+      if (captainMarker) mapInstance.removeLayer(captainMarker);
+      if (captainRoutePolyline) mapInstance.removeLayer(captainRoutePolyline);
 
       const capStart = {
         lat: pickup.lat + (Math.random() > 0.5 ? 0.007 : -0.007),
         lon: pickup.lon + (Math.random() > 0.5 ? 0.007 : -0.007)
-      };[cite: 1]
+      };
 
       const bikeIcon = L.divIcon({
         className: 'custom-pin',
         html: '<div class="captain-bike-pin"><span style="transform:scaleX(-1);">🏍️</span><div class="bike-radar-ring"></div></div>',
         iconSize: [32, 32],
         iconAnchor: [16, 16]
-      });[cite: 1]
+      });
 
-      captainMarker = L.marker([capStart.lat, capStart.lon], { icon: bikeIcon }).addTo(mapInstance);[cite: 1]
+      captainMarker = L.marker([capStart.lat, capStart.lon], { icon: bikeIcon }).addTo(mapInstance);
 
       try {
-        const url = `https://router.project-osrm.org/route/v1/driving/${capStart.lon},${capStart.lat};${pickup.lon},${pickup.lat}?overview=full&geometries=geojson`;[cite: 1]
-        const res = await fetch(url);[cite: 1]
-        const json = await res.json();[cite: 1]
+        const url = `https://router.project-osrm.org/route/v1/driving/${capStart.lon},${capStart.lat};${pickup.lon},${pickup.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(url);
+        const json = await res.json();
 
         if (json.routes && json.routes.length > 0) {
-          const path = json.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);[cite: 1]
+          const path = json.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
 
           captainRoutePolyline = L.polyline(path, {
             color: '#38bdf8',
             weight: 3.5,
             dashArray: '6, 8',
             opacity: 0.8
-          }).addTo(mapInstance);[cite: 1]
+          }).addTo(mapInstance);
 
-          mapInstance.fitBounds(captainRoutePolyline.getBounds(), { padding: [40, 40] });[cite: 1]
+          mapInstance.fitBounds(captainRoutePolyline.getBounds(), { padding: [40, 40] });
 
-          let stepIndex = 0;[cite: 1]
+          let stepIndex = 0;
           captainMotionTimer = setInterval(() => {
             stepIndex++;
             if (stepIndex < path.length) {
-              captainMarker.setLatLng(path[stepIndex]);[cite: 1]
-              captainRoutePolyline.setLatLngs(path.slice(stepIndex));[cite: 1]
+              captainMarker.setLatLng(path[stepIndex]);
+              captainRoutePolyline.setLatLngs(path.slice(stepIndex));
             } else {
-              clearInterval(captainMotionTimer);[cite: 1]
-              captainMotionTimer = null;[cite: 1]
-              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";[cite: 1]
-              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");[cite: 1]
+              clearInterval(captainMotionTimer);
+              captainMotionTimer = null;
+              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";
+              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");
             }
-          }, 1800);[cite: 1]
+          }, 1800);
         }
       } catch (e) {
-        console.warn("Captain approach route error:", e);[cite: 1]
+        console.warn("Captain approach route error:", e);
       }
     }
 
     async function triggerRouteEstimation() {
-      const pVal = document.getElementById("pickup").value.trim();[cite: 1]
-      const dVal = document.getElementById("drop").value.trim();[cite: 1]
-      if (!pVal || !dVal) return;[cite: 1]
+      const pVal = document.getElementById("pickup").value.trim();
+      const dVal = document.getElementById("drop").value.trim();
+      if (!pVal || !dVal) return;
 
-      const card = document.getElementById("routeCard");[cite: 1]
-      const subtitle = document.getElementById("routeSubtitle");[cite: 1]
-      card.style.display = "block";[cite: 1]
+      const card = document.getElementById("routeCard");
+      const subtitle = document.getElementById("routeSubtitle");
+      card.style.display = "block";
       subtitle.innerText = "Finding route & fares...";
 
-      if (pVal !== lastResolvedPickupText) pickupCoords = null;[cite: 1]
-      if (dVal !== lastResolvedDropText) dropCoords = null;[cite: 1]
+      if (pVal !== lastResolvedPickupText) pickupCoords = null;
+      if (dVal !== lastResolvedDropText) dropCoords = null;
 
       if (!pickupCoords) {
-        pickupCoords = await geocodeLocation(pVal);[cite: 1]
-        if (pickupCoords) lastResolvedPickupText = pVal;[cite: 1]
+        pickupCoords = await geocodeLocation(pVal);
+        if (pickupCoords) lastResolvedPickupText = pVal;
       }
       if (!dropCoords) {
-        dropCoords = await geocodeLocation(dVal);[cite: 1]
-        if (dropCoords) lastResolvedDropText = dVal;[cite: 1]
+        dropCoords = await geocodeLocation(dVal);
+        if (dropCoords) lastResolvedDropText = dVal;
       }
 
       if (!pickupCoords || !dropCoords) {
-        const missing = !pickupCoords ? `Pickup: "${pVal}"` : `Drop: "${dVal}"`;[cite: 1]
-        subtitle.innerText = `⚠️️ Could not locate ${missing}. Please pick a landmark.`;[cite: 1]
+        const missing = !pickupCoords ? `Pickup: "${pVal}"` : `Drop: "${dVal}"`;
+        subtitle.innerText = `⚠️ Could not locate ${missing}. Please pick a landmark.`;
         return;
       }
 
-      const isPickupInRanchi = isWithinRanchiBoundary(pickupCoords);[cite: 1]
-      const isDropInRanchi = isWithinRanchiBoundary(dropCoords);[cite: 1]
+      const isPickupInRanchi = isWithinRanchiBoundary(pickupCoords);
+      const isDropInRanchi = isWithinRanchiBoundary(dropCoords);
 
       if (!isPickupInRanchi || !isDropInRanchi) {
-        const outPlace = !isPickupInRanchi ? "Pickup location" : "Destination";[cite: 1]
-        subtitle.innerHTML = `<b style="color:var(--primary-accent);">🚫 Outside Operating Zone:</b> ${outPlace} is beyond Ranchi limits (max 26km from center). nineO operates only within Ranchi.`;[cite: 1]
-        document.getElementById("btnBookDirect").disabled = true;[cite: 1]
-        const btnSingle = document.getElementById("btnBookSingle");[cite: 1]
-        if (btnSingle) btnSingle.disabled = true;[cite: 1]
-        const btnPassOffer = document.getElementById("btnBookPassOffer");[cite: 1]
-        if (btnPassOffer) btnPassOffer.disabled = true;[cite: 1]
-        const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
-        if (btnActive) btnActive.disabled = true;[cite: 1]
-        document.getElementById("routeKm").innerText = "--";[cite: 1]
-        document.getElementById("singlePrice").innerText = "₹--";[cite: 1]
-        document.getElementById("passPrice").innerText = "₹--";[cite: 1]
+        const outPlace = !isPickupInRanchi ? "Pickup location" : "Destination";
+        subtitle.innerHTML = `<b style="color:var(--primary-accent);">🚫 Outside Operating Zone:</b> ${outPlace} is beyond Ranchi limits (max 26km from center). nineO operates only within Ranchi.`;
+        document.getElementById("btnBookDirect").disabled = true;
+        const btnSingle = document.getElementById("btnBookSingle");
+        if (btnSingle) btnSingle.disabled = true;
+        const btnPassOffer = document.getElementById("btnBookPassOffer");
+        if (btnPassOffer) btnPassOffer.disabled = true;
+        const btnActive = document.getElementById("btnBookActivePass");
+        if (btnActive) btnActive.disabled = true;
+        document.getElementById("routeKm").innerText = "--";
+        document.getElementById("singlePrice").innerText = "₹--";
+        document.getElementById("passPrice").innerText = "₹--";
         return;
       }
 
-      document.getElementById("btnBookDirect").disabled = false;[cite: 1]
-      const btnSingle = document.getElementById("btnBookSingle");[cite: 1]
-      if (btnSingle) btnSingle.disabled = false;[cite: 1]
-      const btnPassOffer = document.getElementById("btnBookPassOffer");[cite: 1]
-      if (btnPassOffer) btnPassOffer.disabled = false;[cite: 1]
+      document.getElementById("btnBookDirect").disabled = false;
+      const btnSingle = document.getElementById("btnBookSingle");
+      if (btnSingle) btnSingle.disabled = false;
+      const btnPassOffer = document.getElementById("btnBookPassOffer");
+      if (btnPassOffer) btnPassOffer.disabled = false;
 
       try {
-        const routeUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=full&geometries=geojson`;[cite: 1]
-        const res = await fetch(routeUrl);[cite: 1]
-        const data = await res.json();[cite: 1]
+        const routeUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=full&geometries=geojson`;
+        const res = await fetch(routeUrl);
+        const data = await res.json();
 
         if (data && data.routes && data.routes.length > 0) {
-          calculatedKm = (data.routes[0].distance / 1000).toFixed(1);[cite: 1]
-          calculatedMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));[cite: 1]
+          calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
+          calculatedMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));
           renderComparison(parseFloat(calculatedKm), calculatedMinutes);
-          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, calculatedMinutes);[cite: 1]
+          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, calculatedMinutes);
         } else {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
           calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
           renderComparison(parseFloat(calculatedKm), calculatedMinutes);
           renderInteractiveMap(pickupCoords, dropCoords, null, calculatedMinutes);
         }
       } catch (err) {
-        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
+        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
         calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
         renderComparison(parseFloat(calculatedKm), calculatedMinutes);
         renderInteractiveMap(pickupCoords, dropCoords, null, calculatedMinutes);
@@ -2071,36 +2057,33 @@
     }
 
     function haversine(lat1, lon1, lat2, lon2) {
-      const R = 6371;[cite: 1]
-      const dLat = (lat2 - lat1) * Math.PI / 180;[cite: 1]
-      const dLon = (lon2 - lon1) * Math.PI / 180;[cite: 1]
+      const R = 6371;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);[cite: 1]
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));[cite: 1]
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    // Displays ONLY Fares (No Calculation Breakdowns) & Applies Intelligent Recommendation
     function renderComparison(km, minutes) {
-      document.getElementById("routeKm").innerText = km;[cite: 1]
-      document.getElementById("btnBookDirect").style.display = "none";[cite: 1]
+      document.getElementById("routeKm").innerText = km;
+      document.getElementById("btnBookDirect").style.display = "none";
 
-      const stdGrid = document.getElementById("standardGrid");[cite: 1]
-      const passCard = document.getElementById("activePassCard");[cite: 1]
-      const passDue = document.getElementById("activePassDue");[cite: 1]
-      const passExp = document.getElementById("activePassExplanation");[cite: 1]
-      const btnBookPass = document.getElementById("btnBookActivePass");[cite: 1]
-      const upsellBox = document.getElementById("passUpsellBox");[cite: 1]
+      const stdGrid = document.getElementById("standardGrid");
+      const passCard = document.getElementById("activePassCard");
+      const passDue = document.getElementById("activePassDue");
+      const passExp = document.getElementById("activePassExplanation");
+      const btnBookPass = document.getElementById("btnBookActivePass");
+      const upsellBox = document.getElementById("passUpsellBox");
 
-      // Single Ride Final Fare
       singleFareAmount = calculateSingleRideFare(km, minutes);
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
       document.getElementById("singleDesc").innerText = "Direct point-to-point ride. Pay captain at drop.";
 
-      // Determine Best Matching Pass
-      const pTitle = document.getElementById("passCardTitle");[cite: 1]
-      const pPrice = document.getElementById("passPrice");[cite: 1]
-      const pDesc = document.getElementById("passDesc");[cite: 1]
+      const pTitle = document.getElementById("passCardTitle");
+      const pPrice = document.getElementById("passPrice");
+      const pDesc = document.getElementById("passDesc");
 
       if (km <= 5.0) {
         recommendedTier = "PASS_59";
@@ -2125,35 +2108,34 @@
         pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
       }
 
-      // ACTIVE PASS HOLDER LOGIC
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
-        stdGrid.style.display = "none";[cite: 1]
-        passCard.style.display = "block";[cite: 1]
+        stdGrid.style.display = "none";
+        passCard.style.display = "block";
         document.getElementById("routeSubtitle").innerText = "Active Pass Applied:";
 
         if (km <= userActivePass.remainingKm) {
-          currentDueFare = 0;[cite: 1]
-          passDue.innerText = "₹0";[cite: 1]
-          passDue.style.color = "var(--green)";[cite: 1]
-          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);[cite: 1]
+          currentDueFare = 0;
+          passDue.innerText = "₹0";
+          passDue.style.color = "var(--green)";
+          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
           passExp.innerHTML = `✅ <b>Trip Fully Covered!</b><br>1 ride deducted. <b>${leftAfter} KM</b> balance remaining.`;
-          btnBookPass.disabled = false;[cite: 1]
-          btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";[cite: 1]
-          if (upsellBox) upsellBox.style.display = "none";[cite: 1]
+          btnBookPass.disabled = false;
+          btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";
+          if (upsellBox) upsellBox.style.display = "none";
         } else {
-          const coveredKm = userActivePass.remainingKm;[cite: 1]
-          const extraKm = parseFloat((km - coveredKm).toFixed(1));[cite: 1]
-          currentDueFare = Math.round(extraKm * 9);[cite: 1]
+          const coveredKm = userActivePass.remainingKm;
+          const extraKm = parseFloat((km - coveredKm).toFixed(1));
+          currentDueFare = Math.round(extraKm * 9);
 
-          passDue.innerText = `₹${currentDueFare}`;[cite: 1]
-          passDue.style.color = "var(--primary)";[cite: 1]
+          passDue.innerText = `₹${currentDueFare}`;
+          passDue.style.color = "var(--primary)";
           passExp.innerHTML = `⚡ <b>${coveredKm} KM covered free by your pass.</b><br>Extra ${extraKm} KM overage: <b>₹${currentDueFare}</b> due to captain.`;
           
-          btnBookPass.disabled = false;[cite: 1]
+          btnBookPass.disabled = false;
           btnBookPass.innerHTML = `<span>Confirm Ride (₹${currentDueFare} Due)</span> ➔`;
 
           if (upsellBox) {
-            upsellBox.style.display = "block";[cite: 1]
+            upsellBox.style.display = "block";
             upsellBox.innerHTML = `
               <div class="upsell-title">💡 Smart Pass Upgrade</div>
               <div class="upsell-text">Activate a fresh <b>${recommendedName} (₹${recommendedAmount})</b> instead to cover this ride plus future trips.</div>
@@ -2164,9 +2146,8 @@
           }
         }
       } else {
-        // NON-PASS USER: Intelligently Recommend either Pass or Single Ride
-        passCard.style.display = "none";[cite: 1]
-        stdGrid.style.display = "grid";[cite: 1]
+        passCard.style.display = "none";
+        stdGrid.style.display = "grid";
 
         const cardSingle = document.getElementById("cardSingleRide");
         const cardPass = document.getElementById("cardPassOffer");
@@ -2174,7 +2155,6 @@
         const badgePass = document.getElementById("badgePass");
         const subtitle = document.getElementById("routeSubtitle");
 
-        // Recommend Pass if single ride is at least 70% of pass cost (due to multi-ride 24h bonus)
         const isPassBetterValue = (singleFareAmount >= (recommendedAmount * 0.70));
 
         if (isPassBetterValue) {
@@ -2198,115 +2178,114 @@
     }
 
     function buyRecommendedPass() {
-      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);[cite: 1]
-      openPaymentModal();[cite: 1]
+      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);
+      openPaymentModal();
     }
 
-    // Voice AI Engine
-    let voiceRecognition = null;[cite: 1]
-    let isVoiceActive = false;[cite: 1]
+    let voiceRecognition = null;
+    let isVoiceActive = false;
 
     function initVoiceAI() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;[cite: 1]
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        document.getElementById("voiceStatusText").innerText = "⚠️ Voice input not supported on this browser";[cite: 1]
-        document.getElementById("voiceSubText").innerText = "Use Google Chrome on Android or Safari on iOS";[cite: 1]
+        document.getElementById("voiceStatusText").innerText = "⚠️ Voice input not supported on this browser";
+        document.getElementById("voiceSubText").innerText = "Use Google Chrome on Android or Safari on iOS";
         return;
       }
 
       try {
-        voiceRecognition = new SpeechRecognition();[cite: 1]
-        voiceRecognition.lang = 'en-IN';[cite: 1]
-        voiceRecognition.interimResults = false;[cite: 1]
-        voiceRecognition.continuous = false;[cite: 1]
+        voiceRecognition = new SpeechRecognition();
+        voiceRecognition.lang = 'en-IN';
+        voiceRecognition.interimResults = false;
+        voiceRecognition.continuous = false;
 
         voiceRecognition.onstart = () => {
-          isVoiceActive = true;[cite: 1]
-          document.getElementById("voiceMicBtn").classList.add("listening");[cite: 1]
-          document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";[cite: 1]
-          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";[cite: 1]
+          isVoiceActive = true;
+          document.getElementById("voiceMicBtn").classList.add("listening");
+          document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";
+          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";
         };
 
         voiceRecognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;[cite: 1]
-          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;[cite: 1]
-          parseVoiceIntentWithBackend(transcript);[cite: 1]
+          const transcript = event.results[0][0].transcript;
+          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;
+          parseVoiceIntentWithBackend(transcript);
         };
 
         voiceRecognition.onerror = (event) => {
-          isVoiceActive = false;[cite: 1]
-          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
-          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");[cite: 1]
-          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";[cite: 1]
+          isVoiceActive = false;
+          document.getElementById("voiceMicBtn").classList.remove("listening");
+          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");
+          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";
         };
 
         voiceRecognition.onend = () => {
-          isVoiceActive = false;[cite: 1]
-          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
+          isVoiceActive = false;
+          document.getElementById("voiceMicBtn").classList.remove("listening");
         };
       } catch (err) {
-        console.error("Speech init error:", err);[cite: 1]
+        console.error("Speech init error:", err);
       }
     }
 
     function toggleVoiceRecognition() {
-      if (!voiceRecognition) initVoiceAI();[cite: 1]
-      if (!voiceRecognition) return;[cite: 1]
+      if (!voiceRecognition) initVoiceAI();
+      if (!voiceRecognition) return;
 
       if (isVoiceActive) {
-        try { voiceRecognition.stop(); } catch (e) {}[cite: 1]
+        try { voiceRecognition.stop(); } catch (e) {}
       } else {
         try {
-          voiceRecognition.start();[cite: 1]
+          voiceRecognition.start();
         } catch (e) {
-          try { voiceRecognition.stop(); } catch (err) {}[cite: 1]
-          setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);[cite: 1]
+          try { voiceRecognition.stop(); } catch (err) {}
+          setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);
         }
       }
     }
 
     async function parseVoiceIntentWithBackend(rawText) {
-      const subText = document.getElementById("voiceSubText");[cite: 1]
-      const lower = rawText.toLowerCase().trim();[cite: 1]
+      const subText = document.getElementById("voiceSubText");
+      const lower = rawText.toLowerCase().trim();
 
       if (lower.includes("pass") || lower.includes("card")) {
         if (lower.includes("89") || lower.includes("super") || lower.includes("9")) {
           selectPass(document.getElementById("card_PASS_89"), "PASS_89", 89, "9 KM Super Pass (2 Rides)");
-          switchTab('pass'); openPaymentModal(); return;[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;
         }
         if (lower.includes("149") || lower.includes("pro") || lower.includes("18")) {
           selectPass(document.getElementById("card_PASS_149"), "PASS_149", 149, "18 KM Pro Pass (3 Rides)");
-          switchTab('pass'); openPaymentModal(); return;[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;
         }
         if (lower.includes("59") || lower.includes("5")) {
           selectPass(document.getElementById("card_PASS_59"), "PASS_59", 59, "5 KM Pass (1 Ride)");
-          switchTab('pass'); openPaymentModal(); return;[cite: 1]
+          switchTab('pass'); openPaymentModal(); return;
         }
       }
 
       const singleDrop = lower.match(/(?:take\s+me\s+to|drop\s+me\s+at|drop\s+at|destination|le\s*chalo|chalo)\s+(.+)/i) ||
-                         lower.match(/(?:mujhe|humko)?\s*(.+?)\s*(?:jana\s*h|jana\s*hai|chalna\s*hai|chalo)/i);[cite: 1]
+                         lower.match(/(?:mujhe|humko)?\s*(.+?)\s*(?:jana\s*h|jana\s*hai|chalna\s*hai|chalo)/i);
 
-      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);[cite: 1]
+      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
 
       if (singleDrop) {
-        const d = cleanPlace(singleDrop[1]);[cite: 1]
-        if (d) { applyTransitLocations(null, d); return; }[cite: 1]
+        const d = cleanPlace(singleDrop[1]);
+        if (d) { applyTransitLocations(null, d); return; }
       } else if (twoPoint && !lower.includes("jana") && !lower.includes("chalo")) {
-        const p = cleanPlace(twoPoint[1]);[cite: 1]
-        const d = cleanPlace(twoPoint[2]);[cite: 1]
-        if (d && p && p !== "me") { applyTransitLocations(p, d); return; }[cite: 1]
-        if (d) { applyTransitLocations(null, d); return; }[cite: 1]
+        const p = cleanPlace(twoPoint[1]);
+        const d = cleanPlace(twoPoint[2]);
+        if (d && p && p !== "me") { applyTransitLocations(p, d); return; }
+        if (d) { applyTransitLocations(null, d); return; }
       }
 
-      subText.innerText = "🧠 Analyzing transit route...";[cite: 1]
+      subText.innerText = "🧠 Analyzing transit route...";
       try {
-        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;[cite: 1]
-        const res = await fetch(url);[cite: 1]
-        const json = await res.json();[cite: 1]
+        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;
+        const res = await fetch(url);
+        const json = await res.json();
 
         if (json.status === "SUCCESS" && json.data) {
-          const { pickup, drop, passTier } = json.data;[cite: 1]
+          const { pickup, drop, passTier } = json.data;
 
           if (passTier) {
             const tierMap = {
@@ -2315,154 +2294,153 @@
               "PASS_149": { id: "card_PASS_149", amt: 149, name: "18 KM Pro Pass (3 Rides)" }
             };
             const p = tierMap[passTier] || tierMap["PASS_89"];
-            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);[cite: 1]
-            switchTab('pass');[cite: 1]
-            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');[cite: 1]
-            setTimeout(() => openPaymentModal(), 800);[cite: 1]
+            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
+            switchTab('pass');
+            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
+            setTimeout(() => openPaymentModal(), 800);
             return;
           }
 
           if (drop) {
-            applyTransitLocations(pickup, drop);[cite: 1]
+            applyTransitLocations(pickup, drop);
             return;
           }
         }
       } catch (err) {
-        console.warn("Backend AI parse error:", err);[cite: 1]
+        console.warn("Backend AI parse error:", err);
       }
 
-      const fallbackDrop = cleanPlace(lower);[cite: 1]
+      const fallbackDrop = cleanPlace(lower);
       if (fallbackDrop.length > 1) {
-        applyTransitLocations(null, fallbackDrop);[cite: 1]
+        applyTransitLocations(null, fallbackDrop);
       } else {
-        subText.innerText = "⚠️ Could not detect location. Tap to type.";[cite: 1]
+        subText.innerText = "⚠️ Could not detect location. Tap to type.";
       }
     }
 
     function cleanPlace(str) {
-      if (!str) return "";[cite: 1]
+      if (!str) return "";
       return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take|me)\b/gi, " ")
                 .replace(/\s+/g, " ")
-                .trim();[cite: 1]
+                .trim();
     }
 
     function applyTransitLocations(pickup, drop) {
-      switchTab('book');[cite: 1]
-      const dTitle = toTitleCase(drop);[cite: 1]
-      document.getElementById("drop").value = dTitle;[cite: 1]
-      dropCoords = null;[cite: 1]
-      lastResolvedDropText = "";[cite: 1]
+      switchTab('book');
+      const dTitle = toTitleCase(drop);
+      document.getElementById("drop").value = dTitle;
+      dropCoords = null;
+      lastResolvedDropText = "";
 
       if (pickup) {
-        const pTitle = toTitleCase(pickup);[cite: 1]
-        document.getElementById("pickup").value = pTitle;[cite: 1]
-        pickupCoords = null;[cite: 1]
-        lastResolvedPickupText = "";[cite: 1]
-        triggerRouteEstimation();[cite: 1]
-        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');[cite: 1]
+        const pTitle = toTitleCase(pickup);
+        document.getElementById("pickup").value = pTitle;
+        pickupCoords = null;
+        lastResolvedPickupText = "";
+        triggerRouteEstimation();
+        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');
       } else {
-        getPreciseGPS();[cite: 1]
-        speakResponse(`Destination set to ${dTitle}. Locking your current location.`, 'en');[cite: 1]
+        getPreciseGPS();
+        speakResponse(`Destination set to ${dTitle}. Locking your current location.`, 'en');
       }
-      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;[cite: 1]
+      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;
     }
 
     function toTitleCase(str) {
-      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());[cite: 1]
+      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
     }
 
     function speakResponse(msg, lang = 'en') {
-      if (!('speechSynthesis' in window)) return;[cite: 1]
+      if (!('speechSynthesis' in window)) return;
       try {
-        window.speechSynthesis.cancel();[cite: 1]
-        const utter = new SpeechSynthesisUtterance(msg);[cite: 1]
-        utter.rate = 1.0;[cite: 1]
-        utter.pitch = 1.0;[cite: 1]
-        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';[cite: 1]
-        window.speechSynthesis.speak(utter);[cite: 1]
+        window.speechSynthesis.cancel();
+        const utter = new SpeechSynthesisUtterance(msg);
+        utter.rate = 1.0;
+        utter.pitch = 1.0;
+        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
+        window.speechSynthesis.speak(utter);
       } catch (e) {}
     }
 
-    // Razorpay Integration
     async function openPaymentModal() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
       if (phone.length !== 10) {
-        alert("Please enter a valid 10-digit WhatsApp number first.");[cite: 1]
-        document.getElementById("userPhone").focus();[cite: 1]
+        alert("Please enter a valid 10-digit WhatsApp number first.");
+        document.getElementById("userPhone").focus();
         return;
       }
 
-      try { localStorage.setItem("nineo_phone", phone); } catch (e) {}[cite: 1]
+      try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
 
-      const triggerBtn = document.getElementById("btnActivatePassGateway");[cite: 1]
-      let originalBtnText = "Activate Pass with UPI ⚡";[cite: 1]
+      const triggerBtn = document.getElementById("btnActivatePassGateway");
+      let originalBtnText = "Activate Pass with UPI ⚡";
       if (triggerBtn) {
-        originalBtnText = triggerBtn.innerText;[cite: 1]
-        triggerBtn.disabled = true;[cite: 1]
-        triggerBtn.innerText = "Connecting Secure Gateway...";[cite: 1]
+        originalBtnText = triggerBtn.innerText;
+        triggerBtn.disabled = true;
+        triggerBtn.innerText = "Connecting Secure Gateway...";
       }
 
       try {
-        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;[cite: 1]
-        const res = await fetch(orderUrl);[cite: 1]
-        const orderRes = await res.json();[cite: 1]
+        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;
+        const res = await fetch(orderUrl);
+        const orderRes = await res.json();
 
         if (orderRes.status !== "SUCCESS") {
-          simulateZeroCostPayment(phone);[cite: 1]
+          simulateZeroCostPayment(phone);
           return;
         }
 
         const options = {
-          key: orderRes.keyId,[cite: 1]
-          amount: orderRes.amountPaise,[cite: 1]
-          currency: "INR",[cite: 1]
-          name: COMPANY_NAME,[cite: 1]
-          description: `${selectedPassName} (24h Validity)`,[cite: 1]
-          image: "https://nineo.in/favicon.ico",[cite: 1]
-          order_id: orderRes.orderId,[cite: 1]
-          prefill: { contact: phone },[cite: 1]
-          theme: { color: "#facc15" },[cite: 1]
+          key: orderRes.keyId,
+          amount: orderRes.amountPaise,
+          currency: "INR",
+          name: COMPANY_NAME,
+          description: `${selectedPassName} (24h Validity)`,
+          image: "https://nineo.in/favicon.ico",
+          order_id: orderRes.orderId,
+          prefill: { contact: phone },
+          theme: { color: "#facc15" },
           handler: async function (response) {
             const tierMap = {
               "PASS_59": { km: 5.0, rides: 1, name: "5 KM Pass" },
               "PASS_89": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
               "PASS_149": { km: 18.0, rides: 3, name: "18 KM Pro Pass" }
             };
-            const pInfo = tierMap[selectedPassCode] || { km: 9.0, rides: 2, name: "Daily Pass" };[cite: 1]
+            const pInfo = tierMap[selectedPassCode] || { km: 9.0, rides: 2, name: "Daily Pass" };
             userActivePass = {
               hasActivePass: true,
               passTier: selectedPassCode,
               remainingKm: pInfo.km,
               remainingRides: pInfo.rides,
               hoursLeft: 24
-            };[cite: 1]
+            };
 
             try {
-              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;[cite: 1]
-              await fetch(verifyUrl);[cite: 1]
+              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;
+              await fetch(verifyUrl);
             } catch (e) {}
 
-            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);[cite: 1]
+            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);
           },
           modal: {
             ondismiss: function() {
-              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
+              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
             }
           }
         };
 
-        const rzp = new Razorpay(options);[cite: 1]
-        rzp.open();[cite: 1]
+        const rzp = new Razorpay(options);
+        rzp.open();
 
       } catch (err) {
-        simulateZeroCostPayment(phone);[cite: 1]
+        simulateZeroCostPayment(phone);
       } finally {
-        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
+        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
       }
     }
 
     function simulateZeroCostPayment(phone) {
-      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);[cite: 1]
+      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);
       userActivePass = {
         hasActivePass: true,
         passTier: selectedPassCode,
@@ -2470,17 +2448,17 @@
         remainingRides: selectedPassCode === 'PASS_149' ? 3 : selectedPassCode === 'PASS_89' ? 2 : 1,
         hoursLeft: 24
       };
-      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);[cite: 1]
+      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);
     }
 
     function showPassConfirmationCard(paymentId, phone, passCode, amount) {
-      document.getElementById("sectionPass").style.display = "none";[cite: 1]
-      document.getElementById("sectionBook").style.display = "none";[cite: 1]
-      document.getElementById("navTabs").style.display = "none";[cite: 1]
-      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
-      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
-      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
+      document.getElementById("sectionPass").style.display = "none";
+      document.getElementById("sectionBook").style.display = "none";
+      document.getElementById("navTabs").style.display = "none";
+      document.getElementById("phoneFieldWrap").style.display = "none";
+      document.getElementById("activePassBanner").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
+      document.getElementById("feedbackCard").style.display = "none";
 
       const quotaMap = {
         "PASS_59": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },
@@ -2488,486 +2466,486 @@
         "PASS_149": { title: "18 KM Pro Pass", km: "18.0 KM", rides: "3 Rides Included" }
       };
 
-      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };[cite: 1]
+      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };
 
-      document.getElementById("confPassTitle").innerText = passInfo.title;[cite: 1]
-      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;[cite: 1]
-      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;[cite: 1]
-      document.getElementById("confPassKm").innerText = passInfo.km;[cite: 1]
-      document.getElementById("confPassRides").innerText = passInfo.rides;[cite: 1]
+      document.getElementById("confPassTitle").innerText = passInfo.title;
+      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;
+      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;
+      document.getElementById("confPassKm").innerText = passInfo.km;
+      document.getElementById("confPassRides").innerText = passInfo.rides;
       
-      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);[cite: 1]
-      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });[cite: 1]
-      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;[cite: 1]
-      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";[cite: 1]
+      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
+      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;
+      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";
 
-      document.getElementById("passConfirmCard").style.display = "block";[cite: 1]
-      speakResponse("Daily pass activated. Redirecting you to book your ride.", "en");[cite: 1]
+      document.getElementById("passConfirmCard").style.display = "block";
+      speakResponse("Daily pass activated. Redirecting you to book your ride.", "en");
 
-      let countdown = 2;[cite: 1]
-      const timerLabel = document.getElementById("confRedirectTimer");[cite: 1]
-      if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;[cite: 1]
+      let countdown = 2;
+      const timerLabel = document.getElementById("confRedirectTimer");
+      if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;
 
-      if (autoRedirectTimer) clearInterval(autoRedirectTimer);[cite: 1]
+      if (autoRedirectTimer) clearInterval(autoRedirectTimer);
       autoRedirectTimer = setInterval(() => {
         countdown--;
-        if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;[cite: 1]
+        if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;
         if (countdown <= 0) {
-          clearInterval(autoRedirectTimer);[cite: 1]
-          autoRedirectTimer = null;[cite: 1]
-          proceedToRideFromConfirmation();[cite: 1]
+          clearInterval(autoRedirectTimer);
+          autoRedirectTimer = null;
+          proceedToRideFromConfirmation();
         }
-      }, 1000);[cite: 1]
+      }, 1000);
     }
 
     function proceedToRideFromConfirmation() {
       if (autoRedirectTimer) {
-        clearInterval(autoRedirectTimer);[cite: 1]
-        autoRedirectTimer = null;[cite: 1]
+        clearInterval(autoRedirectTimer);
+        autoRedirectTimer = null;
       }
-      document.getElementById("passConfirmCard").style.display = "none";[cite: 1]
-      document.getElementById("navTabs").style.display = "grid";[cite: 1]
-      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
-      switchTab('book');[cite: 1]
+      document.getElementById("passConfirmCard").style.display = "none";
+      document.getElementById("navTabs").style.display = "grid";
+      document.getElementById("phoneFieldWrap").style.display = "block";
+      switchTab('book');
 
-      const banner = document.getElementById("activePassBanner");[cite: 1]
+      const banner = document.getElementById("activePassBanner");
       if (userActivePass) {
-        banner.style.display = "block";[cite: 1]
-        banner.innerHTML = `🎟️ <b>Active Pass:</b> ${userActivePass.remainingKm} KM & ${userActivePass.remainingRides} ride(s) available today`;[cite: 1]
+        banner.style.display = "block";
+        banner.innerHTML = `🎟️ <b>Active Pass:</b> ${userActivePass.remainingKm} KM & ${userActivePass.remainingRides} ride(s) available today`;
       }
 
       if (document.getElementById("pickup").value && document.getElementById("drop").value) {
-        triggerRouteEstimation();[cite: 1]
+        triggerRouteEstimation();
       }
     }
 
     async function submitRideBooking(type, fare) {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
-      let pickup = document.getElementById("pickup").value.trim();[cite: 1]
-      const drop = document.getElementById("drop").value.trim();[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      let pickup = document.getElementById("pickup").value.trim();
+      const drop = document.getElementById("drop").value.trim();
 
-      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");[cite: 1]
-      if (!pickup || !drop) return alert("Please specify both pickup and destination.");[cite: 1]
+      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
+      if (!pickup || !drop) return alert("Please specify both pickup and destination.");
 
-      if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);[cite: 1]
-      if (!dropCoords) dropCoords = await geocodeLocation(drop);[cite: 1]
+      if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
+      if (!dropCoords) dropCoords = await geocodeLocation(drop);
 
       if (!isWithinRanchiBoundary(pickupCoords) || !isWithinRanchiBoundary(dropCoords)) {
-        return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");[cite: 1]
+        return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
       }
 
       if (!calculatedKm || calculatedKm === 0) {
         if (pickupCoords && dropCoords) {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
         } else {
-          calculatedKm = 5.0;[cite: 1]
+          calculatedKm = 5.0;
         }
         calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
         singleFareAmount = calculateSingleRideFare(calculatedKm, calculatedMinutes);
       }
 
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
-        type = 'PASS';[cite: 1]
-        const tripNum = parseFloat(calculatedKm);[cite: 1]
+        type = 'PASS';
+        const tripNum = parseFloat(calculatedKm);
         if (tripNum <= userActivePass.remainingKm) {
-          fare = 0;[cite: 1]
+          fare = 0;
         } else {
-          const extraKm = parseFloat((tripNum - userActivePass.remainingKm).toFixed(1));[cite: 1]
-          fare = Math.round(extraKm * 9);[cite: 1]
+          const extraKm = parseFloat((tripNum - userActivePass.remainingKm).toFixed(1));
+          fare = Math.round(extraKm * 9);
         }
       } else if (type === 'SINGLE' || type === 'DEFAULT') {
-        type = 'SINGLE';[cite: 1]
+        type = 'SINGLE';
         fare = singleFareAmount;
       }
 
-      currentPickupText = pickup;[cite: 1]
-      currentDropText = drop;[cite: 1]
+      currentPickupText = pickup;
+      currentDropText = drop;
 
       if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
-        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;[cite: 1]
+        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
       }
 
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = true;[cite: 1]
-        b.innerText = "Assigning Captain...";[cite: 1]
+        b.disabled = true;
+        b.innerText = "Assigning Captain...";
       });
 
-      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;[cite: 1]
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;
 
       try {
-        const res = await fetch(url);[cite: 1]
-        const data = await res.json();[cite: 1]
+        const res = await fetch(url);
+        const data = await res.json();
 
         if (data.status === "SUCCESS" && data.captain) {
-          renderCaptainCard(data, currentPickupText, currentDropText, fare, type);[cite: 1]
+          renderCaptainCard(data, currentPickupText, currentDropText, fare, type);
         } else if (data.status === "ERROR") {
-          alert("⚠️ " + (data.message || "Booking request could not be completed."));[cite: 1]
+          alert("⚠️ " + (data.message || "Booking request could not be completed."));
           document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-            b.disabled = false;[cite: 1]
+            b.disabled = false;
           });
-          const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
+          const btnActive = document.getElementById("btnBookActivePass");
           if (btnActive) {
-            btnActive.innerText = (fare === 0) ? "Request nineO Captain (₹0) ➔" : `Confirm Ride (₹${fare} Due) ➔`;[cite: 1]
+            btnActive.innerText = (fare === 0) ? "Request nineO Captain (₹0) ➔" : `Confirm Ride (₹${fare} Due) ➔`;
           }
         } else {
-          fallbackCaptainCard(currentPickupText, currentDropText, fare, type);[cite: 1]
+          fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
         }
       } catch (e) {
-        fallbackCaptainCard(currentPickupText, currentDropText, fare, type);[cite: 1]
+        fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
       }
     }
 
     function renderCaptainCard(data, pickup, drop, fare, type) {
-      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());[cite: 1]
-      activeCaptainDetails = data.captain;[cite: 1]
+      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());
+      activeCaptainDetails = data.captain;
 
-      document.getElementById("sectionBook").style.display = "none";[cite: 1]
-      document.getElementById("navTabs").style.display = "none";[cite: 1]
-      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
-      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
-      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
+      document.getElementById("sectionBook").style.display = "none";
+      document.getElementById("navTabs").style.display = "none";
+      document.getElementById("phoneFieldWrap").style.display = "none";
+      document.getElementById("activePassBanner").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
+      document.getElementById("feedbackCard").style.display = "none";
 
-      const capCard = document.getElementById("captainDisplayCard");[cite: 1]
-      capCard.style.display = "block";[cite: 1]
+      const capCard = document.getElementById("captainDisplayCard");
+      capCard.style.display = "block";
 
-      document.getElementById("dispRideId").innerText = currentRideId;[cite: 1]
-      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";[cite: 1]
-      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";[cite: 1]
-      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";[cite: 1]
-      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";[cite: 1]
+      document.getElementById("dispRideId").innerText = currentRideId;
+      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";
+      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
+      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
+      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
       
-      document.getElementById("dispOtpWrap").style.display = "block";[cite: 1]
-      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);[cite: 1]
-      document.getElementById("inTripPassBox").style.display = "none";[cite: 1]
+      document.getElementById("dispOtpWrap").style.display = "block";
+      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
+      document.getElementById("inTripPassBox").style.display = "none";
 
-      document.getElementById("dispPickup").innerText = pickup;[cite: 1]
-      document.getElementById("dispDrop").innerText = drop;[cite: 1]
-      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;[cite: 1]
+      document.getElementById("dispPickup").innerText = pickup;
+      document.getElementById("dispDrop").innerText = drop;
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
 
       if (type === "PASS") {
-        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Overage - Pay Captain)`;[cite: 1]
+        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Overage - Pay Captain)`;
       } else {
-        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;[cite: 1]
+        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
       }
 
-      const callBtn = document.getElementById("btnCallCaptain");[cite: 1]
+      const callBtn = document.getElementById("btnCallCaptain");
       if (data.captain.phone) {
-        callBtn.href = `tel:+91${data.captain.phone}`;[cite: 1]
-        callBtn.style.display = "flex";[cite: 1]
+        callBtn.href = `tel:+91${data.captain.phone}`;
+        callBtn.style.display = "flex";
       } else {
-        callBtn.style.display = "none";[cite: 1]
+        callBtn.style.display = "none";
       }
 
-      const mapEl = document.getElementById("routeMap");[cite: 1]
-      const capSlot = document.getElementById("captainMapSlot");[cite: 1]
+      const mapEl = document.getElementById("routeMap");
+      const capSlot = document.getElementById("captainMapSlot");
       if (mapEl && capSlot) {
-        capSlot.appendChild(mapEl);[cite: 1]
+        capSlot.appendChild(mapEl);
         if (mapInstance) {
           setTimeout(() => { 
-            mapInstance.invalidateSize();[cite: 1]
-            if (pickupCoords) startCaptainLiveTracking(pickupCoords);[cite: 1]
+            mapInstance.invalidateSize(); 
+            if (pickupCoords) startCaptainLiveTracking(pickupCoords);
           }, 250);
         }
       }
 
-      startRidePolling(currentRideId);[cite: 1]
+      startRidePolling(currentRideId);
     }
 
     function fallbackCaptainCard(pickup, drop, fare, type) {
       renderCaptainCard({
-        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),[cite: 1]
+        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
         captain: {
-          name: "Rahul Kumar (nineO Captain)",[cite: 1]
-          vehicleNo: "JH 01 BZ 4821",[cite: 1]
-          bikeModel: "Hero Splendor Plus",[cite: 1]
-          phone: "9876543210"[cite: 1]
+          name: "Rahul Kumar (nineO Captain)",
+          vehicleNo: "JH 01 BZ 4821",
+          bikeModel: "Hero Splendor Plus",
+          phone: "9876543210"
         },
-        otp: Math.floor(1000 + Math.random() * 9000).toString()[cite: 1]
-      }, pickup, drop, fare, type);[cite: 1]
+        otp: Math.floor(1000 + Math.random() * 9000).toString()
+      }, pickup, drop, fare, type);
     }
 
     function startRidePolling(rideId) {
-      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);[cite: 1]
+      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);
 
       rideStatusPollTimer = setInterval(async () => {
         try {
-          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);[cite: 1]
-          const data = await res.json();[cite: 1]
+          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);
+          const data = await res.json();
 
           if (data && data.status === "IN_PROGRESS") {
-            transitionToInTripView();[cite: 1]
+            transitionToInTripView();
           } else if (data && data.status === "COMPLETED") {
-            clearInterval(rideStatusPollTimer);[cite: 1]
-            rideStatusPollTimer = null;[cite: 1]
-            showTripCompletionTransition();[cite: 1]
+            clearInterval(rideStatusPollTimer);
+            rideStatusPollTimer = null;
+            showTripCompletionTransition();
           }
         } catch (e) {}
-      }, 3500);[cite: 1]
+      }, 3500);
     }
 
     function transitionToInTripView() {
-      document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";[cite: 1]
-      document.getElementById("dispOtpWrap").style.display = "none";[cite: 1]
-      const cancelBtn = document.getElementById("btnCancelBooking");[cite: 1]
-      if (cancelBtn) cancelBtn.style.display = "none";[cite: 1]
+      document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";
+      document.getElementById("dispOtpWrap").style.display = "none";
+      const cancelBtn = document.getElementById("btnCancelBooking");
+      if (cancelBtn) cancelBtn.style.display = "none";
 
       if (pickupCoords && dropCoords && mapInstance) {
-        renderInteractiveMap(pickupCoords, dropCoords, null, null);[cite: 1]
+        renderInteractiveMap(pickupCoords, dropCoords, null, null);
       }
 
-      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;[cite: 1]
-      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;[cite: 1]
-      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;[cite: 1]
+      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;
+      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
 
-      const passBox = document.getElementById("inTripPassBox");[cite: 1]
+      const passBox = document.getElementById("inTripPassBox");
       if (userActivePass) {
-        passBox.style.display = "block";[cite: 1]
+        passBox.style.display = "block";
         const tierName = (userActivePass.passTier === "PASS_149") ? "18 KM Pro Pass (₹149)" 
                        : (userActivePass.passTier === "PASS_89") ? "9 KM Super Pass (₹89)" 
                        : "5 KM Pass (₹59)";
         
-        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;[cite: 1]
-        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;[cite: 1]
-        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;[cite: 1]
-        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;[cite: 1]
+        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;
+        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;
+        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;
+        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;
         
-        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);[cite: 1]
-        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;[cite: 1]
+        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);
+        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;
       } else {
-        passBox.style.display = "none";[cite: 1]
+        passBox.style.display = "none";
       }
 
       if (activeCaptainDetails) {
-        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";[cite: 1]
-        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";[cite: 1]
-        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";[cite: 1]
+        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";
+        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";
+        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";
       }
     }
 
     async function showTripCompletionTransition() {
-      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = "block";[cite: 1]
+      document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "block";
 
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
       
       try {
-        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
-        const data = await res.json();[cite: 1]
+        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
+        const data = await res.json();
 
         if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0.1) {
-          userActivePass = data;[cite: 1]
+          userActivePass = data;
           document.getElementById("postTripTitle").innerText = "Ride Completed!";
-          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;[cite: 1]
-          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;[cite: 1]
-          document.getElementById("btnBookNextRidePass").style.display = "flex";[cite: 1]
-          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Next Pass Ride (${data.remainingKm}km free) ➔`;[cite: 1]
+          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;
+          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;
+          document.getElementById("btnBookNextRidePass").style.display = "flex";
+          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Next Pass Ride (${data.remainingKm}km free) ➔`;
         } else {
-          userActivePass = null;[cite: 1]
-          document.getElementById("postTripTitle").innerText = "Trip Completed!";[cite: 1]
-          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";[cite: 1]
-          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";[cite: 1]
-          document.getElementById("btnBookNextRidePass").style.display = "none";[cite: 1]
+          userActivePass = null;
+          document.getElementById("postTripTitle").innerText = "Trip Completed!";
+          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";
+          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";
+          document.getElementById("btnBookNextRidePass").style.display = "none";
         }
       } catch (err) {
-        document.getElementById("postTripBalanceKm").innerText = "Active";[cite: 1]
+        document.getElementById("postTripBalanceKm").innerText = "Active";
       }
     }
 
     function proceedToNextPassRide() {
-      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
-      resetBookingView();[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";
+      resetBookingView();
     }
 
     function resetBookingView() {
       if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);[cite: 1]
-        rideStatusPollTimer = null;[cite: 1]
+        clearInterval(rideStatusPollTimer);
+        rideStatusPollTimer = null;
       }
 
       if (captainMotionTimer) {
-        clearInterval(captainMotionTimer);[cite: 1]
-        captainMotionTimer = null;[cite: 1]
+        clearInterval(captainMotionTimer);
+        captainMotionTimer = null;
       }
-      if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);[cite: 1]
-      if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);[cite: 1]
+      if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);
+      if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);
 
-      const mapEl = document.getElementById("routeMap");[cite: 1]
-      const bookSlot = document.getElementById("bookingMapSlot");[cite: 1]
-      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);[cite: 1]
+      const mapEl = document.getElementById("routeMap");
+      const bookSlot = document.getElementById("bookingMapSlot");
+      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);
 
-      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
-      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
-      document.getElementById("sectionBook").style.display = "block";[cite: 1]
-      document.getElementById("navTabs").style.display = "grid";[cite: 1]
-      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
+      document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
+      document.getElementById("feedbackCard").style.display = "none";
+      document.getElementById("sectionBook").style.display = "block";
+      document.getElementById("navTabs").style.display = "grid";
+      document.getElementById("phoneFieldWrap").style.display = "block";
       
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = false;[cite: 1]
+        b.disabled = false;
       });
 
-      const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
-      if (btnActive) btnActive.innerText = "Request nineO Captain (₹0) ➔";[cite: 1]
+      const btnActive = document.getElementById("btnBookActivePass");
+      if (btnActive) btnActive.innerText = "Request nineO Captain (₹0) ➔";
 
-      const directBtn = document.getElementById("btnBookDirect");[cite: 1]
+      const directBtn = document.getElementById("btnBookDirect");
       if (directBtn) {
-        directBtn.style.display = "block";[cite: 1]
-        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";[cite: 1]
+        directBtn.style.display = "block";
+        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";
       }
 
-      document.getElementById("routeCard").style.display = "none";[cite: 1]
-      document.getElementById("drop").value = "";[cite: 1]
-      dropCoords = null;[cite: 1]
-      lastResolvedDropText = "";[cite: 1]
-      calculatedKm = 0;[cite: 1]
+      document.getElementById("routeCard").style.display = "none";
+      document.getElementById("drop").value = "";
+      dropCoords = null;
+      lastResolvedDropText = "";
+      calculatedKm = 0;
       calculatedMinutes = 0;
-      currentDueFare = 0;[cite: 1]
-      const dropSug = document.getElementById("dropSuggestions");[cite: 1]
-      if (dropSug) dropSug.style.display = "none";[cite: 1]
+      currentDueFare = 0;
+      const dropSug = document.getElementById("dropSuggestions");
+      if (dropSug) dropSug.style.display = "none";
       
-      const upsellBox = document.getElementById("passUpsellBox");[cite: 1]
-      if (upsellBox) upsellBox.style.display = "none";[cite: 1]
+      const upsellBox = document.getElementById("passUpsellBox");
+      if (upsellBox) upsellBox.style.display = "none";
 
-      handlePhoneInput();[cite: 1]
+      handlePhoneInput();
     }
 
     function selectPass(el, code, amt, name) {
-      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));[cite: 1]
-      if (el) el.classList.add("selected");[cite: 1]
-      selectedPassCode = code;[cite: 1]
-      selectedAmount = amt;[cite: 1]
-      selectedPassName = name;[cite: 1]
+      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));
+      if (el) el.classList.add("selected");
+      selectedPassCode = code;
+      selectedAmount = amt;
+      selectedPassName = name;
     }
 
     function openFeedbackModal() {
       if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);[cite: 1]
-        rideStatusPollTimer = null;[cite: 1]
+        clearInterval(rideStatusPollTimer);
+        rideStatusPollTimer = null;
       }
-      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
-      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
-      const capName = document.getElementById("dispCaptainName").innerText;[cite: 1]
-      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;[cite: 1]
-      document.getElementById("feedbackCard").style.display = "block";[cite: 1]
-      setRating(5);[cite: 1]
+      document.getElementById("captainDisplayCard").style.display = "none";
+      document.getElementById("tripCompleteCard").style.display = "none";
+      const capName = document.getElementById("dispCaptainName").innerText;
+      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;
+      document.getElementById("feedbackCard").style.display = "block";
+      setRating(5);
     }
 
     function setRating(num) {
-      selectedRating = num;[cite: 1]
-      const stars = document.querySelectorAll("#starRatingBox .star-btn");[cite: 1]
+      selectedRating = num;
+      const stars = document.querySelectorAll("#starRatingBox .star-btn");
       stars.forEach(s => {
-        const val = parseInt(s.getAttribute("data-rating"));[cite: 1]
+        const val = parseInt(s.getAttribute("data-rating"));
         if (val <= num) {
-          s.classList.add("active");[cite: 1]
+          s.classList.add("active");
         } else {
-          s.classList.remove("active");[cite: 1]
+          s.classList.remove("active");
         }
       });
     }
 
     function toggleTag(el) {
-      el.classList.toggle("active");[cite: 1]
-      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();[cite: 1]
+      el.classList.toggle("active");
+      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();
       if (el.classList.contains("active")) {
-        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);[cite: 1]
+        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);
       } else {
-        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);[cite: 1]
+        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);
       }
     }
 
     async function submitFeedback() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";[cite: 1]
-      const comment = document.getElementById("feedbackComment").value.trim();[cite: 1]
-      const btn = document.getElementById("btnSubmitFeedback");[cite: 1]
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";
+      const comment = document.getElementById("feedbackComment").value.trim();
+      const btn = document.getElementById("btnSubmitFeedback");
 
-      btn.disabled = true;[cite: 1]
-      btn.innerText = "Submitting Review...";[cite: 1]
+      btn.disabled = true;
+      btn.innerText = "Submitting Review...";
 
       try {
-        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;[cite: 1]
-        await fetch(feedUrl);[cite: 1]
+        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;
+        await fetch(feedUrl);
       } catch (e) {}
 
-      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);[cite: 1]
+      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);
       
-      document.getElementById("feedbackComment").value = "";[cite: 1]
-      selectedFeedbackTags = [];[cite: 1]
-      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));[cite: 1]
-      btn.disabled = false;[cite: 1]
-      btn.innerText = "Submit Rating & Done ➔";[cite: 1]
+      document.getElementById("feedbackComment").value = "";
+      selectedFeedbackTags = [];
+      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));
+      btn.disabled = false;
+      btn.innerText = "Submit Rating & Done ➔";
 
-      resetBookingView();[cite: 1]
+      resetBookingView();
     }
 
     function toggleChatDrawer() {
-      const drawer = document.getElementById("chatDrawer");[cite: 1]
-      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";[cite: 1]
+      const drawer = document.getElementById("chatDrawer");
+      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";
       if (drawer.style.display === "flex") {
-        document.getElementById("chatInput").focus();[cite: 1]
+        document.getElementById("chatInput").focus();
       }
     }
 
     function appendUserMessage(text) {
-      const body = document.getElementById("chatBody");[cite: 1]
-      const div = document.createElement("div");[cite: 1]
-      div.className = "chat-msg user";[cite: 1]
-      div.innerText = text;[cite: 1]
-      body.appendChild(div);[cite: 1]
-      body.scrollTop = body.scrollHeight;[cite: 1]
+      const body = document.getElementById("chatBody");
+      const div = document.createElement("div");
+      div.className = "chat-msg user";
+      div.innerText = text;
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
     }
 
     function appendBotMessage(html) {
-      const body = document.getElementById("chatBody");[cite: 1]
-      const div = document.createElement("div");[cite: 1]
-      div.className = "chat-msg bot";[cite: 1]
-      div.innerHTML = html;[cite: 1]
-      body.appendChild(div);[cite: 1]
-      body.scrollTop = body.scrollHeight;[cite: 1]
+      const body = document.getElementById("chatBody");
+      const div = document.createElement("div");
+      div.className = "chat-msg bot";
+      div.innerHTML = html;
+      body.appendChild(div);
+      body.scrollTop = body.scrollHeight;
     }
 
     function sendChatMessage() {
-      const input = document.getElementById("chatInput");[cite: 1]
-      const q = input.value.trim();[cite: 1]
-      if (!q) return;[cite: 1]
+      const input = document.getElementById("chatInput");
+      const q = input.value.trim();
+      if (!q) return;
       
-      appendUserMessage(q);[cite: 1]
-      input.value = "";[cite: 1]
+      appendUserMessage(q);
+      input.value = "";
 
       setTimeout(() => {
-        resolveBotQuery(q);[cite: 1]
+        resolveBotQuery(q);
       }, 350);
     }
 
     function handleQuickPill(text) {
-      appendUserMessage(text);[cite: 1]
+      appendUserMessage(text);
       setTimeout(() => {
-        resolveBotQuery(text);[cite: 1]
+        resolveBotQuery(text);
       }, 350);
     }
 
     function resolveBotQuery(query) {
-      const q = query.toLowerCase();[cite: 1]
+      const q = query.toLowerCase();
 
       if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
-        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");[cite: 1]
+        appendBotMessage("🎟️️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
       } 
       else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
-        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");[cite: 1]
+        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
       }
       else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost")) {
         appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Instant dynamic fare based on road distance, duration, and statutory taxes.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
       }
       else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {
-        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);[cite: 1]
+        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);
       }
       else {
-        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);[cite: 1]
+        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
       }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      initVoiceAI();[cite: 1]
+      initVoiceAI();
     });
   </script>
 </body>
