@@ -472,33 +472,38 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      transition: all 0.25s ease;
     }
 
     .choice-card.highlight {
       border-color: var(--primary);
-      background: rgba(250, 204, 21, 0.06);
+      background: rgba(250, 204, 21, 0.08);
+      box-shadow: 0 0 18px rgba(250, 204, 21, 0.12);
     }
 
     .choice-badge {
       font-size: 9px;
       font-weight: 800;
       text-transform: uppercase;
-      padding: 2px 6px;
-      border-radius: 4px;
+      padding: 3px 7px;
+      border-radius: 5px;
       margin-bottom: 6px;
       display: inline-block;
+      letter-spacing: 0.4px;
     }
 
     .badge-single { background: #334155; color: #cbd5e1; }
     .badge-pass { background: #0284c7; color: white; }
-    .choice-title { font-size: 12px; color: var(--text-dim); font-weight: 700; }
-    .choice-price { font-size: 21px; font-weight: 900; margin: 4px 0; color: white; line-height: 1.2; }
-    .choice-desc { font-size: 10.5px; color: #94a3b8; line-height: 1.35; margin-bottom: 10px; min-height: 28px; }
+    .badge-recommended { background: var(--primary); color: #0f172a; font-weight: 900; }
+
+    .choice-title { font-size: 13px; color: var(--text); font-weight: 800; }
+    .choice-price { font-size: 23px; font-weight: 900; margin: 4px 0; color: white; line-height: 1.2; }
+    .choice-desc { font-size: 11px; color: #94a3b8; line-height: 1.35; margin-bottom: 10px; min-height: 28px; }
 
     .btn-choice {
       width: 100%;
       border: none;
-      padding: 9px;
+      padding: 10px;
       border-radius: 10px;
       font-size: 12px;
       font-weight: 800;
@@ -1143,30 +1148,11 @@
       padding-left: 8px;
     }
 
-    .terms-body p {
-      margin-bottom: 10px;
-    }
-
-    .terms-body ul, .terms-body ol {
-      margin-left: 20px;
-      margin-bottom: 10px;
-    }
-
-    .terms-body li {
-      margin-bottom: 6px;
-    }
-
-    .terms-body hr {
-      border: none;
-      border-top: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 12px 0;
-    }
-
-    .terms-footer {
-      padding: 12px 18px;
-      border-top: 1px solid var(--border);
-      background: #111827;
-    }
+    .terms-body p { margin-bottom: 10px; }
+    .terms-body ul, .terms-body ol { margin-left: 20px; margin-bottom: 10px; }
+    .terms-body li { margin-bottom: 6px; }
+    .terms-body hr { border: none; border-top: 1px solid rgba(255, 255, 255, 0.1); margin: 12px 0; }
+    .terms-footer { padding: 12px 18px; border-top: 1px solid var(--border); background: #111827; }
   </style>
 </head>
 <body>
@@ -1233,7 +1219,7 @@
       <div class="route-card" id="routeCard">
         <div class="route-header">
           <div class="route-dist">Road Distance: <span id="routeKm">0.0</span> km</div>
-          <div style="font-size: 11px; color: var(--text-dim);" id="routeSubtitle">Choose booking mode:</div>
+          <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
         <!-- Real-Time Interactive Route Map (Leaflet) -->
@@ -1241,30 +1227,30 @@
           <div id="routeMap"></div>
         </div>
 
-        <!-- Standard Single Ride Pricing (HIDDEN for Pass Holders) -->
+        <!-- Fare Choice Grid: Clean Fare Display with Intelligent Recommendation -->
         <div class="fare-choice-grid" id="standardGrid">
-          <div class="choice-card">
+          <div class="choice-card" id="cardSingleRide">
             <div>
-              <span class="choice-badge badge-single">Single Ride</span>
-              <div class="choice-title">Pay Per Trip</div>
+              <span class="choice-badge badge-single" id="badgeSingle">Single Ride</span>
+              <div class="choice-title">Single Ride</div>
               <div class="choice-price" id="singlePrice">₹--</div>
-              <div class="choice-desc" id="singleDesc">Pay cash or UPI to captain upon arrival.</div>
+              <div class="choice-desc" id="singleDesc">Direct point-to-point ride. Pay captain at drop.</div>
             </div>
             <button class="btn-choice btn-choice-single" id="btnBookSingle" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
           </div>
 
-          <div class="choice-card highlight">
+          <div class="choice-card" id="cardPassOffer">
             <div>
-              <span class="choice-badge badge-pass">Pass Saver</span>
+              <span class="choice-badge badge-pass" id="badgePass">Pass Saver</span>
               <div class="choice-title" id="passCardTitle">Daily Pass</div>
               <div class="choice-price" style="color:var(--primary);" id="passPrice">₹--</div>
-              <div class="choice-desc" id="passDesc">Covers this trip + 24h quota.</div>
+              <div class="choice-desc" id="passDesc">Prepaid pass covering this trip + 24h quota.</div>
             </div>
             <button class="btn-choice btn-choice-pass" id="btnBookPassOffer" onclick="buyRecommendedPass()">Get Pass ⚡</button>
           </div>
         </div>
 
-        <!-- Dedicated Pass Card (Shown for Pass Holders) -->
+        <!-- Dedicated Pass Card (Shown for Active Pass Holders) -->
         <div class="active-pass-card" id="activePassCard">
           <span class="choice-badge badge-pass">Active Pass Applied</span>
           <div class="active-pass-price" id="activePassDue">₹0</div>
@@ -1352,32 +1338,32 @@
       </button>
     </div>
 
-    <!-- 3. DAILY PASS TAB -->
+    <!-- 3. DAILY PASS TAB (Only Clean Fares Shown) -->
     <div id="sectionPass" style="display: none;">
       <label>Choose Your Pass (24-Hour Validity)</label>
 
-      <div class="pass-card selected" id="card_PASS_39" onclick="selectPass(this, 'PASS_39', 39, '5 KM Pass (1 Ride)')">
+      <div class="pass-card" id="card_PASS_59" onclick="selectPass(this, 'PASS_59', 59, '5 KM Pass (1 Ride)')">
         <div>
           <div class="pass-title">5 KM Pass</div>
           <div style="font-size:12px; color:var(--text-dim);">5 KM Total • 1 Ride included • 24h</div>
         </div>
-        <div class="pass-price">₹39</div>
+        <div class="pass-price">₹59</div>
       </div>
 
-      <div class="pass-card" id="card_PASS_69" onclick="selectPass(this, 'PASS_69', 69, '9 KM Super (2 Rides)')">
+      <div class="pass-card selected" id="card_PASS_89" onclick="selectPass(this, 'PASS_89', 89, '9 KM Super Pass (2 Rides)')">
         <div>
           <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
           <div style="font-size:12px; color:var(--text-dim);">9 KM Total • 2 Rides included • 24h</div>
         </div>
-        <div class="pass-price">₹69</div>
+        <div class="pass-price">₹89</div>
       </div>
 
-      <div class="pass-card" id="card_PASS_129" onclick="selectPass(this, 'PASS_129', 129, '19 KM Pro (3 Rides)')">
+      <div class="pass-card" id="card_PASS_149" onclick="selectPass(this, 'PASS_149', 149, '18 KM Pro Pass (3 Rides)')">
         <div>
-          <div class="pass-title">19 KM Pro Pass</div>
-          <div style="font-size:12px; color:var(--text-dim);">19 KM Total • 3 Rides included • 24h</div>
+          <div class="pass-title">18 KM Pro Pass</div>
+          <div style="font-size:12px; color:var(--text-dim);">18 KM Total • 3 Rides included • 24h</div>
         </div>
-        <div class="pass-price">₹129</div>
+        <div class="pass-price">₹149</div>
       </div>
 
       <button class="btn-submit" id="btnActivatePassGateway" style="background:#0284c7;" onclick="openPaymentModal()">
@@ -1385,14 +1371,14 @@
       </button>
     </div>
 
-    <!-- 4. PASS CONFIRMATION DISPLAY (With Auto-Redirect) -->
+    <!-- 4. PASS CONFIRMATION DISPLAY -->
     <div class="pass-confirm-card" id="passConfirmCard">
       <div class="check-icon-circle">✓</div>
       <div style="font-size: 12px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
         Payment Received • Pass Activated
       </div>
       <div style="font-size: 22px; font-weight: 900; color: white; margin: 4px 0;" id="confPassTitle">9 KM Super Pass</div>
-      <div style="font-size: 13px; color: var(--primary); font-weight: 800;" id="confPassAmount">₹69 Paid via UPI</div>
+      <div style="font-size: 13px; color: var(--primary); font-weight: 800;" id="confPassAmount">₹89 Paid via UPI</div>
 
       <div class="pass-ticket-stub">
         <div class="ticket-row"><span>Registered User</span><b id="confPassPhone">+91 ----------</b></div>
@@ -1411,7 +1397,7 @@
       </button>
     </div>
 
-    <!-- 5. DEDICATED TRIP COMPLETE SCREEN -->
+    <!-- 5. TRIP COMPLETE SCREEN -->
     <div class="trip-complete-card" id="tripCompleteCard">
       <div class="check-icon-circle">🏁</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1505,14 +1491,14 @@
 
     <div class="chat-body" id="chatBody">
       <div class="chat-msg bot">
-        Namaste! I'm your nineO assistant. How can I help you with your Ranchi bike taxi or pass today?
+        Namaste! I'm your nineO assistant. How can I help you with your Ranchi bike taxi or daily pass today?
       </div>
     </div>
 
     <div class="chat-quick-queries">
       <div class="quick-pill" onclick="handleQuickPill('Pass not activated')">🎟️ Pass Issue</div>
       <div class="quick-pill" onclick="handleQuickPill('Captain delayed')">⏳ Captain Delayed</div>
-      <div class="quick-pill" onclick="handleQuickPill('Overage fee query')">💰 Overage Charges</div>
+      <div class="quick-pill" onclick="handleQuickPill('Fare query')">💰 Fare Details</div>
       <div class="quick-pill" onclick="handleQuickPill('Talk to human agent')">📞 Talk to Agent</div>
     </div>
 
@@ -1522,7 +1508,7 @@
     </div>
   </div>
 
-  <!-- 8. TERMS AND CONDITIONS VERIFICATION MODAL -->
+  <!-- 8. TERMS MODAL -->
   <div class="terms-overlay" id="termsModalOverlay" onclick="if(event.target===this) closeTermsModal()">
     <div class="terms-modal">
       <div class="terms-header">
@@ -1530,98 +1516,12 @@
         <button class="terms-close" onclick="closeTermsModal()">✕</button>
       </div>
       <div class="terms-body">
-        <p style="font-weight: 700; color: #facc15;">BY ACCESSING OR USING THE PLATFORM, YOU AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE, DO NOT ACCESS OR USE THE PLATFORM.</p>
+        <p style="font-weight: 700; color: #facc15;">BY ACCESSING OR USING THE PLATFORM, YOU AGREE TO BE BOUND BY THESE TERMS.</p>
         <hr>
-
-        <h3>1. The Nature of the Platform</h3>
-        <p>NINEO provides a technology platform that connects individual riders ("Riders") with independent third-party transport operators or drivers ("Captains" or "Drivers").</p>
-        <p>Unless explicitly stated otherwise in writing, NINEO is a technology services provider and does not directly operate transportation services, nor does it function as a common carrier. Independent Drivers are solely responsible for providing transportation services requested through the Platform.</p>
-
-        <h3>2. User Eligibility and Account Registration</h3>
-        <ul>
-          <li><b>Age Requirement:</b> You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to create an account and use the Platform.</li>
-          <li><b>Account Security:</b> Registration requires providing accurate, up-to-date personal details, including a valid mobile phone number. Verification is conducted via One-Time Passwords (OTP), PINs, or digital credentials.</li>
-          <li><b>Account Ownership:</b> You may not assign, transfer, or authorize any third party to use your account. You are strictly responsible for all activity conducted under your account credentials.</li>
-        </ul>
-
-        <h3>3. Location Tracking and Telemetry</h3>
-        <p>To deliver essential transit routing, dispatching, and pricing services:</p>
-        <ul>
-          <li>You grant NINEO permission to access and monitor your device's <b>precise GPS location data</b> while using the Platform.</li>
-          <li>Location data is recorded to match you with nearby Drivers, calculate transit distances, determine fare tiers or overage charges, and provide real-time trip monitoring for safety.</li>
-          <li>Disabling device location permissions will render the Platform's core dispatch and transport functionalities inoperable. For details on telemetry storage, refer to our Privacy Policy.</li>
-        </ul>
-
-        <h3>4. Pricing, Passes, and Payment Terms</h3>
-        <ul>
-          <li><b>Fares and Structured Passes:</b> Fares may be charged per individual trip or via pre-purchased ride passes (e.g., promotional fixed-distance or fixed-time allotments). All applicable fares and pass terms are displayed prior to booking or purchase.</li>
-          <li><b>Distance Overages and Surcharges:</b> Any trip exceeding the pre-purchased pass distance or standard quota will incur additional per-kilometer overage charges (₹9/km), calculated automatically by our GPS telemetry engine.</li>
-          <li><b>Taxes and Fees:</b> You agree to pay all applicable fares, toll fees, dynamic peak-pricing surcharges, and local statutory taxes associated with your booking.</li>
-          <li><b>Payment Processing:</b> Payments are processed through secure, PCI-DSS-compliant third-party payment gateways. You authorize NINEO and its payment partners to charge your designated payment method for all incurred amounts.</li>
-          <li><b>Refund Policy:</b> Pre-purchased passes, promotional packages, and completed trips are strictly non-refundable except where required by applicable consumer protection laws or due to a documented technical failure verified by our support team.</li>
-        </ul>
-
-        <h3>5. Cancellations and Wait-Time Fees</h3>
-        <ul>
-          <li><b>Cancellation Windows:</b> You may cancel a booking request free of charge within 2 minutes of a Driver accepting the request. Cancellations made after this grace period may incur a standard cancellation fee.</li>
-          <li><b>No-Show and Wait Time:</b> If a Driver arrives at the designated pickup location and you fail to board within 5 minutes, the Driver may cancel the ride, and a no-show cancellation fee will be billed to your account.</li>
-        </ul>
-
-        <h3>6. Masked Communications and Messaging</h3>
-        <ul>
-          <li>To protect the personal privacy of both parties, the Platform utilizes call and SMS masking proxies.</li>
-          <li>When you communicate with a Driver regarding a booking, your personal telephone number is concealed behind a temporary virtual relay.</li>
-          <li>By using the Platform, you consent to receive operational communications, ride receipts, system alerts, and security verification codes via SMS, automated push notifications, and telephone calls.</li>
-        </ul>
-
-        <h3>7. User Conduct and Safety Obligations</h3>
-        <p>You agree to maintain safety and decorum at all times while using the Platform. You shall NOT:</p>
-        <ol>
-          <li>Impair or attempt to impair the safe operation of any vehicle.</li>
-          <li>Refuse to comply with local road safety mandates, including mandatory helmet regulations for two-wheeler transport.</li>
-          <li>Carry hazardous, flammable, illicit, or oversized goods that violate vehicle capacity limits.</li>
-          <li>Verbally abuse, harass, intimidate, or physically harm any Driver, passenger, or Platform representative.</li>
-          <li>Tamper with the Platform's digital systems, reverse-engineer proprietary algorithms, or manipulate GPS coordinates (spoofing).</li>
-        </ol>
-        <p>Violation of these standards will result in immediate and permanent account termination, forfeiture of unused passes, and potential reporting to local law enforcement.</p>
-
-        <h3>8. Intellectual Property Rights</h3>
-        <p>All software, trademarks, logos, system algorithms, user interface designs, and intellectual assets associated with the Platform are the exclusive property of NINEO or its licensors. You are granted a limited, revocable, non-exclusive, non-transferable license strictly to access the mobile application for personal, non-commercial use.</p>
-
-        <h3>9. Disclaimer of Warranties</h3>
-        <p>THE PLATFORM IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, NINEO EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT GUARANTEE THAT THE PLATFORM WILL OPERATE UNINTERRUPTED, SECURE, OR ERROR-FREE, NOR DO WE WARRANT THE RELIABILITY, TIMELINESS, OR SAFETY OF ANY THIRD-PARTY TRANSPORT OPERATOR.</p>
-
-        <h3>10. Limitation of Liability</h3>
-        <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL NINEO, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA LOSS, PERSONAL INJURY, OR PROPERTY DAMAGE ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE PLATFORM OR ANY RIDE TRANSACTIONS, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
-        <p>OUR TOTAL AGGREGATE LIABILITY TO YOU FOR ALL CLAIMS ARISING UNDER THESE TERMS SHALL NOT EXCEED THE TOTAL AMOUNT PAID BY YOU TO NINEO IN THE THREE (3) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY, OR ₹1,000, WHICHEVER IS LESS.</p>
-
-        <h3>11. Indemnification</h3>
-        <p>You agree to defend, indemnify, and hold harmless Nineo, its officers, affiliates, and employees from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable legal fees) arising from:</p>
-        <ul>
-          <li>Your violation of these Terms or applicable laws;</li>
-          <li>Your interaction with, transport by, or disputes with any third-party Driver;</li>
-          <li>Your infringement of any third-party rights, including privacy or intellectual property rights.</li>
-        </ul>
-
-        <h3>12. Governing Law and Dispute Resolution</h3>
-        <ul>
-          <li><b>Governing Law:</b> These Terms shall be governed by, interpreted, and construed in accordance with the laws of India, without regard to conflict of law principles.</li>
-          <li><b>Dispute Escalation:</b> Before initiating formal legal proceedings, you agree to submit any claim or dispute to informal resolution by contacting our legal department at harshjaiswal@nineo.in.</li>
-          <li><b>Jurisdiction:</b> Any unresolved dispute, controversy, or claim arising out of these Terms shall be subject to the exclusive jurisdiction of the competent courts located in Ranchi, Jharkhand.</li>
-        </ul>
-
-        <h3>13. Modifications to the Terms</h3>
-        <p>We reserve the right to amend or update these Terms at any time. Material changes will be communicated via in-app notification, email, or by revising the terms on the Platform. Your continued use of the Platform following published changes signifies your legal acceptance of the revised Terms.</p>
-
-        <h3>14. Contact and Legal Notices</h3>
-        <p>For questions, regulatory inquiries, or legal notices concerning these Terms, contact our compliance officer at:</p>
-        <ul>
-          <li><b>Entity Name:</b> Nineo Mobility</li>
-          <li><b>Attn:</b> Legal & Compliance Department</li>
-          <li><b>Physical Address:</b> Prasad Hostel, Ranchi, Jharkhand</li>
-          <li><b>Support Email:</b> harshjaiswal@nineo.in</li>
-          <li><b>Customer Support Contact:</b> +91-9525054247</li>
-        </ul>
+        <h3>1. Fares & Passes</h3>
+        <p>Dynamic Fares are calculated on standard base rates, per-kilometer travel, duration, and statutory taxes. Daily Passes provide bundled travel quotas valid for 24 hours.</p>
+        <h3>2. Distance Overages</h3>
+        <p>Trips that exceed the balance of an active daily pass incur an overage fee of ₹9/km payable directly upon arrival.</p>
       </div>
       <div class="terms-footer">
         <button class="btn-submit" style="padding: 12px; font-size: 13px;" onclick="closeTermsModal()">
@@ -1632,329 +1532,362 @@
   </div>
 
   <script>
-    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";
-    const COMPANY_NAME = "nineO Mobility";
-    const SUPPORT_WHATSAPP = "919525054247";
+    const BACKEND_URL = "https://script.google.com/macros/s/AKfycbzvrrvJg-G0HeeAIKPXcfSCrDHFKk3NJKovLR6c02ArEvvdXeZm2Du6cD3O3malL2Us/exec";[cite: 1]
+    const COMPANY_NAME = "nineO Mobility";[cite: 1]
+    const SUPPORT_WHATSAPP = "919525054247";[cite: 1]
 
-    const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };
-    const RANCHI_MAX_RADIUS_KM = 26.0;
+    const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };[cite: 1]
+    const RANCHI_MAX_RADIUS_KM = 26.0;[cite: 1]
 
-    let selectedPassCode = "PASS_39";
-    let selectedAmount = 39;
-    let selectedPassName = "5 KM Pass (1 Ride)";
+    // Nearest 9 Unit Digit Rounding
+    function roundToNearestNine(val) {
+      return Math.round((val - 9) / 10) * 10 + 9;
+    }
+
+    // Dynamic Single Ride Fare Engine (Base ₹21, ₹6.75/km, ₹0.30/min, tiered fees + 5% GST)
+    function calculateSingleRideFare(km, minutes) {
+      const dist = parseFloat(km) || 0;
+      const duration = (minutes && minutes > 0) ? minutes : Math.max(5, Math.round((dist / 22) * 60));
+      
+      const baseFare = 21.0;
+      const perKmRate = 6.75;
+      const perMinRate = 0.30;
+      
+      const rideFare = baseFare + (dist * perKmRate) + (duration * perMinRate);
+      
+      let platformFee = 0;
+      let captainMicroFee = 0;
+      
+      if (rideFare <= 50) {
+        platformFee = 3;
+        captainMicroFee = 2;
+      } else {
+        platformFee = 4;
+        captainMicroFee = 3;
+      }
+      
+      const subtotal = rideFare + platformFee + captainMicroFee;
+      const totalWithGst = subtotal * 1.05;
+      
+      return Math.round(totalWithGst);
+    }
+
+    let selectedPassCode = "PASS_89";
+    let selectedAmount = 89;
+    let selectedPassName = "9 KM Super Pass (2 Rides)";
     
-    let pickupCoords = null;
-    let dropCoords = null;
-    let lastResolvedPickupText = "";
-    let lastResolvedDropText = "";
+    let pickupCoords = null;[cite: 1]
+    let dropCoords = null;[cite: 1]
+    let lastResolvedPickupText = "";[cite: 1]
+    let lastResolvedDropText = "";[cite: 1]
     
-    let currentPickupText = "";
-    let currentDropText = "";
-    let activeCaptainDetails = null;
+    let currentPickupText = "";[cite: 1]
+    let currentDropText = "";[cite: 1]
+    let activeCaptainDetails = null;[cite: 1]
 
-    let routeDebounceTimer = null;
-    let suggestDebounceTimer = null;
-    let autoRedirectTimer = null;
+    let routeDebounceTimer = null;[cite: 1]
+    let suggestDebounceTimer = null;[cite: 1]
+    let autoRedirectTimer = null;[cite: 1]
 
-    let calculatedKm = 0;
-    let singleFareAmount = 25;
-    let currentDueFare = 0;
-    let userActivePass = null;
-    let currentRideId = null;
-    let rideStatusPollTimer = null;
+    let calculatedKm = 0;[cite: 1]
+    let calculatedMinutes = 0;
+    let singleFareAmount = 40;
+    let currentDueFare = 0;[cite: 1]
+    let userActivePass = null;[cite: 1]
+    let currentRideId = null;[cite: 1]
+    let rideStatusPollTimer = null;[cite: 1]
 
-    let selectedRating = 5;
-    let selectedFeedbackTags = [];
+    let selectedRating = 5;[cite: 1]
+    let selectedFeedbackTags = [];[cite: 1]
 
-    let recommendedTier = "PASS_39";
-    let recommendedAmount = 39;
-    let recommendedName = "5 KM Pass";
+    let recommendedTier = "PASS_89";
+    let recommendedAmount = 89;
+    let recommendedName = "9 KM Super Pass";
 
-    let mapInstance = null;
-    let routeOutline = null;
-    let routePolyline = null;
-    let pickupMarker = null;
-    let dropMarker = null;
+    let mapInstance = null;[cite: 1]
+    let routeOutline = null;[cite: 1]
+    let routePolyline = null;[cite: 1]
+    let pickupMarker = null;[cite: 1]
+    let dropMarker = null;[cite: 1]
 
-    let captainMarker = null;
-    let captainRoutePolyline = null;
-    let captainMotionTimer = null;
+    let captainMarker = null;[cite: 1]
+    let captainRoutePolyline = null;[cite: 1]
+    let captainMotionTimer = null;[cite: 1]
 
-    // Modal helpers
     function openTermsModal() {
-      document.getElementById("termsModalOverlay").style.display = "flex";
-      document.body.style.overflow = "hidden";
+      document.getElementById("termsModalOverlay").style.display = "flex";[cite: 1]
+      document.body.style.overflow = "hidden";[cite: 1]
     }
 
     function closeTermsModal() {
-      document.getElementById("termsModalOverlay").style.display = "none";
-      document.body.style.overflow = "auto";
+      document.getElementById("termsModalOverlay").style.display = "none";[cite: 1]
+      document.body.style.overflow = "auto";[cite: 1]
     }
 
     document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape") closeTermsModal();
+      if (e.key === "Escape") closeTermsModal();[cite: 1]
     });
 
     try {
       if (localStorage.getItem("nineo_phone")) {
-        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
-        handlePhoneInput();
+        document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");[cite: 1]
+        handlePhoneInput();[cite: 1]
       }
     } catch (e) {
-      console.warn("Storage restricted:", e);
+      console.warn("Storage restricted:", e);[cite: 1]
     }
 
     function isWithinRanchiBoundary(coords) {
-      if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;
-      const distFromCenter = haversine(RANCHI_CENTER.lat, RANCHI_CENTER.lon, coords.lat, coords.lon);
-      return distFromCenter <= RANCHI_MAX_RADIUS_KM;
+      if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;[cite: 1]
+      const distFromCenter = haversine(RANCHI_CENTER.lat, RANCHI_CENTER.lon, coords.lat, coords.lon);[cite: 1]
+      return distFromCenter <= RANCHI_MAX_RADIUS_KM;[cite: 1]
     }
 
     function switchTab(t) {
       if (autoRedirectTimer) {
-        clearInterval(autoRedirectTimer);
-        autoRedirectTimer = null;
+        clearInterval(autoRedirectTimer);[cite: 1]
+        autoRedirectTimer = null;[cite: 1]
       }
-      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';
-      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';
-      document.getElementById("passConfirmCard").style.display = 'none';
-      document.getElementById("tripCompleteCard").style.display = 'none';
-      document.getElementById("feedbackCard").style.display = 'none';
-      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');
-      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');
+      document.getElementById("sectionBook").style.display = t === 'book' ? 'block' : 'none';[cite: 1]
+      document.getElementById("sectionPass").style.display = t === 'pass' ? 'block' : 'none';[cite: 1]
+      document.getElementById("passConfirmCard").style.display = 'none';[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = 'none';[cite: 1]
+      document.getElementById("feedbackCard").style.display = 'none';[cite: 1]
+      document.getElementById("btnTabBook").className = 'tab-btn ' + (t === 'book' ? 'active' : '');[cite: 1]
+      document.getElementById("btnTabPass").className = 'tab-btn ' + (t === 'pass' ? 'active' : '');[cite: 1]
 
       if (t === 'book' && mapInstance) {
-        setTimeout(() => mapInstance.invalidateSize(), 200);
+        setTimeout(() => mapInstance.invalidateSize(), 200);[cite: 1]
       }
     }
 
     function handleDropChange() {
-      dropCoords = null;
-      lastResolvedDropText = "";
-      const val = document.getElementById("drop").value.trim();
-      const dropSugBox = document.getElementById("dropSuggestions");
+      dropCoords = null;[cite: 1]
+      lastResolvedDropText = "";[cite: 1]
+      const val = document.getElementById("drop").value.trim();[cite: 1]
+      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
 
-      if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);
+      if (suggestDebounceTimer) clearTimeout(suggestDebounceTimer);[cite: 1]
 
       if (val.length < 2) {
-        dropSugBox.style.display = "none";
-        dropSugBox.innerHTML = "";
+        dropSugBox.style.display = "none";[cite: 1]
+        dropSugBox.innerHTML = "";[cite: 1]
       } else {
         suggestDebounceTimer = setTimeout(() => {
-          fetchDropSuggestions(val);
+          fetchDropSuggestions(val);[cite: 1]
         }, 220);
       }
 
-      debounceRouting();
+      debounceRouting();[cite: 1]
     }
 
     async function fetchDropSuggestions(query) {
-      const dropSugBox = document.getElementById("dropSuggestions");
+      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
       try {
-        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=5`;
-        const res = await fetch(url);
-        const data = await res.json();
+        const url = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=5`;[cite: 1]
+        const res = await fetch(url);[cite: 1]
+        const data = await res.json();[cite: 1]
 
         if (data && data.features && data.features.length > 0) {
-          dropSugBox.innerHTML = "";
+          dropSugBox.innerHTML = "";[cite: 1]
           data.features.forEach(f => {
-            const [lon, lat] = f.geometry.coordinates;
-            const p = f.properties;
-            const title = p.name || p.street || query;
-            const desc = [p.street, p.district || p.suburb || p.city, "Ranchi"].filter(Boolean).join(", ");
+            const [lon, lat] = f.geometry.coordinates;[cite: 1]
+            const p = f.properties;[cite: 1]
+            const title = p.name || p.street || query;[cite: 1]
+            const desc = [p.street, p.district || p.suburb || p.city, "Ranchi"].filter(Boolean).join(", ");[cite: 1]
 
-            const item = document.createElement("div");
-            item.className = "suggestion-item";
-            item.innerHTML = `<div class="suggestion-title">📍 ${title}</div><div class="suggestion-desc">${desc}</div>`;
+            const item = document.createElement("div");[cite: 1]
+            item.className = "suggestion-item";[cite: 1]
+            item.innerHTML = `<div class="suggestion-title">📍 ${title}</div><div class="suggestion-desc">${desc}</div>`;[cite: 1]
             item.onclick = () => {
-              selectDropSuggestion(title, desc, lat, lon);
+              selectDropSuggestion(title, desc, lat, lon);[cite: 1]
             };
-            dropSugBox.appendChild(item);
+            dropSugBox.appendChild(item);[cite: 1]
           });
-          dropSugBox.style.display = "block";
+          dropSugBox.style.display = "block";[cite: 1]
         } else {
-          dropSugBox.style.display = "none";
+          dropSugBox.style.display = "none";[cite: 1]
         }
       } catch (e) {
-        dropSugBox.style.display = "none";
+        dropSugBox.style.display = "none";[cite: 1]
       }
     }
 
     function selectDropSuggestion(title, desc, lat, lon) {
-      const dropInput = document.getElementById("drop");
-      dropInput.value = title;
-      dropCoords = { lat, lon };
-      lastResolvedDropText = title;
-      document.getElementById("dropSuggestions").style.display = "none";
-      triggerRouteEstimation();
+      const dropInput = document.getElementById("drop");[cite: 1]
+      dropInput.value = title;[cite: 1]
+      dropCoords = { lat, lon };[cite: 1]
+      lastResolvedDropText = title;[cite: 1]
+      document.getElementById("dropSuggestions").style.display = "none";[cite: 1]
+      triggerRouteEstimation();[cite: 1]
     }
 
     document.addEventListener("click", (e) => {
-      const dropInput = document.getElementById("drop");
-      const dropSugBox = document.getElementById("dropSuggestions");
+      const dropInput = document.getElementById("drop");[cite: 1]
+      const dropSugBox = document.getElementById("dropSuggestions");[cite: 1]
       if (dropSugBox && !dropInput.contains(e.target) && !dropSugBox.contains(e.target)) {
-        dropSugBox.style.display = "none";
+        dropSugBox.style.display = "none";[cite: 1]
       }
     });
 
     function handlePickupChange() {
-      pickupCoords = null;
-      lastResolvedPickupText = "";
-      debounceRouting();
+      pickupCoords = null;[cite: 1]
+      lastResolvedPickupText = "";[cite: 1]
+      debounceRouting();[cite: 1]
     }
 
     function setDrop(v) {
-      document.getElementById("drop").value = v;
-      dropCoords = null;
-      lastResolvedDropText = "";
-      document.getElementById("dropSuggestions").style.display = "none";
-      triggerRouteEstimation();
+      document.getElementById("drop").value = v;[cite: 1]
+      dropCoords = null;[cite: 1]
+      lastResolvedDropText = "";[cite: 1]
+      document.getElementById("dropSuggestions").style.display = "none";[cite: 1]
+      triggerRouteEstimation();[cite: 1]
     }
 
     function setPickup(v) {
-      document.getElementById("pickup").value = v;
-      pickupCoords = null;
-      lastResolvedPickupText = "";
-      triggerRouteEstimation();
+      document.getElementById("pickup").value = v;[cite: 1]
+      pickupCoords = null;[cite: 1]
+      lastResolvedPickupText = "";[cite: 1]
+      triggerRouteEstimation();[cite: 1]
     }
 
     function debounceRouting() {
-      if (routeDebounceTimer) clearTimeout(routeDebounceTimer);
+      if (routeDebounceTimer) clearTimeout(routeDebounceTimer);[cite: 1]
       routeDebounceTimer = setTimeout(() => {
-        triggerRouteEstimation();
+        triggerRouteEstimation();[cite: 1]
       }, 500);
     }
 
     async function handlePhoneInput() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
-      const banner = document.getElementById("activePassBanner");
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      const banner = document.getElementById("activePassBanner");[cite: 1]
 
       if (phone.length === 10) {
-        try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
+        try { localStorage.setItem("nineo_phone", phone); } catch (e) {}[cite: 1]
         try {
-          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
-          const data = await res.json();
+          const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
+          const data = await res.json();[cite: 1]
 
           if (data.hasActivePass) {
-            userActivePass = data;
-            banner.style.display = "block";
-            banner.innerHTML = `🎟️ <b>Active Pass:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) available today`;
+            userActivePass = data;[cite: 1]
+            banner.style.display = "block";[cite: 1]
+            banner.innerHTML = `🎟️ <b>Active Pass:</b> ${data.remainingKm} KM & ${data.remainingRides} ride(s) available today`;[cite: 1]
           } else {
-            userActivePass = null;
-            banner.style.display = "none";
+            userActivePass = null;[cite: 1]
+            banner.style.display = "none";[cite: 1]
           }
         } catch (e) {
-          userActivePass = null;
+          userActivePass = null;[cite: 1]
         }
-        if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm));
+        if (calculatedKm > 0) renderComparison(parseFloat(calculatedKm), calculatedMinutes);
       } else {
-        banner.style.display = "none";
-        userActivePass = null;
+        banner.style.display = "none";[cite: 1]
+        userActivePass = null;[cite: 1]
       }
     }
 
     function getPreciseGPS() {
-      const p = document.getElementById("pickup");
-      const s = document.getElementById("gpsStatus");
-      s.innerText = "📍 Pinning GPS satellites...";
+      const p = document.getElementById("pickup");[cite: 1]
+      const s = document.getElementById("gpsStatus");[cite: 1]
+      s.innerText = "📍 Pinning GPS satellites...";[cite: 1]
 
       if (!navigator.geolocation) {
-        s.innerText = "⚠️ Geolocation not supported on browser.";
+        s.innerText = "⚠️ Geolocation not supported on browser.";[cite: 1]
         return;
       }
 
       navigator.geolocation.getCurrentPosition(
         async (pos) => {
-          const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };
+          const coords = { lat: pos.coords.latitude, lon: pos.coords.longitude };[cite: 1]
 
           if (!isWithinRanchiBoundary(coords)) {
-            s.innerHTML = "<b style='color:var(--primary-accent);'>⚠️ GPS shows you are outside Ranchi operational area.</b>";
-            pickupCoords = null;
+            s.innerHTML = "<b style='color:var(--primary-accent);'>⚠️ GPS shows you are outside Ranchi operational area.</b>";[cite: 1]
+            pickupCoords = null;[cite: 1]
             return;
           }
 
-          pickupCoords = coords;
-          lastResolvedPickupText = `${pickupCoords.lat},${pickupCoords.lon}`;
-          const acc = Math.round(pos.coords.accuracy);
-          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;
-          s.innerText = `📍 GPS Locked in Ranchi (±${acc}m)`;
-          triggerRouteEstimation();
+          pickupCoords = coords;[cite: 1]
+          lastResolvedPickupText = `${pickupCoords.lat},${pickupCoords.lon}`;[cite: 1]
+          const acc = Math.round(pos.coords.accuracy);[cite: 1]
+          p.value = `Current Location (${pickupCoords.lat.toFixed(4)}, ${pickupCoords.lon.toFixed(4)})`;[cite: 1]
+          s.innerText = `📍 GPS Locked in Ranchi (±${acc}m)`;[cite: 1]
+          triggerRouteEstimation();[cite: 1]
 
           try {
-            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);
-            const d = await res.json();
-            const a = d.address || {};
-            const street = a.road || a.suburb || a.neighbourhood || "";
-            const landmark = a.building || a.amenity || "";
-            const resolvedName = [landmark, street].filter(Boolean).join(", ");
-            if (resolvedName) p.value = resolvedName;
+            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${pickupCoords.lat}&lon=${pickupCoords.lon}&zoom=18&addressdetails=1`);[cite: 1]
+            const d = await res.json();[cite: 1]
+            const a = d.address || {};[cite: 1]
+            const street = a.road || a.suburb || a.neighbourhood || "";[cite: 1]
+            const landmark = a.building || a.amenity || "";[cite: 1]
+            const resolvedName = [landmark, street].filter(Boolean).join(", ");[cite: 1]
+            if (resolvedName) p.value = resolvedName;[cite: 1]
           } catch(e) {}
         },
         (err) => {
-          s.innerText = "⚠️ GPS access denied. Please type pickup landmark.";
+          s.innerText = "⚠️ GPS access denied. Please type pickup landmark.";[cite: 1]
         },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 30000 }[cite: 1]
       );
     }
 
     async function geocodeLocation(rawText) {
-      if (!rawText || !rawText.trim()) return null;
-      const query = rawText.trim();
+      if (!rawText || !rawText.trim()) return null;[cite: 1]
+      const query = rawText.trim();[cite: 1]
 
-      const coordMatch = query.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      const coordMatch = query.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);[cite: 1]
       if (coordMatch) {
-        return { lat: parseFloat(coordMatch[1]), lon: parseFloat(coordMatch[2]) };
+        return { lat: parseFloat(coordMatch[1]), lon: parseFloat(coordMatch[2]) };[cite: 1]
       }
 
       try {
-        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=1`;
-        const res = await fetch(photonUrl);
-        const data = await res.json();
+        const photonUrl = `https://photon.komoot.io/api/?q=${encodeURIComponent(query)}&lat=${RANCHI_CENTER.lat}&lon=${RANCHI_CENTER.lon}&limit=1`;[cite: 1]
+        const res = await fetch(photonUrl);[cite: 1]
+        const data = await res.json();[cite: 1]
         if (data && data.features && data.features.length > 0) {
-          const [lon, lat] = data.features[0].geometry.coordinates;
-          return { lat, lon };
+          const [lon, lat] = data.features[0].geometry.coordinates;[cite: 1]
+          return { lat, lon };[cite: 1]
         }
       } catch (e) {}
 
       try {
-        const viewbox = "85.10,23.55,85.55,23.15";
-        const nomQuery = query.toLowerCase().includes("ranchi") ? query : `${query}, Ranchi`;
-        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nomQuery)}&viewbox=${viewbox}&limit=1`;
-        const res = await fetch(nomUrl, { headers: { "Accept-Language": "en" } });
-        const data = await res.json();
+        const viewbox = "85.10,23.55,85.55,23.15";[cite: 1]
+        const nomQuery = query.toLowerCase().includes("ranchi") ? query : `${query}, Ranchi`;[cite: 1]
+        const nomUrl = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(nomQuery)}&viewbox=${viewbox}&limit=1`;[cite: 1]
+        const res = await fetch(nomUrl, { headers: { "Accept-Language": "en" } });[cite: 1]
+        const data = await res.json();[cite: 1]
         if (data && data.length > 0) {
-          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };
+          return { lat: parseFloat(data[0].lat), lon: parseFloat(data[0].lon) };[cite: 1]
         }
       } catch (e) {}
 
-      return null;
+      return null;[cite: 1]
     }
 
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
-      const mapContainer = document.getElementById("routeMap");
-      if (!mapContainer) return;
+      const mapContainer = document.getElementById("routeMap");[cite: 1]
+      if (!mapContainer) return;[cite: 1]
 
-      mapContainer.style.display = "block";
+      mapContainer.style.display = "block";[cite: 1]
 
       if (!mapInstance) {
         mapInstance = L.map('routeMap', {
           zoomControl: false,
           attributionControl: false
-        }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
+        }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);[cite: 1]
 
         L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
           attribution: '&copy; OpenStreetMap contributors'
-        }).addTo(mapInstance);
+        }).addTo(mapInstance);[cite: 1]
       }
 
-      if (routeOutline) mapInstance.removeLayer(routeOutline);
-      if (routePolyline) mapInstance.removeLayer(routePolyline);
-      if (pickupMarker) mapInstance.removeLayer(pickupMarker);
-      if (dropMarker) mapInstance.removeLayer(dropMarker);
+      if (routeOutline) mapInstance.removeLayer(routeOutline);[cite: 1]
+      if (routePolyline) mapInstance.removeLayer(routePolyline);[cite: 1]
+      if (pickupMarker) mapInstance.removeLayer(pickupMarker);[cite: 1]
+      if (dropMarker) mapInstance.removeLayer(dropMarker);[cite: 1]
 
       if (!pickup || !drop) {
-        setTimeout(() => { mapInstance.invalidateSize(); }, 200);
+        setTimeout(() => { mapInstance.invalidateSize(); }, 200);[cite: 1]
         return;
       }
 
@@ -1963,21 +1896,21 @@
         html: '<div class="pin-badge pin-a">A</div>',
         iconSize: [28, 28],
         iconAnchor: [14, 14]
-      });
+      });[cite: 1]
 
-      const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';
+      const etaTag = etaMin ? `<div class="eta-pill">⏱️ ${etaMin} min</div>` : '';[cite: 1]
       const dropIcon = L.divIcon({
         className: 'custom-pin',
         html: `<div class="pin-b-wrap">${etaTag}<div class="pin-badge pin-b">B</div></div>`,
         iconSize: [28, 28],
         iconAnchor: [14, 14]
-      });
+      });[cite: 1]
 
-      pickupMarker = L.marker([pickup.lat, pickup.lon], { icon: pickupIcon }).addTo(mapInstance);
-      dropMarker = L.marker([drop.lat, drop.lon], { icon: dropIcon }).addTo(mapInstance);
+      pickupMarker = L.marker([pickup.lat, pickup.lon], { icon: pickupIcon }).addTo(mapInstance);[cite: 1]
+      dropMarker = L.marker([drop.lat, drop.lon], { icon: dropIcon }).addTo(mapInstance);[cite: 1]
 
       if (coordinates && coordinates.length > 0) {
-        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);
+        const latLngs = coordinates.map(coord => [coord[1], coord[0]]);[cite: 1]
 
         routeOutline = L.polyline(latLngs, {
           color: '#050811',
@@ -1985,7 +1918,7 @@
           opacity: 0.9,
           lineJoin: 'round',
           lineCap: 'round'
-        }).addTo(mapInstance);
+        }).addTo(mapInstance);[cite: 1]
 
         routePolyline = L.polyline(latLngs, {
           color: '#facc15',
@@ -1993,1043 +1926,1048 @@
           opacity: 1.0,
           lineJoin: 'round',
           lineCap: 'round'
-        }).addTo(mapInstance);
+        }).addTo(mapInstance);[cite: 1]
 
-        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [35, 35] });
+        mapInstance.fitBounds(routePolyline.getBounds(), { padding: [35, 35] });[cite: 1]
       } else {
-        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [35, 35] });
+        mapInstance.fitBounds([[pickup.lat, pickup.lon], [drop.lat, drop.lon]], { padding: [35, 35] });[cite: 1]
       }
 
-      setTimeout(() => { mapInstance.invalidateSize(); }, 200);
+      setTimeout(() => { mapInstance.invalidateSize(); }, 200);[cite: 1]
     }
 
     async function startCaptainLiveTracking(pickup) {
-      if (!mapInstance || !pickup) return;
+      if (!mapInstance || !pickup) return;[cite: 1]
 
-      if (captainMotionTimer) clearInterval(captainMotionTimer);
-      if (captainMarker) mapInstance.removeLayer(captainMarker);
-      if (captainRoutePolyline) mapInstance.removeLayer(captainRoutePolyline);
+      if (captainMotionTimer) clearInterval(captainMotionTimer);[cite: 1]
+      if (captainMarker) mapInstance.removeLayer(captainMarker);[cite: 1]
+      if (captainRoutePolyline) mapInstance.removeLayer(captainRoutePolyline);[cite: 1]
 
       const capStart = {
         lat: pickup.lat + (Math.random() > 0.5 ? 0.007 : -0.007),
         lon: pickup.lon + (Math.random() > 0.5 ? 0.007 : -0.007)
-      };
+      };[cite: 1]
 
       const bikeIcon = L.divIcon({
         className: 'custom-pin',
         html: '<div class="captain-bike-pin"><span style="transform:scaleX(-1);">🏍️</span><div class="bike-radar-ring"></div></div>',
         iconSize: [32, 32],
         iconAnchor: [16, 16]
-      });
+      });[cite: 1]
 
-      captainMarker = L.marker([capStart.lat, capStart.lon], { icon: bikeIcon }).addTo(mapInstance);
+      captainMarker = L.marker([capStart.lat, capStart.lon], { icon: bikeIcon }).addTo(mapInstance);[cite: 1]
 
       try {
-        const url = `https://router.project-osrm.org/route/v1/driving/${capStart.lon},${capStart.lat};${pickup.lon},${pickup.lat}?overview=full&geometries=geojson`;
-        const res = await fetch(url);
-        const json = await res.json();
+        const url = `https://router.project-osrm.org/route/v1/driving/${capStart.lon},${capStart.lat};${pickup.lon},${pickup.lat}?overview=full&geometries=geojson`;[cite: 1]
+        const res = await fetch(url);[cite: 1]
+        const json = await res.json();[cite: 1]
 
         if (json.routes && json.routes.length > 0) {
-          const path = json.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);
+          const path = json.routes[0].geometry.coordinates.map(c => [c[1], c[0]]);[cite: 1]
 
           captainRoutePolyline = L.polyline(path, {
             color: '#38bdf8',
             weight: 3.5,
             dashArray: '6, 8',
             opacity: 0.8
-          }).addTo(mapInstance);
+          }).addTo(mapInstance);[cite: 1]
 
-          mapInstance.fitBounds(captainRoutePolyline.getBounds(), { padding: [40, 40] });
+          mapInstance.fitBounds(captainRoutePolyline.getBounds(), { padding: [40, 40] });[cite: 1]
 
-          let stepIndex = 0;
+          let stepIndex = 0;[cite: 1]
           captainMotionTimer = setInterval(() => {
             stepIndex++;
             if (stepIndex < path.length) {
-              captainMarker.setLatLng(path[stepIndex]);
-              captainRoutePolyline.setLatLngs(path.slice(stepIndex));
+              captainMarker.setLatLng(path[stepIndex]);[cite: 1]
+              captainRoutePolyline.setLatLngs(path.slice(stepIndex));[cite: 1]
             } else {
-              clearInterval(captainMotionTimer);
-              captainMotionTimer = null;
-              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";
-              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");
+              clearInterval(captainMotionTimer);[cite: 1]
+              captainMotionTimer = null;[cite: 1]
+              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";[cite: 1]
+              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");[cite: 1]
             }
-          }, 1800);
+          }, 1800);[cite: 1]
         }
       } catch (e) {
-        console.warn("Captain approach route error:", e);
+        console.warn("Captain approach route error:", e);[cite: 1]
       }
     }
 
     async function triggerRouteEstimation() {
-      const pVal = document.getElementById("pickup").value.trim();
-      const dVal = document.getElementById("drop").value.trim();
-      if (!pVal || !dVal) return;
+      const pVal = document.getElementById("pickup").value.trim();[cite: 1]
+      const dVal = document.getElementById("drop").value.trim();[cite: 1]
+      if (!pVal || !dVal) return;[cite: 1]
 
-      const card = document.getElementById("routeCard");
-      const subtitle = document.getElementById("routeSubtitle");
-      card.style.display = "block";
-      subtitle.innerText = "Finding route & calculating road distance...";
+      const card = document.getElementById("routeCard");[cite: 1]
+      const subtitle = document.getElementById("routeSubtitle");[cite: 1]
+      card.style.display = "block";[cite: 1]
+      subtitle.innerText = "Finding route & fares...";
 
-      if (pVal !== lastResolvedPickupText) pickupCoords = null;
-      if (dVal !== lastResolvedDropText) dropCoords = null;
+      if (pVal !== lastResolvedPickupText) pickupCoords = null;[cite: 1]
+      if (dVal !== lastResolvedDropText) dropCoords = null;[cite: 1]
 
       if (!pickupCoords) {
-        pickupCoords = await geocodeLocation(pVal);
-        if (pickupCoords) lastResolvedPickupText = pVal;
+        pickupCoords = await geocodeLocation(pVal);[cite: 1]
+        if (pickupCoords) lastResolvedPickupText = pVal;[cite: 1]
       }
       if (!dropCoords) {
-        dropCoords = await geocodeLocation(dVal);
-        if (dropCoords) lastResolvedDropText = dVal;
+        dropCoords = await geocodeLocation(dVal);[cite: 1]
+        if (dropCoords) lastResolvedDropText = dVal;[cite: 1]
       }
 
       if (!pickupCoords || !dropCoords) {
-        const missing = !pickupCoords ? `Pickup: "${pVal}"` : `Drop: "${dVal}"`;
-        subtitle.innerText = `⚠️ Could not locate ${missing}. Please pick a landmark.`;
+        const missing = !pickupCoords ? `Pickup: "${pVal}"` : `Drop: "${dVal}"`;[cite: 1]
+        subtitle.innerText = `⚠️️ Could not locate ${missing}. Please pick a landmark.`;[cite: 1]
         return;
       }
 
-      const isPickupInRanchi = isWithinRanchiBoundary(pickupCoords);
-      const isDropInRanchi = isWithinRanchiBoundary(dropCoords);
+      const isPickupInRanchi = isWithinRanchiBoundary(pickupCoords);[cite: 1]
+      const isDropInRanchi = isWithinRanchiBoundary(dropCoords);[cite: 1]
 
       if (!isPickupInRanchi || !isDropInRanchi) {
-        const outPlace = !isPickupInRanchi ? "Pickup location" : "Destination";
-        subtitle.innerHTML = `<b style="color:var(--primary-accent);">🚫 Outside Operating Zone:</b> ${outPlace} is beyond Ranchi limits (max 26km from center). nineO operates only within Ranchi.`;
-        document.getElementById("btnBookDirect").disabled = true;
-        const btnSingle = document.getElementById("btnBookSingle");
-        if (btnSingle) btnSingle.disabled = true;
-        const btnPassOffer = document.getElementById("btnBookPassOffer");
-        if (btnPassOffer) btnPassOffer.disabled = true;
-        const btnActive = document.getElementById("btnBookActivePass");
-        if (btnActive) btnActive.disabled = true;
-        document.getElementById("routeKm").innerText = "--";
-        document.getElementById("singlePrice").innerText = "₹--";
-        document.getElementById("passPrice").innerText = "₹--";
+        const outPlace = !isPickupInRanchi ? "Pickup location" : "Destination";[cite: 1]
+        subtitle.innerHTML = `<b style="color:var(--primary-accent);">🚫 Outside Operating Zone:</b> ${outPlace} is beyond Ranchi limits (max 26km from center). nineO operates only within Ranchi.`;[cite: 1]
+        document.getElementById("btnBookDirect").disabled = true;[cite: 1]
+        const btnSingle = document.getElementById("btnBookSingle");[cite: 1]
+        if (btnSingle) btnSingle.disabled = true;[cite: 1]
+        const btnPassOffer = document.getElementById("btnBookPassOffer");[cite: 1]
+        if (btnPassOffer) btnPassOffer.disabled = true;[cite: 1]
+        const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
+        if (btnActive) btnActive.disabled = true;[cite: 1]
+        document.getElementById("routeKm").innerText = "--";[cite: 1]
+        document.getElementById("singlePrice").innerText = "₹--";[cite: 1]
+        document.getElementById("passPrice").innerText = "₹--";[cite: 1]
         return;
       }
 
-      document.getElementById("btnBookDirect").disabled = false;
-      const btnSingle = document.getElementById("btnBookSingle");
-      if (btnSingle) btnSingle.disabled = false;
-      const btnPassOffer = document.getElementById("btnBookPassOffer");
-      if (btnPassOffer) btnPassOffer.disabled = false;
+      document.getElementById("btnBookDirect").disabled = false;[cite: 1]
+      const btnSingle = document.getElementById("btnBookSingle");[cite: 1]
+      if (btnSingle) btnSingle.disabled = false;[cite: 1]
+      const btnPassOffer = document.getElementById("btnBookPassOffer");[cite: 1]
+      if (btnPassOffer) btnPassOffer.disabled = false;[cite: 1]
 
       try {
-        const routeUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=full&geometries=geojson`;
-        const res = await fetch(routeUrl);
-        const data = await res.json();
+        const routeUrl = `https://router.project-osrm.org/route/v1/driving/${pickupCoords.lon},${pickupCoords.lat};${dropCoords.lon},${dropCoords.lat}?overview=full&geometries=geojson`;[cite: 1]
+        const res = await fetch(routeUrl);[cite: 1]
+        const data = await res.json();[cite: 1]
 
         if (data && data.routes && data.routes.length > 0) {
-          calculatedKm = (data.routes[0].distance / 1000).toFixed(1);
-          const etaMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));
-          subtitle.innerText = "Live route locked in Ranchi:";
-          renderComparison(parseFloat(calculatedKm));
-          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, etaMinutes);
+          calculatedKm = (data.routes[0].distance / 1000).toFixed(1);[cite: 1]
+          calculatedMinutes = Math.max(3, Math.round(data.routes[0].duration / 60));[cite: 1]
+          renderComparison(parseFloat(calculatedKm), calculatedMinutes);
+          renderInteractiveMap(pickupCoords, dropCoords, data.routes[0].geometry.coordinates, calculatedMinutes);[cite: 1]
         } else {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
-          const fallbackEta = Math.max(5, Math.round((calculatedKm / 22) * 60));
-          renderComparison(parseFloat(calculatedKm));
-          renderInteractiveMap(pickupCoords, dropCoords, null, fallbackEta);
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
+          calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
+          renderComparison(parseFloat(calculatedKm), calculatedMinutes);
+          renderInteractiveMap(pickupCoords, dropCoords, null, calculatedMinutes);
         }
       } catch (err) {
-        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
-        const fallbackEta = Math.max(5, Math.round((calculatedKm / 22) * 60));
-        renderComparison(parseFloat(calculatedKm));
-        renderInteractiveMap(pickupCoords, dropCoords, null, fallbackEta);
+        calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
+        calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
+        renderComparison(parseFloat(calculatedKm), calculatedMinutes);
+        renderInteractiveMap(pickupCoords, dropCoords, null, calculatedMinutes);
       }
     }
 
     function haversine(lat1, lon1, lat2, lon2) {
-      const R = 6371;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const R = 6371;[cite: 1]
+      const dLat = (lat2 - lat1) * Math.PI / 180;[cite: 1]
+      const dLon = (lon2 - lon1) * Math.PI / 180;[cite: 1]
       const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+                Math.sin(dLon/2) * Math.sin(dLon/2);[cite: 1]
+      return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));[cite: 1]
     }
 
-    function renderComparison(km) {
-      document.getElementById("routeKm").innerText = km;
-      document.getElementById("btnBookDirect").style.display = "none";
+    // Displays ONLY Fares (No Calculation Breakdowns) & Applies Intelligent Recommendation
+    function renderComparison(km, minutes) {
+      document.getElementById("routeKm").innerText = km;[cite: 1]
+      document.getElementById("btnBookDirect").style.display = "none";[cite: 1]
 
-      const stdGrid = document.getElementById("standardGrid");
-      const passCard = document.getElementById("activePassCard");
-      const passDue = document.getElementById("activePassDue");
-      const passExp = document.getElementById("activePassExplanation");
-      const btnBookPass = document.getElementById("btnBookActivePass");
-      const upsellBox = document.getElementById("passUpsellBox");
+      const stdGrid = document.getElementById("standardGrid");[cite: 1]
+      const passCard = document.getElementById("activePassCard");[cite: 1]
+      const passDue = document.getElementById("activePassDue");[cite: 1]
+      const passExp = document.getElementById("activePassExplanation");[cite: 1]
+      const btnBookPass = document.getElementById("btnBookActivePass");[cite: 1]
+      const upsellBox = document.getElementById("passUpsellBox");[cite: 1]
 
-      singleFareAmount = Math.max(25, Math.round(km * 9));
+      // Single Ride Final Fare
+      singleFareAmount = calculateSingleRideFare(km, minutes);
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
+      document.getElementById("singleDesc").innerText = "Direct point-to-point ride. Pay captain at drop.";
+
+      // Determine Best Matching Pass
+      const pTitle = document.getElementById("passCardTitle");[cite: 1]
+      const pPrice = document.getElementById("passPrice");[cite: 1]
+      const pDesc = document.getElementById("passDesc");[cite: 1]
+
+      if (km <= 5.0) {
+        recommendedTier = "PASS_59";
+        recommendedAmount = 59;
+        recommendedName = "5 KM Pass";
+        pTitle.innerText = "5 KM Pass";
+        pPrice.innerText = "₹59";
+        pDesc.innerText = "Covers this trip in full. Valid 24 hours.";
+      } else if (km <= 9.0) {
+        recommendedTier = "PASS_89";
+        recommendedAmount = 89;
+        recommendedName = "9 KM Super Pass";
+        pTitle.innerText = "9 KM Super Pass";
+        pPrice.innerText = "₹89";
+        pDesc.innerText = "Covers this trip + return trip within 24h.";
+      } else {
+        recommendedTier = "PASS_149";
+        recommendedAmount = 149;
+        recommendedName = "18 KM Pro Pass";
+        pTitle.innerText = "18 KM Pro Pass";
+        pPrice.innerText = "₹149";
+        pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
+      }
 
       // ACTIVE PASS HOLDER LOGIC
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
-        stdGrid.style.display = "none";
-        passCard.style.display = "block";
-        document.getElementById("routeSubtitle").innerText = "Pass Booking Mode:";
+        stdGrid.style.display = "none";[cite: 1]
+        passCard.style.display = "block";[cite: 1]
+        document.getElementById("routeSubtitle").innerText = "Active Pass Applied:";
 
-        // Case 1: Trip completely within leftover KM
         if (km <= userActivePass.remainingKm) {
-          currentDueFare = 0;
-          passDue.innerText = "₹0";
-          passDue.style.color = "var(--green)";
-          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
-          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b><br>Deducts 1 ride from your pass. <b>${leftAfter} KM</b> will remain for today.`;
-          btnBookPass.disabled = false;
-          btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";
-
-          if (upsellBox) upsellBox.style.display = "none";
+          currentDueFare = 0;[cite: 1]
+          passDue.innerText = "₹0";[cite: 1]
+          passDue.style.color = "var(--green)";[cite: 1]
+          const leftAfter = (userActivePass.remainingKm - km).toFixed(1);[cite: 1]
+          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b><br>1 ride deducted. <b>${leftAfter} KM</b> balance remaining.`;
+          btnBookPass.disabled = false;[cite: 1]
+          btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";[cite: 1]
+          if (upsellBox) upsellBox.style.display = "none";[cite: 1]
         } else {
-          // Case 2: Trip exceeds leftover KM -> Overage @ ₹9/km + Smart Upgrade Offer
-          const coveredKm = userActivePass.remainingKm;
-          const extraKm = parseFloat((km - coveredKm).toFixed(1));
-          currentDueFare = Math.round(extraKm * 9);
+          const coveredKm = userActivePass.remainingKm;[cite: 1]
+          const extraKm = parseFloat((km - coveredKm).toFixed(1));[cite: 1]
+          currentDueFare = Math.round(extraKm * 9);[cite: 1]
 
-          passDue.innerText = `₹${currentDueFare}`;
-          passDue.style.color = "var(--primary)";
-          passExp.innerHTML = `⚡ <b>${coveredKm} KM covered free by your pass.</b><br>Extra <b>${extraKm} KM</b> billed at ₹9/km overage = <b>₹${currentDueFare}</b> due to captain at drop.`;
+          passDue.innerText = `₹${currentDueFare}`;[cite: 1]
+          passDue.style.color = "var(--primary)";[cite: 1]
+          passExp.innerHTML = `⚡ <b>${coveredKm} KM covered free by your pass.</b><br>Extra ${extraKm} KM overage: <b>₹${currentDueFare}</b> due to captain.`;
           
-          btnBookPass.disabled = false;
-          btnBookPass.innerHTML = `<span>Confirm Ride (₹${currentDueFare} Due to Captain)</span> ➔`;
+          btnBookPass.disabled = false;[cite: 1]
+          btnBookPass.innerHTML = `<span>Confirm Ride (₹${currentDueFare} Due)</span> ➔`;
 
-          let freshTier = "PASS_69";
-          let freshAmt = 69;
-          let freshName = "9 KM Super Pass";
-
-          if (km <= 5.0) {
-            freshTier = "PASS_39"; freshAmt = 39; freshName = "5 KM Pass";
-          } else if (km <= 9.0) {
-            freshTier = "PASS_69"; freshAmt = 69; freshName = "9 KM Super Pass";
-          } else {
-            freshTier = "PASS_129"; freshAmt = 129; freshName = "19 KM Pro Pass";
-          }
-
-          const diff = freshAmt - currentDueFare;
           if (upsellBox) {
-            upsellBox.style.display = "block";
-            if (diff <= 0) {
-              upsellBox.innerHTML = `
-                <div class="upsell-title">💡 Smart Pass Saver</div>
-                <div class="upsell-text">Paying <b>₹${currentDueFare}</b> in overage is higher than a fresh <b>${freshName} (₹${freshAmt})</b>! Activate a fresh pass instead:</div>
-                <button type="button" class="btn-upsell" onclick="selectPass(null, '${freshTier}', ${freshAmt}, '${freshName}'); openPaymentModal();">
-                  Activate ${freshName} (₹${freshAmt}) ⚡
-                </button>
-              `;
-            } else {
-              const remKmAfterNew = Math.max(0, (freshTier === "PASS_129" ? 19 : freshTier === "PASS_69" ? 9 : 5) - km).toFixed(1);
-              upsellBox.innerHTML = `
-                <div class="upsell-title">💡 Need More KM Today?</div>
-                <div class="upsell-text">For just <b>₹${diff} more</b> than your overage (₹${freshAmt} total), get a fresh <b>${freshName}</b>. Covers this entire trip + leaves <b>${remKmAfterNew} KM & rides</b> for 24h!</div>
-                <button type="button" class="btn-upsell" onclick="selectPass(null, '${freshTier}', ${freshAmt}, '${freshName}'); openPaymentModal();">
-                  Get Fresh ${freshName} (₹${freshAmt}) ⚡
-                </button>
-              `;
-            }
+            upsellBox.style.display = "block";[cite: 1]
+            upsellBox.innerHTML = `
+              <div class="upsell-title">💡 Smart Pass Upgrade</div>
+              <div class="upsell-text">Activate a fresh <b>${recommendedName} (₹${recommendedAmount})</b> instead to cover this ride plus future trips.</div>
+              <button type="button" class="btn-upsell" onclick="selectPass(null, '${recommendedTier}', ${recommendedAmount}, '${recommendedName}'); openPaymentModal();">
+                Get ${recommendedName} (₹${recommendedAmount}) ⚡
+              </button>
+            `;
           }
         }
       } else {
-        // NON-PASS USER
-        passCard.style.display = "none";
-        stdGrid.style.display = "grid";
-        document.getElementById("routeSubtitle").innerText = "Choose booking mode:";
+        // NON-PASS USER: Intelligently Recommend either Pass or Single Ride
+        passCard.style.display = "none";[cite: 1]
+        stdGrid.style.display = "grid";[cite: 1]
 
-        const pTitle = document.getElementById("passCardTitle");
-        const pPrice = document.getElementById("passPrice");
-        const pDesc = document.getElementById("passDesc");
+        const cardSingle = document.getElementById("cardSingleRide");
+        const cardPass = document.getElementById("cardPassOffer");
+        const badgeSingle = document.getElementById("badgeSingle");
+        const badgePass = document.getElementById("badgePass");
+        const subtitle = document.getElementById("routeSubtitle");
 
-        if (km <= 5.0) {
-          recommendedTier = "PASS_39"; recommendedAmount = 39; recommendedName = "5 KM Pass (1 Ride)";
-          pTitle.innerText = "5 KM Pass"; pPrice.innerText = "₹39";
-          pDesc.innerHTML = "Covers this trip in full. Zero extra cash.";
-        } else if (km <= 9.0) {
-          recommendedTier = "PASS_69"; recommendedAmount = 69; recommendedName = "9 KM Super (2 Rides)";
-          pTitle.innerText = "9 KM Super"; pPrice.innerText = "₹69";
-          pDesc.innerHTML = "Covers this trip + 2nd ride within 24h.";
+        // Recommend Pass if single ride is at least 70% of pass cost (due to multi-ride 24h bonus)
+        const isPassBetterValue = (singleFareAmount >= (recommendedAmount * 0.70));
+
+        if (isPassBetterValue) {
+          subtitle.innerHTML = `💡 <b>Recommended: Daily Pass</b> (Best Value for 24h)`;
+          cardPass.classList.add("highlight");
+          cardSingle.classList.remove("highlight");
+          badgePass.className = "choice-badge badge-recommended";
+          badgePass.innerText = "RECOMMENDED";
+          badgeSingle.className = "choice-badge badge-single";
+          badgeSingle.innerText = "SINGLE RIDE";
         } else {
-          recommendedTier = "PASS_129"; recommendedAmount = 129; recommendedName = "19 KM Pro (3 Rides)";
-          pTitle.innerText = "19 KM Pro"; pPrice.innerText = "₹129";
-          pDesc.innerHTML = "Covers this trip + up to 2 more trips today.";
+          subtitle.innerHTML = `💡 <b>Recommended: Single Ride</b> (Best for One-Way)`;
+          cardSingle.classList.add("highlight");
+          cardPass.classList.remove("highlight");
+          badgeSingle.className = "choice-badge badge-recommended";
+          badgeSingle.innerText = "RECOMMENDED";
+          badgePass.className = "choice-badge badge-pass";
+          badgePass.innerText = "PASS SAVER";
         }
       }
     }
 
     function buyRecommendedPass() {
-      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);
-      openPaymentModal();
+      selectPass(document.getElementById(`card_${recommendedTier}`), recommendedTier, recommendedAmount, recommendedName);[cite: 1]
+      openPaymentModal();[cite: 1]
     }
 
-    // =========================================================================
-    // 🎙️ VOICE AI ENGINE
-    // =========================================================================
-    let voiceRecognition = null;
-    let isVoiceActive = false;
+    // Voice AI Engine
+    let voiceRecognition = null;[cite: 1]
+    let isVoiceActive = false;[cite: 1]
 
     function initVoiceAI() {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;[cite: 1]
       if (!SpeechRecognition) {
-        document.getElementById("voiceStatusText").innerText = "⚠️ Voice input not supported on this browser";
-        document.getElementById("voiceSubText").innerText = "Use Google Chrome on Android or Safari on iOS";
+        document.getElementById("voiceStatusText").innerText = "⚠️ Voice input not supported on this browser";[cite: 1]
+        document.getElementById("voiceSubText").innerText = "Use Google Chrome on Android or Safari on iOS";[cite: 1]
         return;
       }
 
       try {
-        voiceRecognition = new SpeechRecognition();
-        voiceRecognition.lang = 'en-IN';
-        voiceRecognition.interimResults = false;
-        voiceRecognition.continuous = false;
+        voiceRecognition = new SpeechRecognition();[cite: 1]
+        voiceRecognition.lang = 'en-IN';[cite: 1]
+        voiceRecognition.interimResults = false;[cite: 1]
+        voiceRecognition.continuous = false;[cite: 1]
 
         voiceRecognition.onstart = () => {
-          isVoiceActive = true;
-          document.getElementById("voiceMicBtn").classList.add("listening");
-          document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";
-          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";
+          isVoiceActive = true;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.add("listening");[cite: 1]
+          document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";[cite: 1]
+          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";[cite: 1]
         };
 
         voiceRecognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;
-          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;
-          parseVoiceIntentWithBackend(transcript);
+          const transcript = event.results[0][0].transcript;[cite: 1]
+          document.getElementById("voiceStatusText").innerHTML = `🗣️ "${transcript}"`;[cite: 1]
+          parseVoiceIntentWithBackend(transcript);[cite: 1]
         };
 
         voiceRecognition.onerror = (event) => {
-          isVoiceActive = false;
-          document.getElementById("voiceMicBtn").classList.remove("listening");
-          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");
-          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";
+          isVoiceActive = false;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
+          document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");[cite: 1]
+          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";[cite: 1]
         };
 
         voiceRecognition.onend = () => {
-          isVoiceActive = false;
-          document.getElementById("voiceMicBtn").classList.remove("listening");
+          isVoiceActive = false;[cite: 1]
+          document.getElementById("voiceMicBtn").classList.remove("listening");[cite: 1]
         };
       } catch (err) {
-        console.error("Speech init error:", err);
+        console.error("Speech init error:", err);[cite: 1]
       }
     }
 
     function toggleVoiceRecognition() {
-      if (!voiceRecognition) initVoiceAI();
-      if (!voiceRecognition) return;
+      if (!voiceRecognition) initVoiceAI();[cite: 1]
+      if (!voiceRecognition) return;[cite: 1]
 
       if (isVoiceActive) {
-        try { voiceRecognition.stop(); } catch (e) {}
+        try { voiceRecognition.stop(); } catch (e) {}[cite: 1]
       } else {
         try {
-          voiceRecognition.start();
+          voiceRecognition.start();[cite: 1]
         } catch (e) {
-          try { voiceRecognition.stop(); } catch (err) {}
-          setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);
+          try { voiceRecognition.stop(); } catch (err) {}[cite: 1]
+          setTimeout(() => { try { voiceRecognition.start(); } catch (err) {} }, 250);[cite: 1]
         }
       }
     }
 
     async function parseVoiceIntentWithBackend(rawText) {
-      const subText = document.getElementById("voiceSubText");
-      const lower = rawText.toLowerCase().trim();
+      const subText = document.getElementById("voiceSubText");[cite: 1]
+      const lower = rawText.toLowerCase().trim();[cite: 1]
 
       if (lower.includes("pass") || lower.includes("card")) {
-        if (lower.includes("69") || lower.includes("super")) {
-          selectPass(document.getElementById("card_PASS_69"), "PASS_69", 69, "9 KM Super (2 Rides)");
-          switchTab('pass'); openPaymentModal(); return;
+        if (lower.includes("89") || lower.includes("super") || lower.includes("9")) {
+          selectPass(document.getElementById("card_PASS_89"), "PASS_89", 89, "9 KM Super Pass (2 Rides)");
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
-        if (lower.includes("129") || lower.includes("pro")) {
-          selectPass(document.getElementById("card_PASS_129"), "PASS_129", 129, "19 KM Pro (3 Rides)");
-          switchTab('pass'); openPaymentModal(); return;
+        if (lower.includes("149") || lower.includes("pro") || lower.includes("18")) {
+          selectPass(document.getElementById("card_PASS_149"), "PASS_149", 149, "18 KM Pro Pass (3 Rides)");
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
-        if (lower.includes("39")) {
-          selectPass(document.getElementById("card_PASS_39"), "PASS_39", 39, "5 KM Pass (1 Ride)");
-          switchTab('pass'); openPaymentModal(); return;
+        if (lower.includes("59") || lower.includes("5")) {
+          selectPass(document.getElementById("card_PASS_59"), "PASS_59", 59, "5 KM Pass (1 Ride)");
+          switchTab('pass'); openPaymentModal(); return;[cite: 1]
         }
       }
 
       const singleDrop = lower.match(/(?:take\s+me\s+to|drop\s+me\s+at|drop\s+at|destination|le\s*chalo|chalo)\s+(.+)/i) ||
-                         lower.match(/(?:mujhe|humko)?\s*(.+?)\s*(?:jana\s*h|jana\s*hai|chalna\s*hai|chalo)/i);
+                         lower.match(/(?:mujhe|humko)?\s*(.+?)\s*(?:jana\s*h|jana\s*hai|chalna\s*hai|chalo)/i);[cite: 1]
 
-      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);
+      const twoPoint = lower.match(/(?:from\s+)?(.+?)\s+(?:to|se)\s+(.+)/i);[cite: 1]
 
       if (singleDrop) {
-        const d = cleanPlace(singleDrop[1]);
-        if (d) { applyTransitLocations(null, d); return; }
+        const d = cleanPlace(singleDrop[1]);[cite: 1]
+        if (d) { applyTransitLocations(null, d); return; }[cite: 1]
       } else if (twoPoint && !lower.includes("jana") && !lower.includes("chalo")) {
-        const p = cleanPlace(twoPoint[1]);
-        const d = cleanPlace(twoPoint[2]);
-        if (d && p && p !== "me") { applyTransitLocations(p, d); return; }
-        if (d) { applyTransitLocations(null, d); return; }
+        const p = cleanPlace(twoPoint[1]);[cite: 1]
+        const d = cleanPlace(twoPoint[2]);[cite: 1]
+        if (d && p && p !== "me") { applyTransitLocations(p, d); return; }[cite: 1]
+        if (d) { applyTransitLocations(null, d); return; }[cite: 1]
       }
 
-      subText.innerText = "🧠 Analyzing transit route...";
+      subText.innerText = "🧠 Analyzing transit route...";[cite: 1]
       try {
-        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;
-        const res = await fetch(url);
-        const json = await res.json();
+        const url = `${BACKEND_URL}?action=aiParseVoice&text=${encodeURIComponent(rawText)}`;[cite: 1]
+        const res = await fetch(url);[cite: 1]
+        const json = await res.json();[cite: 1]
 
         if (json.status === "SUCCESS" && json.data) {
-          const { pickup, drop, passTier } = json.data;
+          const { pickup, drop, passTier } = json.data;[cite: 1]
 
           if (passTier) {
             const tierMap = {
-              "PASS_39": { id: "card_PASS_39", amt: 39, name: "5 KM Pass (1 Ride)" },
-              "PASS_69": { id: "card_PASS_69", amt: 69, name: "9 KM Super (2 Rides)" },
-              "PASS_129": { id: "card_PASS_129", amt: 129, name: "19 KM Pro (3 Rides)" }
+              "PASS_59": { id: "card_PASS_59", amt: 59, name: "5 KM Pass (1 Ride)" },
+              "PASS_89": { id: "card_PASS_89", amt: 89, name: "9 KM Super Pass (2 Rides)" },
+              "PASS_149": { id: "card_PASS_149", amt: 149, name: "18 KM Pro Pass (3 Rides)" }
             };
-            const p = tierMap[passTier] || tierMap["PASS_69"];
-            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
-            switchTab('pass');
-            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
-            setTimeout(() => openPaymentModal(), 800);
+            const p = tierMap[passTier] || tierMap["PASS_89"];
+            selectPass(document.getElementById(p.id), passTier, p.amt, p.name);[cite: 1]
+            switchTab('pass');[cite: 1]
+            speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');[cite: 1]
+            setTimeout(() => openPaymentModal(), 800);[cite: 1]
             return;
           }
 
           if (drop) {
-            applyTransitLocations(pickup, drop);
+            applyTransitLocations(pickup, drop);[cite: 1]
             return;
           }
         }
       } catch (err) {
-        console.warn("Backend AI parse error:", err);
+        console.warn("Backend AI parse error:", err);[cite: 1]
       }
 
-      const fallbackDrop = cleanPlace(lower);
+      const fallbackDrop = cleanPlace(lower);[cite: 1]
       if (fallbackDrop.length > 1) {
-        applyTransitLocations(null, fallbackDrop);
+        applyTransitLocations(null, fallbackDrop);[cite: 1]
       } else {
-        subText.innerText = "⚠️ Could not detect location. Tap to type.";
+        subText.innerText = "⚠️ Could not detect location. Tap to type.";[cite: 1]
       }
     }
 
     function cleanPlace(str) {
-      if (!str) return "";
+      if (!str) return "";[cite: 1]
       return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take|me)\b/gi, " ")
                 .replace(/\s+/g, " ")
-                .trim();
+                .trim();[cite: 1]
     }
 
     function applyTransitLocations(pickup, drop) {
-      switchTab('book');
-      const dTitle = toTitleCase(drop);
-      document.getElementById("drop").value = dTitle;
-      dropCoords = null;
-      lastResolvedDropText = "";
+      switchTab('book');[cite: 1]
+      const dTitle = toTitleCase(drop);[cite: 1]
+      document.getElementById("drop").value = dTitle;[cite: 1]
+      dropCoords = null;[cite: 1]
+      lastResolvedDropText = "";[cite: 1]
 
       if (pickup) {
-        const pTitle = toTitleCase(pickup);
-        document.getElementById("pickup").value = pTitle;
-        pickupCoords = null;
-        lastResolvedPickupText = "";
-        triggerRouteEstimation();
-        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');
+        const pTitle = toTitleCase(pickup);[cite: 1]
+        document.getElementById("pickup").value = pTitle;[cite: 1]
+        pickupCoords = null;[cite: 1]
+        lastResolvedPickupText = "";[cite: 1]
+        triggerRouteEstimation();[cite: 1]
+        speakResponse(`Route set from ${pTitle} to ${dTitle}`, 'en');[cite: 1]
       } else {
-        getPreciseGPS();
-        speakResponse(`Destination set to ${dTitle}. Locking your current location.`, 'en');
+        getPreciseGPS();[cite: 1]
+        speakResponse(`Destination set to ${dTitle}. Locking your current location.`, 'en');[cite: 1]
       }
-      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;
+      document.getElementById("voiceSubText").innerText = `✅ Destination: ${dTitle}`;[cite: 1]
     }
 
     function toTitleCase(str) {
-      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());
+      return str.replace(/\w\S*/g, (txt) => txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase());[cite: 1]
     }
 
     function speakResponse(msg, lang = 'en') {
-      if (!('speechSynthesis' in window)) return;
+      if (!('speechSynthesis' in window)) return;[cite: 1]
       try {
-        window.speechSynthesis.cancel();
-        const utter = new SpeechSynthesisUtterance(msg);
-        utter.rate = 1.0;
-        utter.pitch = 1.0;
-        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';
-        window.speechSynthesis.speak(utter);
+        window.speechSynthesis.cancel();[cite: 1]
+        const utter = new SpeechSynthesisUtterance(msg);[cite: 1]
+        utter.rate = 1.0;[cite: 1]
+        utter.pitch = 1.0;[cite: 1]
+        utter.lang = (lang === 'hi') ? 'hi-IN' : 'en-IN';[cite: 1]
+        window.speechSynthesis.speak(utter);[cite: 1]
       } catch (e) {}
     }
 
-    // =========================================================================
-    // RAZORPAY GATEWAY & CONFIRMATION TO BOOKING REDIRECT
-    // =========================================================================
+    // Razorpay Integration
     async function openPaymentModal() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
       if (phone.length !== 10) {
-        alert("Please enter a valid 10-digit WhatsApp number first.");
-        document.getElementById("userPhone").focus();
+        alert("Please enter a valid 10-digit WhatsApp number first.");[cite: 1]
+        document.getElementById("userPhone").focus();[cite: 1]
         return;
       }
 
-      try { localStorage.setItem("nineo_phone", phone); } catch (e) {}
+      try { localStorage.setItem("nineo_phone", phone); } catch (e) {}[cite: 1]
 
-      const triggerBtn = document.getElementById("btnActivatePassGateway");
-      let originalBtnText = "Activate Pass with UPI ⚡";
+      const triggerBtn = document.getElementById("btnActivatePassGateway");[cite: 1]
+      let originalBtnText = "Activate Pass with UPI ⚡";[cite: 1]
       if (triggerBtn) {
-        originalBtnText = triggerBtn.innerText;
-        triggerBtn.disabled = true;
-        triggerBtn.innerText = "Connecting Secure Gateway...";
+        originalBtnText = triggerBtn.innerText;[cite: 1]
+        triggerBtn.disabled = true;[cite: 1]
+        triggerBtn.innerText = "Connecting Secure Gateway...";[cite: 1]
       }
 
       try {
-        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;
-        const res = await fetch(orderUrl);
-        const orderRes = await res.json();
+        const orderUrl = `${BACKEND_URL}?action=createOrder&amount=${selectedAmount}&phone=${phone}&passTier=${selectedPassCode}`;[cite: 1]
+        const res = await fetch(orderUrl);[cite: 1]
+        const orderRes = await res.json();[cite: 1]
 
         if (orderRes.status !== "SUCCESS") {
-          simulateZeroCostPayment(phone);
+          simulateZeroCostPayment(phone);[cite: 1]
           return;
         }
 
         const options = {
-          key: orderRes.keyId,
-          amount: orderRes.amountPaise,
-          currency: "INR",
-          name: COMPANY_NAME,
-          description: `${selectedPassName} (24h Validity)`,
-          image: "https://nineo.in/favicon.ico",
-          order_id: orderRes.orderId,
-          prefill: { contact: phone },
-          theme: { color: "#facc15" },
+          key: orderRes.keyId,[cite: 1]
+          amount: orderRes.amountPaise,[cite: 1]
+          currency: "INR",[cite: 1]
+          name: COMPANY_NAME,[cite: 1]
+          description: `${selectedPassName} (24h Validity)`,[cite: 1]
+          image: "https://nineo.in/favicon.ico",[cite: 1]
+          order_id: orderRes.orderId,[cite: 1]
+          prefill: { contact: phone },[cite: 1]
+          theme: { color: "#facc15" },[cite: 1]
           handler: async function (response) {
             const tierMap = {
-              "PASS_39": { km: 5.0, rides: 1, name: "5 KM Pass" },
-              "PASS_69": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
-              "PASS_129": { km: 19.0, rides: 3, name: "19 KM Pro Pass" }
+              "PASS_59": { km: 5.0, rides: 1, name: "5 KM Pass" },
+              "PASS_89": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
+              "PASS_149": { km: 18.0, rides: 3, name: "18 KM Pro Pass" }
             };
-            const pInfo = tierMap[selectedPassCode] || { km: 9.0, rides: 2, name: "Daily Pass" };
+            const pInfo = tierMap[selectedPassCode] || { km: 9.0, rides: 2, name: "Daily Pass" };[cite: 1]
             userActivePass = {
               hasActivePass: true,
               passTier: selectedPassCode,
               remainingKm: pInfo.km,
               remainingRides: pInfo.rides,
               hoursLeft: 24
-            };
+            };[cite: 1]
 
             try {
-              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;
-              await fetch(verifyUrl);
+              const verifyUrl = `${BACKEND_URL}?action=verifyPayment&orderId=${response.razorpay_order_id}&paymentId=${response.razorpay_payment_id}&signature=${response.razorpay_signature}&phone=${phone}&passTier=${selectedPassCode}&amount=${selectedAmount}`;[cite: 1]
+              await fetch(verifyUrl);[cite: 1]
             } catch (e) {}
 
-            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);
+            showPassConfirmationCard(response.razorpay_payment_id, phone, selectedPassCode, selectedAmount);[cite: 1]
           },
           modal: {
             ondismiss: function() {
-              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
+              if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
             }
           }
         };
 
-        const rzp = new Razorpay(options);
-        rzp.open();
+        const rzp = new Razorpay(options);[cite: 1]
+        rzp.open();[cite: 1]
 
       } catch (err) {
-        simulateZeroCostPayment(phone);
+        simulateZeroCostPayment(phone);[cite: 1]
       } finally {
-        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }
+        if (triggerBtn) { triggerBtn.disabled = false; triggerBtn.innerText = originalBtnText; }[cite: 1]
       }
     }
 
     function simulateZeroCostPayment(phone) {
-      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);
+      const mockPayId = "pay_demo_" + Math.random().toString(36).substring(2, 9);[cite: 1]
       userActivePass = {
         hasActivePass: true,
         passTier: selectedPassCode,
-        remainingKm: selectedPassCode === 'PASS_129' ? 19.0 : selectedPassCode === 'PASS_69' ? 9.0 : 5.0,
-        remainingRides: selectedPassCode === 'PASS_129' ? 3 : selectedPassCode === 'PASS_69' ? 2 : 1,
+        remainingKm: selectedPassCode === 'PASS_149' ? 18.0 : selectedPassCode === 'PASS_89' ? 9.0 : 5.0,
+        remainingRides: selectedPassCode === 'PASS_149' ? 3 : selectedPassCode === 'PASS_89' ? 2 : 1,
         hoursLeft: 24
       };
-      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);
+      showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);[cite: 1]
     }
 
     function showPassConfirmationCard(paymentId, phone, passCode, amount) {
-      document.getElementById("sectionPass").style.display = "none";
-      document.getElementById("sectionBook").style.display = "none";
-      document.getElementById("navTabs").style.display = "none";
-      document.getElementById("phoneFieldWrap").style.display = "none";
-      document.getElementById("activePassBanner").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
+      document.getElementById("sectionPass").style.display = "none";[cite: 1]
+      document.getElementById("sectionBook").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "none";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
+      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
 
       const quotaMap = {
-        "PASS_39": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },
-        "PASS_69": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },
-        "PASS_129": { title: "19 KM Pro Pass", km: "19.0 KM", rides: "3 Rides Included" }
+        "PASS_59": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },
+        "PASS_89": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },
+        "PASS_149": { title: "18 KM Pro Pass", km: "18.0 KM", rides: "3 Rides Included" }
       };
 
-      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };
+      const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };[cite: 1]
 
-      document.getElementById("confPassTitle").innerText = passInfo.title;
-      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;
-      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;
-      document.getElementById("confPassKm").innerText = passInfo.km;
-      document.getElementById("confPassRides").innerText = passInfo.rides;
+      document.getElementById("confPassTitle").innerText = passInfo.title;[cite: 1]
+      document.getElementById("confPassAmount").innerText = `₹${amount} Paid • Verified`;[cite: 1]
+      document.getElementById("confPassPhone").innerText = `+91 ${phone}`;[cite: 1]
+      document.getElementById("confPassKm").innerText = passInfo.km;[cite: 1]
+      document.getElementById("confPassRides").innerText = passInfo.rides;[cite: 1]
       
-      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);
-      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;
-      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";
+      const expiry = new Date(Date.now() + 24 * 60 * 60 * 1000);[cite: 1]
+      const timeStr = expiry.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });[cite: 1]
+      document.getElementById("confPassExpiry").innerText = `${timeStr} Tomorrow (24h)`;[cite: 1]
+      document.getElementById("confPaymentId").innerText = paymentId || "pay_verified";[cite: 1]
 
-      document.getElementById("passConfirmCard").style.display = "block";
-      speakResponse("Daily pass activated. Redirecting you to book your ride.", "en");
+      document.getElementById("passConfirmCard").style.display = "block";[cite: 1]
+      speakResponse("Daily pass activated. Redirecting you to book your ride.", "en");[cite: 1]
 
-      let countdown = 2;
-      const timerLabel = document.getElementById("confRedirectTimer");
-      if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;
+      let countdown = 2;[cite: 1]
+      const timerLabel = document.getElementById("confRedirectTimer");[cite: 1]
+      if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;[cite: 1]
 
-      if (autoRedirectTimer) clearInterval(autoRedirectTimer);
+      if (autoRedirectTimer) clearInterval(autoRedirectTimer);[cite: 1]
       autoRedirectTimer = setInterval(() => {
         countdown--;
-        if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;
+        if (timerLabel) timerLabel.innerText = `Redirecting to ride booking in ${countdown}s...`;[cite: 1]
         if (countdown <= 0) {
-          clearInterval(autoRedirectTimer);
-          autoRedirectTimer = null;
-          proceedToRideFromConfirmation();
+          clearInterval(autoRedirectTimer);[cite: 1]
+          autoRedirectTimer = null;[cite: 1]
+          proceedToRideFromConfirmation();[cite: 1]
         }
-      }, 1000);
+      }, 1000);[cite: 1]
     }
 
     function proceedToRideFromConfirmation() {
       if (autoRedirectTimer) {
-        clearInterval(autoRedirectTimer);
-        autoRedirectTimer = null;
+        clearInterval(autoRedirectTimer);[cite: 1]
+        autoRedirectTimer = null;[cite: 1]
       }
-      document.getElementById("passConfirmCard").style.display = "none";
-      document.getElementById("navTabs").style.display = "grid";
-      document.getElementById("phoneFieldWrap").style.display = "block";
-      switchTab('book');
+      document.getElementById("passConfirmCard").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "grid";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
+      switchTab('book');[cite: 1]
 
-      const banner = document.getElementById("activePassBanner");
+      const banner = document.getElementById("activePassBanner");[cite: 1]
       if (userActivePass) {
-        banner.style.display = "block";
-        banner.innerHTML = `🎟️ <b>Active Pass:</b> ${userActivePass.remainingKm} KM & ${userActivePass.remainingRides} ride(s) available today`;
+        banner.style.display = "block";[cite: 1]
+        banner.innerHTML = `🎟️ <b>Active Pass:</b> ${userActivePass.remainingKm} KM & ${userActivePass.remainingRides} ride(s) available today`;[cite: 1]
       }
 
       if (document.getElementById("pickup").value && document.getElementById("drop").value) {
-        triggerRouteEstimation();
+        triggerRouteEstimation();[cite: 1]
       }
     }
 
-    // =========================================================================
-    // SUBMIT RIDE BOOKING: ALIGNED (PASS COVERED / OVERAGE / SINGLE)
-    // =========================================================================
     async function submitRideBooking(type, fare) {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
-      let pickup = document.getElementById("pickup").value.trim();
-      const drop = document.getElementById("drop").value.trim();
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
+      let pickup = document.getElementById("pickup").value.trim();[cite: 1]
+      const drop = document.getElementById("drop").value.trim();[cite: 1]
 
-      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");
-      if (!pickup || !drop) return alert("Please specify both pickup and destination.");
+      if (phone.length !== 10) return alert("Enter a valid 10-digit WhatsApp phone number.");[cite: 1]
+      if (!pickup || !drop) return alert("Please specify both pickup and destination.");[cite: 1]
 
-      if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);
-      if (!dropCoords) dropCoords = await geocodeLocation(drop);
+      if (!pickupCoords) pickupCoords = await geocodeLocation(pickup);[cite: 1]
+      if (!dropCoords) dropCoords = await geocodeLocation(drop);[cite: 1]
 
       if (!isWithinRanchiBoundary(pickupCoords) || !isWithinRanchiBoundary(dropCoords)) {
-        return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
+        return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");[cite: 1]
       }
 
       if (!calculatedKm || calculatedKm === 0) {
         if (pickupCoords && dropCoords) {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
+          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);[cite: 1]
         } else {
-          calculatedKm = 5.0;
+          calculatedKm = 5.0;[cite: 1]
         }
-        singleFareAmount = Math.max(25, Math.round(calculatedKm * 9));
+        calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
+        singleFareAmount = calculateSingleRideFare(calculatedKm, calculatedMinutes);
       }
 
-      // Re-evaluate pass status & overage charges accurately
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
-        type = 'PASS';
-        const tripNum = parseFloat(calculatedKm);
+        type = 'PASS';[cite: 1]
+        const tripNum = parseFloat(calculatedKm);[cite: 1]
         if (tripNum <= userActivePass.remainingKm) {
-          fare = 0; // Fully covered
+          fare = 0;[cite: 1]
         } else {
-          const extraKm = parseFloat((tripNum - userActivePass.remainingKm).toFixed(1));
-          fare = Math.round(extraKm * 9); // ₹9/km overage
+          const extraKm = parseFloat((tripNum - userActivePass.remainingKm).toFixed(1));[cite: 1]
+          fare = Math.round(extraKm * 9);[cite: 1]
         }
       } else if (type === 'SINGLE' || type === 'DEFAULT') {
-        type = 'SINGLE';
+        type = 'SINGLE';[cite: 1]
         fare = singleFareAmount;
       }
 
-      currentPickupText = pickup;
-      currentDropText = drop;
+      currentPickupText = pickup;[cite: 1]
+      currentDropText = drop;[cite: 1]
 
       if (pickupCoords && !pickup.includes(pickupCoords.lat.toFixed(2))) {
-        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;
+        pickup = `${pickup} (${pickupCoords.lat.toFixed(5)},${pickupCoords.lon.toFixed(5)})`;[cite: 1]
       }
 
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = true;
-        b.innerText = "Assigning Captain...";
+        b.disabled = true;[cite: 1]
+        b.innerText = "Assigning Captain...";[cite: 1]
       });
 
-      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;[cite: 1]
 
       try {
-        const res = await fetch(url);
-        const data = await res.json();
+        const res = await fetch(url);[cite: 1]
+        const data = await res.json();[cite: 1]
 
         if (data.status === "SUCCESS" && data.captain) {
-          renderCaptainCard(data, currentPickupText, currentDropText, fare, type);
+          renderCaptainCard(data, currentPickupText, currentDropText, fare, type);[cite: 1]
         } else if (data.status === "ERROR") {
-          alert("⚠️ " + (data.message || "Booking request could not be completed."));
+          alert("⚠️ " + (data.message || "Booking request could not be completed."));[cite: 1]
           document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-            b.disabled = false;
+            b.disabled = false;[cite: 1]
           });
-          const btnActive = document.getElementById("btnBookActivePass");
+          const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
           if (btnActive) {
-            btnActive.innerText = (fare === 0) ? "Request nineO Captain (₹0) ➔" : `Confirm Ride (₹${fare} Due) ➔`;
+            btnActive.innerText = (fare === 0) ? "Request nineO Captain (₹0) ➔" : `Confirm Ride (₹${fare} Due) ➔`;[cite: 1]
           }
         } else {
-          fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
+          fallbackCaptainCard(currentPickupText, currentDropText, fare, type);[cite: 1]
         }
       } catch (e) {
-        fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
+        fallbackCaptainCard(currentPickupText, currentDropText, fare, type);[cite: 1]
       }
     }
 
     function renderCaptainCard(data, pickup, drop, fare, type) {
-      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());
-      activeCaptainDetails = data.captain;
+      currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());[cite: 1]
+      activeCaptainDetails = data.captain;[cite: 1]
 
-      document.getElementById("sectionBook").style.display = "none";
-      document.getElementById("navTabs").style.display = "none";
-      document.getElementById("phoneFieldWrap").style.display = "none";
-      document.getElementById("activePassBanner").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
+      document.getElementById("sectionBook").style.display = "none";[cite: 1]
+      document.getElementById("navTabs").style.display = "none";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "none";[cite: 1]
+      document.getElementById("activePassBanner").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
 
-      const capCard = document.getElementById("captainDisplayCard");
-      capCard.style.display = "block";
+      const capCard = document.getElementById("captainDisplayCard");[cite: 1]
+      capCard.style.display = "block";[cite: 1]
 
-      document.getElementById("dispRideId").innerText = currentRideId;
-      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";
-      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
-      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
-      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
+      document.getElementById("dispRideId").innerText = currentRideId;[cite: 1]
+      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";[cite: 1]
+      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";[cite: 1]
+      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";[cite: 1]
+      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";[cite: 1]
       
-      document.getElementById("dispOtpWrap").style.display = "block";
-      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
-      document.getElementById("inTripPassBox").style.display = "none";
+      document.getElementById("dispOtpWrap").style.display = "block";[cite: 1]
+      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);[cite: 1]
+      document.getElementById("inTripPassBox").style.display = "none";[cite: 1]
 
-      document.getElementById("dispPickup").innerText = pickup;
-      document.getElementById("dispDrop").innerText = drop;
-      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
+      document.getElementById("dispPickup").innerText = pickup;[cite: 1]
+      document.getElementById("dispDrop").innerText = drop;[cite: 1]
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;[cite: 1]
 
       if (type === "PASS") {
-        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Overage - Pay Captain)`;
+        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Overage - Pay Captain)`;[cite: 1]
       } else {
-        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
+        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;[cite: 1]
       }
 
-      const callBtn = document.getElementById("btnCallCaptain");
+      const callBtn = document.getElementById("btnCallCaptain");[cite: 1]
       if (data.captain.phone) {
-        callBtn.href = `tel:+91${data.captain.phone}`;
-        callBtn.style.display = "flex";
+        callBtn.href = `tel:+91${data.captain.phone}`;[cite: 1]
+        callBtn.style.display = "flex";[cite: 1]
       } else {
-        callBtn.style.display = "none";
+        callBtn.style.display = "none";[cite: 1]
       }
 
-      const mapEl = document.getElementById("routeMap");
-      const capSlot = document.getElementById("captainMapSlot");
+      const mapEl = document.getElementById("routeMap");[cite: 1]
+      const capSlot = document.getElementById("captainMapSlot");[cite: 1]
       if (mapEl && capSlot) {
-        capSlot.appendChild(mapEl);
+        capSlot.appendChild(mapEl);[cite: 1]
         if (mapInstance) {
           setTimeout(() => { 
-            mapInstance.invalidateSize(); 
-            if (pickupCoords) startCaptainLiveTracking(pickupCoords);
+            mapInstance.invalidateSize();[cite: 1]
+            if (pickupCoords) startCaptainLiveTracking(pickupCoords);[cite: 1]
           }, 250);
         }
       }
 
-      startRidePolling(currentRideId);
+      startRidePolling(currentRideId);[cite: 1]
     }
 
     function fallbackCaptainCard(pickup, drop, fare, type) {
       renderCaptainCard({
-        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+        rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),[cite: 1]
         captain: {
-          name: "Rahul Kumar (nineO Captain)",
-          vehicleNo: "JH 01 BZ 4821",
-          bikeModel: "Hero Splendor Plus",
-          phone: "9876543210"
+          name: "Rahul Kumar (nineO Captain)",[cite: 1]
+          vehicleNo: "JH 01 BZ 4821",[cite: 1]
+          bikeModel: "Hero Splendor Plus",[cite: 1]
+          phone: "9876543210"[cite: 1]
         },
-        otp: Math.floor(1000 + Math.random() * 9000).toString()
-      }, pickup, drop, fare, type);
+        otp: Math.floor(1000 + Math.random() * 9000).toString()[cite: 1]
+      }, pickup, drop, fare, type);[cite: 1]
     }
 
     function startRidePolling(rideId) {
-      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);
+      if (rideStatusPollTimer) clearInterval(rideStatusPollTimer);[cite: 1]
 
       rideStatusPollTimer = setInterval(async () => {
         try {
-          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);
-          const data = await res.json();
+          const res = await fetch(`${BACKEND_URL}?action=getRideStatus&rideId=${rideId}`);[cite: 1]
+          const data = await res.json();[cite: 1]
 
           if (data && data.status === "IN_PROGRESS") {
-            transitionToInTripView();
+            transitionToInTripView();[cite: 1]
           } else if (data && data.status === "COMPLETED") {
-            clearInterval(rideStatusPollTimer);
-            rideStatusPollTimer = null;
-            showTripCompletionTransition();
+            clearInterval(rideStatusPollTimer);[cite: 1]
+            rideStatusPollTimer = null;[cite: 1]
+            showTripCompletionTransition();[cite: 1]
           }
         } catch (e) {}
-      }, 3500);
+      }, 3500);[cite: 1]
     }
 
     function transitionToInTripView() {
-      document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";
-      document.getElementById("dispOtpWrap").style.display = "none";
-      const cancelBtn = document.getElementById("btnCancelBooking");
-      if (cancelBtn) cancelBtn.style.display = "none";
+      document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";[cite: 1]
+      document.getElementById("dispOtpWrap").style.display = "none";[cite: 1]
+      const cancelBtn = document.getElementById("btnCancelBooking");[cite: 1]
+      if (cancelBtn) cancelBtn.style.display = "none";[cite: 1]
 
       if (pickupCoords && dropCoords && mapInstance) {
-        renderInteractiveMap(pickupCoords, dropCoords, null, null);
+        renderInteractiveMap(pickupCoords, dropCoords, null, null);[cite: 1]
       }
 
-      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;
-      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;
-      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
+      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;[cite: 1]
+      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;[cite: 1]
+      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;[cite: 1]
 
-      const passBox = document.getElementById("inTripPassBox");
+      const passBox = document.getElementById("inTripPassBox");[cite: 1]
       if (userActivePass) {
-        passBox.style.display = "block";
-        const tierName = userActivePass.passTier === "PASS_129" ? "19 KM Pro Pass (₹129)" 
-                       : userActivePass.passTier === "PASS_69" ? "9 KM Super Pass (₹69)" 
-                       : "5 KM Pass (₹39)";
+        passBox.style.display = "block";[cite: 1]
+        const tierName = (userActivePass.passTier === "PASS_149") ? "18 KM Pro Pass (₹149)" 
+                       : (userActivePass.passTier === "PASS_89") ? "9 KM Super Pass (₹89)" 
+                       : "5 KM Pass (₹59)";
         
-        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;
-        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;
-        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;
-        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;
+        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;[cite: 1]
+        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;[cite: 1]
+        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;[cite: 1]
+        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;[cite: 1]
         
-        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);
-        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;
+        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);[cite: 1]
+        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;[cite: 1]
       } else {
-        passBox.style.display = "none";
+        passBox.style.display = "none";[cite: 1]
       }
 
       if (activeCaptainDetails) {
-        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";
-        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";
-        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";
+        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";[cite: 1]
+        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";[cite: 1]
+        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";[cite: 1]
       }
     }
 
     async function showTripCompletionTransition() {
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "block";
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "block";[cite: 1]
 
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "");[cite: 1]
       
       try {
-        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);
-        const data = await res.json();
+        const res = await fetch(`${BACKEND_URL}?action=checkPass&phone=${phone}`);[cite: 1]
+        const data = await res.json();[cite: 1]
 
         if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0.1) {
-          userActivePass = data;
-          document.getElementById("postTripTitle").innerText = "First Ride Completed!";
-          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;
-          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;
-          document.getElementById("btnBookNextRidePass").style.display = "flex";
-          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Next Pass Ride (${data.remainingKm}km free) ➔`;
+          userActivePass = data;[cite: 1]
+          document.getElementById("postTripTitle").innerText = "Ride Completed!";
+          document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;[cite: 1]
+          document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;[cite: 1]
+          document.getElementById("btnBookNextRidePass").style.display = "flex";[cite: 1]
+          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Next Pass Ride (${data.remainingKm}km free) ➔`;[cite: 1]
         } else {
-          userActivePass = null;
-          document.getElementById("postTripTitle").innerText = "Trip Completed!";
-          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";
-          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";
-          document.getElementById("btnBookNextRidePass").style.display = "none";
+          userActivePass = null;[cite: 1]
+          document.getElementById("postTripTitle").innerText = "Trip Completed!";[cite: 1]
+          document.getElementById("postTripBalanceKm").innerText = "0.0 KM";[cite: 1]
+          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";[cite: 1]
+          document.getElementById("btnBookNextRidePass").style.display = "none";[cite: 1]
         }
       } catch (err) {
-        document.getElementById("postTripBalanceKm").innerText = "Active";
+        document.getElementById("postTripBalanceKm").innerText = "Active";[cite: 1]
       }
     }
 
     function proceedToNextPassRide() {
-      document.getElementById("tripCompleteCard").style.display = "none";
-      resetBookingView();
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      resetBookingView();[cite: 1]
     }
 
     function resetBookingView() {
       if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);
-        rideStatusPollTimer = null;
+        clearInterval(rideStatusPollTimer);[cite: 1]
+        rideStatusPollTimer = null;[cite: 1]
       }
 
       if (captainMotionTimer) {
-        clearInterval(captainMotionTimer);
-        captainMotionTimer = null;
+        clearInterval(captainMotionTimer);[cite: 1]
+        captainMotionTimer = null;[cite: 1]
       }
-      if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);
-      if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);
+      if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);[cite: 1]
+      if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);[cite: 1]
 
-      const mapEl = document.getElementById("routeMap");
-      const bookSlot = document.getElementById("bookingMapSlot");
-      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);
+      const mapEl = document.getElementById("routeMap");[cite: 1]
+      const bookSlot = document.getElementById("bookingMapSlot");[cite: 1]
+      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);[cite: 1]
 
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      document.getElementById("feedbackCard").style.display = "none";
-      document.getElementById("sectionBook").style.display = "block";
-      document.getElementById("navTabs").style.display = "grid";
-      document.getElementById("phoneFieldWrap").style.display = "block";
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      document.getElementById("feedbackCard").style.display = "none";[cite: 1]
+      document.getElementById("sectionBook").style.display = "block";[cite: 1]
+      document.getElementById("navTabs").style.display = "grid";[cite: 1]
+      document.getElementById("phoneFieldWrap").style.display = "block";[cite: 1]
       
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
-        b.disabled = false;
+        b.disabled = false;[cite: 1]
       });
 
-      const btnActive = document.getElementById("btnBookActivePass");
-      if (btnActive) btnActive.innerText = "Request nineO Captain (₹0) ➔";
+      const btnActive = document.getElementById("btnBookActivePass");[cite: 1]
+      if (btnActive) btnActive.innerText = "Request nineO Captain (₹0) ➔";[cite: 1]
 
-      const directBtn = document.getElementById("btnBookDirect");
+      const directBtn = document.getElementById("btnBookDirect");[cite: 1]
       if (directBtn) {
-        directBtn.style.display = "block";
-        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";
+        directBtn.style.display = "block";[cite: 1]
+        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";[cite: 1]
       }
 
-      document.getElementById("routeCard").style.display = "none";
-      document.getElementById("drop").value = "";
-      dropCoords = null;
-      lastResolvedDropText = "";
-      calculatedKm = 0;
-      currentDueFare = 0;
-      const dropSug = document.getElementById("dropSuggestions");
-      if (dropSug) dropSug.style.display = "none";
+      document.getElementById("routeCard").style.display = "none";[cite: 1]
+      document.getElementById("drop").value = "";[cite: 1]
+      dropCoords = null;[cite: 1]
+      lastResolvedDropText = "";[cite: 1]
+      calculatedKm = 0;[cite: 1]
+      calculatedMinutes = 0;
+      currentDueFare = 0;[cite: 1]
+      const dropSug = document.getElementById("dropSuggestions");[cite: 1]
+      if (dropSug) dropSug.style.display = "none";[cite: 1]
       
-      const upsellBox = document.getElementById("passUpsellBox");
-      if (upsellBox) upsellBox.style.display = "none";
+      const upsellBox = document.getElementById("passUpsellBox");[cite: 1]
+      if (upsellBox) upsellBox.style.display = "none";[cite: 1]
 
-      handlePhoneInput();
+      handlePhoneInput();[cite: 1]
     }
 
     function selectPass(el, code, amt, name) {
-      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));
-      if (el) el.classList.add("selected");
-      selectedPassCode = code;
-      selectedAmount = amt;
-      selectedPassName = name;
+      document.querySelectorAll(".pass-card").forEach(c => c.classList.remove("selected"));[cite: 1]
+      if (el) el.classList.add("selected");[cite: 1]
+      selectedPassCode = code;[cite: 1]
+      selectedAmount = amt;[cite: 1]
+      selectedPassName = name;[cite: 1]
     }
 
     function openFeedbackModal() {
       if (rideStatusPollTimer) {
-        clearInterval(rideStatusPollTimer);
-        rideStatusPollTimer = null;
+        clearInterval(rideStatusPollTimer);[cite: 1]
+        rideStatusPollTimer = null;[cite: 1]
       }
-      document.getElementById("captainDisplayCard").style.display = "none";
-      document.getElementById("tripCompleteCard").style.display = "none";
-      const capName = document.getElementById("dispCaptainName").innerText;
-      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;
-      document.getElementById("feedbackCard").style.display = "block";
-      setRating(5);
+      document.getElementById("captainDisplayCard").style.display = "none";[cite: 1]
+      document.getElementById("tripCompleteCard").style.display = "none";[cite: 1]
+      const capName = document.getElementById("dispCaptainName").innerText;[cite: 1]
+      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;[cite: 1]
+      document.getElementById("feedbackCard").style.display = "block";[cite: 1]
+      setRating(5);[cite: 1]
     }
 
     function setRating(num) {
-      selectedRating = num;
-      const stars = document.querySelectorAll("#starRatingBox .star-btn");
+      selectedRating = num;[cite: 1]
+      const stars = document.querySelectorAll("#starRatingBox .star-btn");[cite: 1]
       stars.forEach(s => {
-        const val = parseInt(s.getAttribute("data-rating"));
+        const val = parseInt(s.getAttribute("data-rating"));[cite: 1]
         if (val <= num) {
-          s.classList.add("active");
+          s.classList.add("active");[cite: 1]
         } else {
-          s.classList.remove("active");
+          s.classList.remove("active");[cite: 1]
         }
       });
     }
 
     function toggleTag(el) {
-      el.classList.toggle("active");
-      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();
+      el.classList.toggle("active");[cite: 1]
+      const tag = el.innerText.replace(/[^a-zA-Z0-9 ]/g, "").trim();[cite: 1]
       if (el.classList.contains("active")) {
-        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);
+        if (!selectedFeedbackTags.includes(tag)) selectedFeedbackTags.push(tag);[cite: 1]
       } else {
-        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);
+        selectedFeedbackTags = selectedFeedbackTags.filter(t => t !== tag);[cite: 1]
       }
     }
 
     async function submitFeedback() {
-      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";
-      const comment = document.getElementById("feedbackComment").value.trim();
-      const btn = document.getElementById("btnSubmitFeedback");
+      const phone = document.getElementById("userPhone").value.replace(/[^0-9]/g, "") || "0000000000";[cite: 1]
+      const comment = document.getElementById("feedbackComment").value.trim();[cite: 1]
+      const btn = document.getElementById("btnSubmitFeedback");[cite: 1]
 
-      btn.disabled = true;
-      btn.innerText = "Submitting Review...";
+      btn.disabled = true;[cite: 1]
+      btn.innerText = "Submitting Review...";[cite: 1]
 
       try {
-        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;
-        await fetch(feedUrl);
+        const feedUrl = `${BACKEND_URL}?action=submitFeedback&phone=${phone}&rideId=${currentRideId || 'TRIP'}&rating=${selectedRating}&tags=${encodeURIComponent(selectedFeedbackTags.join(','))}&comment=${encodeURIComponent(comment)}`;[cite: 1]
+        await fetch(feedUrl);[cite: 1]
       } catch (e) {}
 
-      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);
+      alert(`⭐ Thank you for rating ${selectedRating} Stars!\nYour feedback keeps nineO reliable and safe in Ranchi.`);[cite: 1]
       
-      document.getElementById("feedbackComment").value = "";
-      selectedFeedbackTags = [];
-      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));
-      btn.disabled = false;
-      btn.innerText = "Submit Rating & Done ➔";
+      document.getElementById("feedbackComment").value = "";[cite: 1]
+      selectedFeedbackTags = [];[cite: 1]
+      document.querySelectorAll(".tag-chip").forEach(c => c.classList.remove("active"));[cite: 1]
+      btn.disabled = false;[cite: 1]
+      btn.innerText = "Submit Rating & Done ➔";[cite: 1]
 
-      resetBookingView();
+      resetBookingView();[cite: 1]
     }
 
     function toggleChatDrawer() {
-      const drawer = document.getElementById("chatDrawer");
-      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";
+      const drawer = document.getElementById("chatDrawer");[cite: 1]
+      drawer.style.display = (drawer.style.display === "flex") ? "none" : "flex";[cite: 1]
       if (drawer.style.display === "flex") {
-        document.getElementById("chatInput").focus();
+        document.getElementById("chatInput").focus();[cite: 1]
       }
     }
 
     function appendUserMessage(text) {
-      const body = document.getElementById("chatBody");
-      const div = document.createElement("div");
-      div.className = "chat-msg user";
-      div.innerText = text;
-      body.appendChild(div);
-      body.scrollTop = body.scrollHeight;
+      const body = document.getElementById("chatBody");[cite: 1]
+      const div = document.createElement("div");[cite: 1]
+      div.className = "chat-msg user";[cite: 1]
+      div.innerText = text;[cite: 1]
+      body.appendChild(div);[cite: 1]
+      body.scrollTop = body.scrollHeight;[cite: 1]
     }
 
     function appendBotMessage(html) {
-      const body = document.getElementById("chatBody");
-      const div = document.createElement("div");
-      div.className = "chat-msg bot";
-      div.innerHTML = html;
-      body.appendChild(div);
-      body.scrollTop = body.scrollHeight;
+      const body = document.getElementById("chatBody");[cite: 1]
+      const div = document.createElement("div");[cite: 1]
+      div.className = "chat-msg bot";[cite: 1]
+      div.innerHTML = html;[cite: 1]
+      body.appendChild(div);[cite: 1]
+      body.scrollTop = body.scrollHeight;[cite: 1]
     }
 
     function sendChatMessage() {
-      const input = document.getElementById("chatInput");
-      const q = input.value.trim();
-      if (!q) return;
+      const input = document.getElementById("chatInput");[cite: 1]
+      const q = input.value.trim();[cite: 1]
+      if (!q) return;[cite: 1]
       
-      appendUserMessage(q);
-      input.value = "";
+      appendUserMessage(q);[cite: 1]
+      input.value = "";[cite: 1]
 
       setTimeout(() => {
-        resolveBotQuery(q);
+        resolveBotQuery(q);[cite: 1]
       }, 350);
     }
 
     function handleQuickPill(text) {
-      appendUserMessage(text);
+      appendUserMessage(text);[cite: 1]
       setTimeout(() => {
-        resolveBotQuery(text);
+        resolveBotQuery(text);[cite: 1]
       }, 350);
     }
 
     function resolveBotQuery(query) {
-      const q = query.toLowerCase();
+      const q = query.toLowerCase();[cite: 1]
 
       if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
-        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
+        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");[cite: 1]
       } 
       else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
-        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
+        appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");[cite: 1]
       }
-      else if (q.includes("overage") || q.includes("fare") || q.includes("price") || q.includes("extra")) {
-        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Regular ride: ₹9/km (₹25 base minimum).<br>• Passes cover full distance quota (5km, 9km, 19km). Extra kilometers are charged at just ₹9/km upon destination drop.");
+      else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost")) {
+        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Instant dynamic fare based on road distance, duration, and statutory taxes.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
       }
       else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {
-        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);
+        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);[cite: 1]
       }
       else {
-        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
+        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);[cite: 1]
       }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      initVoiceAI();
+      initVoiceAI();[cite: 1]
     });
   </script>
 </body>
