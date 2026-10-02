@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>nineO – Bike taxi & daily passes in Ranchi</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090d16;--ink:#f8fafc;--dim:#94a3b8;--card:rgba(15,23,42,.78);--line:rgba(255,255,255,.14);--y:#facc15;--r:#ef4444;--g:#10b981;--veil:9,13,22;--dim-a:.55;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#fffbea;--ink:#1e293b;--dim:#475569;--card:rgba(255,255,255,.82);--line:rgba(15,23,42,.14);--veil:255,251,234}}
+:root[data-theme="light"]{--bg:#fffbea;--ink:#1e293b;--dim:#475569;--card:rgba(255,255,255,.82);--line:rgba(15,23,42,.14);--veil:255,251,234}
+html{height:100%;scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box;margin:0}
+body{min-height:100%;background:var(--bg);color:var(--ink);font-family:"Bricolage Grotesque",system-ui,sans-serif;line-height:1.5;overflow-x:hidden}
+#wall{position:fixed;inset:0;z-index:-2;background:center/cover no-repeat;transition:background-image .4s}
+#veil{position:fixed;inset:0;z-index:-1;background:rgba(var(--veil),var(--dim-a))}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--y);outline-offset:3px}
+nav{display:flex;justify-content:space-between;align-items:center;padding:18px 5vw}
+.logo{font-weight:800;font-size:28px;color:var(--y);text-decoration:none;letter-spacing:-1px}
+.logo b{color:var(--r)}
+.btn{display:inline-block;background:var(--y);color:#0f172a;font-weight:800;padding:13px 24px;border-radius:14px;text-decoration:none;border:0;cursor:pointer;font:inherit;font-weight:800;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
+.hero{padding:6vh 5vw 0;max-width:1100px;margin:auto}
+h1{font-size:clamp(44px,9vw,104px);line-height:.95;font-weight:800;letter-spacing:-3px;max-width:11ch}
+.hero p{max-width:46ch;color:var(--dim);font-size:19px;margin:22px 0 28px}
+.cta{display:flex;gap:12px;flex-wrap:wrap}
+.live{display:inline-flex;gap:8px;align-items:center;font-size:13px;font-weight:600;color:var(--g);border:1px solid var(--g);border-radius:99px;padding:4px 12px;margin-bottom:20px}
+.live i{width:7px;height:7px;border-radius:50%;background:var(--g);animation:blink 1.4s infinite}
+@keyframes blink{50%{opacity:.25}}
+.speed{display:flex;gap:14px;flex-wrap:wrap;margin-top:26px}
+.speed div{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:12px 20px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.speed b{display:block;font-size:30px;letter-spacing:-1px;color:var(--y);line-height:1.1}
+.speed span{font-size:14px;color:var(--dim)}
+.eta rect{fill:#10b981}.eta text{fill:#fff!important;font-weight:800;text-anchor:middle}
+/* Ride scene: the one orchestrated moment */
+.scene{position:relative;height:230px;margin-top:5vh;overflow:hidden}
+.sky{position:absolute;bottom:46px;left:0;width:200%;height:120px;display:flex;animation:slide 40s linear infinite;opacity:.55}
+.sky svg{width:50%;height:100%}
+.road{position:absolute;bottom:0;left:0;right:0;height:46px;background:#111827;border-top:3px solid var(--y)}
+.road::after{content:"";position:absolute;left:0;right:0;top:20px;height:4px;background:repeating-linear-gradient(90deg,var(--ink) 0 36px,transparent 36px 84px);animation:dash .6s linear infinite}
+@keyframes dash{to{background-position:-84px 0}}
+@keyframes slide{to{transform:translateX(-50%)}}
+.rider{position:absolute;bottom:38px;left:0;width:150px;animation:ride 9s cubic-bezier(.45,.05,.4,.95) infinite}
+@keyframes ride{0%{transform:translateX(-170px)}100%{transform:translateX(calc(100vw + 20px))}}
+.rider svg{width:100%;animation:bob .5s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-3px)}}
+.wheel{transform-box:fill-box;transform-origin:center;animation:spin .5s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+section{padding:80px 5vw;max-width:1100px;margin:auto}
+h2{font-size:clamp(30px,5vw,52px);letter-spacing:-1.5px;line-height:1.05;margin-bottom:12px}
+.sub{color:var(--dim);max-width:52ch;margin-bottom:34px}
+.passes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
+.pass{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s,border-color .25s}
+.pass:hover{transform:translateY(-6px);border-color:var(--y)}
+.pass.hot{border-color:var(--y);background:linear-gradient(160deg,rgba(250,204,21,.22),var(--card))}
+.price{font-size:52px;font-weight:800;letter-spacing:-2px}
+.pass small{color:var(--dim);display:block}
+.pass ul{list-style:none;padding:0;margin:18px 0 0;color:var(--dim);font-size:15px}
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:30px;counter-reset:s}
+.step{border-left:4px solid var(--y);padding-left:18px;counter-increment:s}
+.step::before{content:counter(s);font-size:44px;font-weight:800;color:var(--r);line-height:1}
+.step h3{margin:6px 0}
+.step p{color:var(--dim)}
+.safe{display:flex;gap:14px;flex-wrap:wrap}
+.safe span{background:var(--card);border:1px solid var(--line);border-radius:99px;padding:10px 18px;font-weight:600}
+.founder{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:28px;display:flex;gap:22px;align-items:center;flex-wrap:wrap;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.avatar{width:84px;height:84px;border-radius:50%;background:var(--y);color:#0f172a;font-weight:800;font-size:34px;display:grid;place-items:center;flex-shrink:0}
+.founder h3{font-size:30px;letter-spacing:-1px;line-height:1.1}
+.founder p{color:var(--dim)}
+.founder .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.final{text-align:center;padding-bottom:110px}
+.final h2{margin-inline:auto;max-width:14ch}
+.final .cta{justify-content:center;margin-top:24px}
+footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
+.split{display:grid;grid-template-columns:1.3fr 1fr;gap:22px;align-items:start}
+@media(max-width:820px){.split{grid-template-columns:1fr}}
+.map{background:var(--card);border:1px solid var(--line);border-radius:24px;overflow:hidden;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.map svg{display:block;width:100%;height:auto}
+.map .bg{fill:rgba(100,116,139,.12)}
+.map .rd{fill:none;stroke:var(--dim);stroke-opacity:.35;stroke-width:7;stroke-linecap:round}
+.map text{fill:var(--dim);font:600 13px "Bricolage Grotesque",system-ui,sans-serif}
+.map .mk text{fill:#0f172a;font-weight:800;text-anchor:middle}
+.ring{transform-box:fill-box;transform-origin:center;animation:ring 1.8s ease-out infinite}
+@keyframes ring{from{transform:scale(.5);opacity:.8}to{transform:scale(2.6);opacity:0}}
+.legend{display:flex;gap:18px;flex-wrap:wrap;padding:12px 18px;border-top:1px solid var(--line);font-size:14px;color:var(--dim)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px}
+.col{display:grid;gap:14px}
+.cap{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 20px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.cap h3{font-size:24px;letter-spacing:-.5px}
+.cap p{color:var(--dim);font-size:15px}
+.cap.u{border-left:6px solid var(--y)}.cap.s{border-left:6px solid var(--r)}
+.guar{background:linear-gradient(160deg,rgba(16,185,129,.22),var(--card));border:1.5px solid var(--g);border-radius:20px;padding:20px}
+.guar b.big{display:block;font-size:40px;letter-spacing:-1.5px;line-height:1.05;color:var(--g)}
+.guar p{color:var(--dim);font-size:15px;margin-top:8px}
+.guar em{font-style:normal;font-weight:700;color:var(--y)}
+/* Wallpaper control */
+#wpBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+#wpPanel{position:fixed;right:16px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:10;width:min(320px,calc(100vw - 32px));background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none}
+#wpPanel.open{display:block;animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:translateY(8px) scale(.97)}}
+#wpPanel h4{margin-bottom:10px}
+.sw{display:flex;gap:8px;margin:10px 0}
+.sw button{flex:1;height:48px;border-radius:12px;border:2px solid var(--line);cursor:pointer}
+.sw button:hover{border-color:var(--y)}
+#wpPanel label{display:block;font-size:13px;color:var(--dim);margin-top:10px}
+#wpPanel input[type=range]{width:100%;accent-color:var(--y)}
+#wpPanel .row{display:flex;gap:8px;margin-top:12px}
+#wpPanel .btn{padding:9px 14px;font-size:14px;flex:1;text-align:center}
+#wpMsg{font-size:12px;color:var(--dim);margin-top:8px;min-height:16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rider{left:40%}}
+</style>
+</head>
+<body>
+<div id="wall"></div><div id="veil"></div>
+
+<nav>
+  <a class="logo" href="#top">nine<b>O</b></a>
+  <a class="btn" href="book.html">Book a ride</a>
+</nav>
+
+<header class="hero" id="top">
+  <div class="live"><i></i>Captains online in Ranchi</div>
+  <h1>Ranchi, one ride at a time.</h1>
+  <p>nineO is Ranchi's bike taxi service with daily passes that let you ride more for less. Verified captains, and fares you see before you go.</p>
+  <div class="cta">
+    <a class="btn" href="https://wa.me/919525054247?text=Hi%20nineO%2C%20I%20have%20a%20question" target="_blank" rel="noopener">Ask us anything</a>
+    <a class="btn ghost" href="#passes">See daily passes</a>
+  </div>
+  <div class="speed">
+    <div><b>5–10 sec</b><span>to assign your captain</span></div>
+    <div><b>~2 min</b><span>typical pickup ETA</span></div>
+  </div>
+</header>
+
+<div class="scene" aria-hidden="true">
+  <div class="sky">
+    <svg viewBox="0 0 600 120" preserveAspectRatio="none" fill="#1e293b"><path d="M0 120V70h40V40h30v30h30V20h40v50h30V55h50v65h30V35h40v85h30V60h50V30h40v90h30V65h40v55H0z"/></svg>
+    <svg viewBox="0 0 600 120" preserveAspectRatio="none" fill="#1e293b"><path d="M0 120V70h40V40h30v30h30V20h40v50h30V55h50v65h30V35h40v85h30V60h50V30h40v90h30V65h40v55H0z"/></svg>
+  </div>
+  <div class="road"></div>
+  <div class="rider">
+    <svg viewBox="0 0 150 90">
+      <circle class="wheel" cx="28" cy="70" r="15" fill="none" stroke="#e2e8f0" stroke-width="5" stroke-dasharray="14 6"/>
+      <circle class="wheel" cx="122" cy="70" r="15" fill="none" stroke="#e2e8f0" stroke-width="5" stroke-dasharray="14 6"/>
+      <path d="M28 70L52 56h42l28 14-18-26h-14" fill="none" stroke="#facc15" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/>
+      <rect x="50" y="46" width="40" height="10" rx="5" fill="#ef4444"/>
+      <path d="M72 44l10-22 12 6-4 14z" fill="#f8fafc"/>
+      <circle cx="86" cy="14" r="9" fill="#ef4444"/>
+      <path d="M92 28l16 16" stroke="#f8fafc" stroke-width="5" stroke-linecap="round"/>
+    </svg>
+  </div>
+</div>
+
+<section id="passes">
+  <h2>Daily passes that pay for themselves</h2>
+  <p class="sub">Pay once and ride within 24 hours. The kilometres and number of rides are included in the price.</p>
+  <div class="passes">
+    <div class="pass"><small>Short hops</small><div class="price">₹59</div><ul><li>5 KM for 24 hours</li><li>1 ride</li></ul></div>
+    <div class="pass hot"><small>Most picked</small><div class="price">₹89</div><ul><li>9 KM for 24 hours</li><li>2 rides</li></ul></div>
+    <div class="pass"><small>Full day</small><div class="price">₹149</div><ul><li>18 KM for 24 hours</li><li>2 rides</li></ul></div>
+  </div>
+</section>
+
+<section id="captains">
+  <h2>Meet your Ustaad or Sakhi</h2>
+  <p class="sub">Every nineO captain is verified and tracked live on the map until they reach you.</p>
+  <div class="split">
+    <div class="map">
+      <svg viewBox="0 0 600 400" role="img" aria-label="Map of Ranchi showing an Ustaad and a Sakhi riding to a pickup point">
+        <rect class="bg" width="600" height="400"/>
+        <ellipse cx="140" cy="110" rx="78" ry="42" fill="rgba(59,130,246,.28)"/>
+        <text x="96" y="114">Ranchi Lake</text>
+        <path class="rd" d="M0 250H600M0 120H300M210 0V400M470 0V400M300 120V400M0 340H420"/>
+        <path id="rU" d="M50 340C150 320 230 280 290 250S360 215 380 200" fill="none" stroke="#facc15" stroke-width="4" stroke-dasharray="3 9" stroke-linecap="round"/>
+        <path id="rS" d="M560 60C520 100 480 150 440 175S400 195 380 200" fill="none" stroke="#ef4444" stroke-width="4" stroke-dasharray="3 9" stroke-linecap="round"/>
+        <circle class="ring" cx="380" cy="200" r="14" fill="#10b981"/>
+        <circle cx="380" cy="200" r="9" fill="#10b981" stroke="#fff" stroke-width="3"/>
+        <text x="392" y="188">Pickup</text>
+        <g class="eta"><rect x="330" y="214" width="100" height="26" rx="13"/><text x="380" y="232">ETA ~2 min</text></g>
+        <g class="mk"><circle r="14" fill="#facc15" stroke="#fff" stroke-width="3"/><text y="5">U</text>
+          <animateMotion dur="7s" repeatCount="indefinite"><mpath href="#rU"/></animateMotion></g>
+        <g class="mk"><circle r="14" fill="#ef4444" stroke="#fff" stroke-width="3"/><text y="5" style="fill:#fff">S</text>
+          <animateMotion dur="8s" repeatCount="indefinite" begin="1s"><mpath href="#rS"/></animateMotion></g>
+      </svg>
+      <div class="legend"><span><i style="background:#facc15"></i>Ustaad</span><span><i style="background:#ef4444"></i>Sakhi</span><span><i style="background:#10b981"></i>Your pickup</span></div>
+    </div>
+    <div class="col">
+      <div class="cap u"><h3>Ustaad</h3><p>Our male captains. Verified riders who know Ranchi's lanes and shortcuts.</p></div>
+      <div class="cap s"><h3>Sakhi</h3><p>Our female captains. Verified riders with the same upfront fares and live tracking.</p></div>
+      <div class="guar"><b class="big">₹5 off if we're late</b>
+        <p>If your captain doesn't reach your pickup on time, a flat ₹5 discount applies automatically. On-time arrivals send 100% of the fare to the captain. <em>Single rides only.</em></p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>From tap to takeoff</h2>
+  <p class="sub">Here is how a nineO ride works.</p>
+  <div class="steps">
+    <div class="step"><h3>Enter your drop</h3><p>Type or say where you're going. The route and fare appear instantly.</p></div>
+    <div class="step"><h3>Meet your Ustaad or Sakhi</h3><p>Your captain is assigned in 5–10 seconds and usually reaches you in about 2 minutes. Watch them move on the live map and call them from the ride card.</p></div>
+    <div class="step"><h3>Ride and rate</h3><p>Pay with your pass or Razorpay, then rate the ride to keep nineO safe.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2>Built for Ranchi roads</h2>
+  <p class="sub">Local captains, local support on WhatsApp, and no surprise charges.</p>
+  <div class="safe"><span>Verified Ustaads and Sakhis</span><span>₹5 punctuality guarantee</span><span>Captain assigned in 5–10 sec</span><span>~2 min ETA</span><span>Live ride tracking</span><span>Upfront fares</span><span>Rate every ride</span><span>WhatsApp support</span></div>
+</section>
+
+<section id="founder">
+  <h2>Meet the founder</h2>
+  <p class="sub">nineO is run from Ranchi. You can reach the founder directly.</p>
+  <div class="founder">
+    <div class="avatar" aria-hidden="true">HJ</div>
+    <div>
+      <h3>Harsh Jaiswal</h3>
+      <p>Founder, nineO</p>
+      <p>Phone: <a href="tel:+919525054247">9525054247</a><br>Email: <a href="mailto:harshjaiswal@nineo.in">harshjaiswal@nineo.in</a></p>
+      <div class="links"><a class="btn" href="tel:+919525054247">Call</a><a class="btn ghost" href="mailto:harshjaiswal@nineo.in">Email</a></div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <h2>Questions about nineO?</h2>
+  <div class="cta"><a class="btn" href="https://wa.me/919525054247?text=Hi%20nineO%2C%20I%20have%20a%20question" target="_blank" rel="noopener">Message us on WhatsApp</a></div>
+</section>
+<footer>© nineO · Ranchi, Jharkhand</footer>
+
+<button class="btn" id="wpBtn" aria-expanded="false" aria-controls="wpPanel">Wallpaper</button>
+<div id="wpPanel" role="dialog" aria-label="Custom wallpaper">
+  <h4>Custom wallpaper</h4>
+  <input type="file" id="wpFile" accept="image/*" hidden>
+  <button class="btn" id="wpUpload" style="width:100%">Upload your image</button>
+  <div class="sw" id="wpSw">
+    <button data-g="linear-gradient(135deg,#facc15,#ef4444)" style="background:linear-gradient(135deg,#facc15,#ef4444)" aria-label="Sunrise"></button>
+    <button data-g="linear-gradient(160deg,#0f172a,#1d4ed8)" style="background:linear-gradient(160deg,#0f172a,#1d4ed8)" aria-label="Midnight"></button>
+    <button data-g="radial-gradient(circle at 30% 20%,#10b981,#064e3b)" style="background:radial-gradient(circle at 30% 20%,#10b981,#064e3b)" aria-label="Forest"></button>
+  </div>
+  <label for="wpDim">Dim the wallpaper</label>
+  <input type="range" id="wpDim" min="0" max="90" value="55">
+  <div class="row"><button class="btn ghost" id="wpReset">Reset</button><button class="btn ghost" id="wpClose">Close</button></div>
+  <div id="wpMsg"></div>
+</div>
+
+<script>
+(function(){
+  var wall=document.getElementById('wall'),panel=document.getElementById('wpPanel'),btn=document.getElementById('wpBtn'),
+      file=document.getElementById('wpFile'),dim=document.getElementById('wpDim'),msg=document.getElementById('wpMsg');
+  function say(t){msg.textContent=t}
+  function save(k,v){try{localStorage.setItem(k,v)}catch(e){say('Wallpaper applied, but too large to remember for next visit.')}}
+  function setBg(css){wall.style.backgroundImage=css}
+  function setDim(v){document.documentElement.style.setProperty('--dim-a',v/100)}
+  function toggle(open){panel.classList.toggle('open',open);btn.setAttribute('aria-expanded',open)}
+  btn.onclick=function(){toggle(!panel.classList.contains('open'))};
+  document.getElementById('wpClose').onclick=function(){toggle(false)};
+  document.getElementById('wpUpload').onclick=function(){file.click()};
+  file.onchange=function(){
+    var f=file.files[0];if(!f)return;
+    if(!f.type.startsWith('image/')){say('Choose an image file (JPG, PNG or WebP).');return}
+    var r=new FileReader();
+    r.onload=function(){var u='url("'+r.result+'")';setBg(u);save('nineo-wall',u);say('Wallpaper set.')};
+    r.readAsDataURL(f);
+  };
+  document.getElementById('wpSw').onclick=function(e){
+    var g=e.target.dataset&&e.target.dataset.g;if(!g)return;
+    setBg(g);save('nineo-wall',g);say('Wallpaper set.');
+  };
+  dim.oninput=function(){setDim(dim.value);save('nineo-dim',dim.value)};
+  document.getElementById('wpReset').onclick=function(){
+    setBg('');dim.value=55;setDim(55);
+    try{localStorage.removeItem('nineo-wall');localStorage.removeItem('nineo-dim')}catch(e){}
+    say('Back to the default look.');
+  };
+  try{
+    var w=localStorage.getItem('nineo-wall'),d=localStorage.getItem('nineo-dim');
+    if(w)setBg(w);if(d){dim.value=d;setDim(d)}
+  }catch(e){}
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('.map svg').forEach(function(v){v.pauseAnimations()})}
+})();
+</script>
+</body>
+</html>
