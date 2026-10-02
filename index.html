@@ -643,13 +643,13 @@
       letter-spacing: 0.8px;
     }
 
-    /* Punctuality Guarantee & Live Quiz Banner */
+    /* Punctuality Guarantee Banner Styles */
     .guarantee-box {
-      background: rgba(250, 204, 21, 0.1);
-      border: 1px solid rgba(250, 204, 21, 0.35);
+      background: rgba(250, 204, 21, 0.09);
+      border: 1.5px dashed rgba(250, 204, 21, 0.45);
       border-radius: 14px;
-      padding: 12px;
-      margin: 12px 0;
+      padding: 11px 13px;
+      margin: 12px 0 6px;
       text-align: left;
     }
 
@@ -1351,6 +1351,14 @@
           </div>
         </div>
 
+        <!-- On-Time Arrival Guarantee: Adjusted for High Visibility at Booking Time (Single Rides Only) -->
+        <div class="guarantee-box" id="singleRideGuaranteeBox">
+          <div class="guarantee-title">⚡ On-Time Arrival Guarantee</div>
+          <div class="guarantee-text">
+            If your Captain does not arrive at your pickup location on time, a flat <b>₹5 discount</b> applies automatically. On-time arrivals award 100% of your fare directly to the Captain. <span style="color: var(--primary); font-weight: 700;">*Applicable only to Single Rides.</span>
+          </div>
+        </div>
+
         <div class="active-pass-card" id="activePassCard">
           <span class="choice-badge badge-pass">Active Pass Applied</span>
           <div class="active-pass-price" id="activePassDue">₹0</div>
@@ -1385,11 +1393,11 @@
         </div>
       </div>
 
-      <!-- ₹5 Punctuality Promise Banner -->
-      <div class="guarantee-box">
+      <!-- ₹5 Punctuality Promise Banner on Captain Card -->
+      <div class="guarantee-box" id="dispCaptainGuaranteeBox">
         <div class="guarantee-title">⚡ ₹5 Punctuality Guarantee</div>
         <div class="guarantee-text">
-          If your Captain fails to reach your pickup location on time, you get a flat <b>₹5 discount</b> on this ride. If your Captain reaches on time, 100% of the fare is awarded directly to them with zero penalty! 🎯 Till then, play our Ranchi Flash Quiz while your Captain arrives!
+          If your Captain fails to reach your pickup location on time, you get a flat <b>₹5 discount</b> on this ride. If your Captain reaches on time, 100% of the fare is awarded directly to them with zero penalty! 🎯 Till then, play our Ranchi Flash Quiz while your Captain arrives! <span style="color: var(--primary); font-weight: 700;">*Applicable only to Single Rides.</span>
         </div>
       </div>
 
@@ -2349,6 +2357,7 @@
       const passExp = document.getElementById("activePassExplanation");
       const btnBookPass = document.getElementById("btnBookActivePass");
       const upsellBox = document.getElementById("passUpsellBox");
+      const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
 
       singleFareAmount = calculateSingleRideFare(km, minutes);
       document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
@@ -2384,6 +2393,7 @@
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
         stdGrid.style.display = "none";
         passCard.style.display = "block";
+        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "none"; // Guarantee is for Single Rides only
         document.getElementById("routeSubtitle").innerText = "Active Pass Applied:";
 
         if (km <= userActivePass.remainingKm) {
@@ -2421,6 +2431,7 @@
       } else {
         passCard.style.display = "none";
         stdGrid.style.display = "grid";
+        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "block"; // Display guarantee banner for single ride booking
 
         const cardSingle = document.getElementById("cardSingleRide");
         const cardPass = document.getElementById("cardPassOffer");
@@ -2902,6 +2913,12 @@
         document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
       }
 
+      // Hide or show Punctuality Guarantee Banner based on booking type (Single Rides Only)
+      const capGuarantee = document.getElementById("dispCaptainGuaranteeBox");
+      if (capGuarantee) {
+        capGuarantee.style.display = (type === "PASS") ? "none" : "block";
+      }
+
       // Initialize Waiting Ranchi Trivia Quiz
       renderNextQuiz();
 
@@ -2961,6 +2978,9 @@
       
       const quizBox = document.getElementById("waitingQuizBox");
       if (quizBox) quizBox.style.display = "none";
+
+      const capGuarantee = document.getElementById("dispCaptainGuaranteeBox");
+      if (capGuarantee) capGuarantee.style.display = "none";
 
       const cancelBtn = document.getElementById("btnCancelBooking");
       if (cancelBtn) cancelBtn.style.display = "none";
@@ -3080,6 +3100,9 @@
       
       const upsellBox = document.getElementById("passUpsellBox");
       if (upsellBox) upsellBox.style.display = "none";
+
+      const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
+      if (singleGuaranteeBox) singleGuaranteeBox.style.display = "none";
 
       handlePhoneInput();
     }
