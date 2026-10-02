@@ -72,6 +72,21 @@ h2{font-size:clamp(30px,5vw,52px);letter-spacing:-1.5px;line-height:1.05;margin-
 .founder h3{font-size:30px;letter-spacing:-1px;line-height:1.1}
 .founder p{color:var(--dim)}
 .founder .links{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.quiz{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;max-width:720px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.qtop{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.qtime{font-size:40px;font-weight:800;letter-spacing:-1px;color:var(--y);line-height:1}
+.qtime small{display:block;font-size:13px;font-weight:600;color:var(--dim);letter-spacing:0}
+.qscore{font-weight:800;color:var(--g)}
+.bar{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin-bottom:20px}
+.bar i{display:block;height:100%;width:100%;background:var(--y);transition:width 1s linear}
+.qq{font-size:20px;font-weight:600;margin-bottom:14px;min-height:56px}
+.qo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:560px){.qo{grid-template-columns:1fr}}
+.qo button{font:inherit;font-weight:600;color:var(--ink);background:transparent;border:1.5px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;text-align:left}
+.qo button:hover:not(:disabled){border-color:var(--y)}
+.qo button.ok{background:#065f46;border-color:var(--g);color:#fff}
+.qo button.no{background:#7f1d1d;border-color:var(--r);color:#fff}
+.qmsg{margin-top:14px;font-weight:700;min-height:24px}
 .final{text-align:center;padding-bottom:110px}
 .final h2{margin-inline:auto;max-width:14ch}
 .final .cta{justify-content:center;margin-top:24px}
@@ -197,12 +212,25 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   </div>
 </section>
 
+<section id="quiz">
+  <h2>Play a quiz until your captain arrives</h2>
+  <p class="sub">Your Ustaad or Sakhi usually reaches you in about 2 minutes. Try the Ranchi Flash Quiz while you wait.</p>
+  <div class="quiz" aria-live="polite">
+    <div class="qtop"><div class="qtime" id="qt">2:00<small>Captain arriving in</small></div><div class="qscore" id="qs">Score: 0 pts</div></div>
+    <div class="bar" aria-hidden="true"><i id="qb"></i></div>
+    <div class="qq" id="qq">Tap start and answer as many questions as you can in 2 minutes.</div>
+    <div class="qo" id="qo"></div>
+    <div class="qmsg" id="qm"></div>
+    <button class="btn" id="qgo" style="margin-top:14px">Start the 2-minute quiz</button>
+  </div>
+</section>
+
 <section>
   <h2>From tap to takeoff</h2>
   <p class="sub">Here is how a nineO ride works.</p>
   <div class="steps">
     <div class="step"><h3>Enter your drop</h3><p>Type or say where you're going. The route and fare appear instantly.</p></div>
-    <div class="step"><h3>Meet your Ustaad or Sakhi</h3><p>Your captain is assigned in 5–10 seconds and usually reaches you in about 2 minutes. Watch them move on the live map and call them from the ride card.</p></div>
+    <div class="step"><h3>Meet your Ustaad or Sakhi</h3><p>Your captain is assigned in 5–10 seconds and usually reaches you in about 2 minutes. Play a quick quiz while you wait, and watch them move on the live map and call them from the ride card.</p></div>
     <div class="step"><h3>Ride and rate</h3><p>Pay with your pass or Razorpay, then rate the ride to keep nineO safe.</p></div>
   </div>
 </section>
@@ -283,6 +311,37 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
     if(w)setBg(w);if(d){dim.value=d;setDim(d)}
   }catch(e){}
   if(matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('.map svg').forEach(function(v){v.pauseAnimations()})}
+})();
+</script>
+<script>
+(function(){
+  var Q=[{q:"Which waterfall near Ranchi drops about 320 feet along the Subarnarekha River?",o:["Hundru Falls","Dassam Falls","Jonha Falls","Hirni Falls"],c:0},
+  {q:"Which international cricket stadium in Ranchi hosts IPL and ODI matches?",o:["Keenan Stadium","JSCA International Stadium","Birsa Munda Ground","Morabadi Stadium"],c:1},
+  {q:"Which hilltop temple in Ranchi gives a wide view of the whole city?",o:["Pahari Mandir","Jagannath Temple","Sun Temple","Deori Mandir"],c:0},
+  {q:"By which nickname is Ranchi popularly known?",o:["City of Lakes","City of Waterfalls","Coal Capital","Steel City"],c:1}];
+  var $=function(i){return document.getElementById(i)},T=120,left=T,score=0,idx=0,timer=null,locked=false;
+  function fmt(n){return Math.floor(n/60)+":"+("0"+n%60).slice(-2)}
+  function paint(){$('qt').firstChild.nodeValue=fmt(left);$('qb').style.width=(left/T*100)+"%";$('qs').textContent="Score: "+score+" pts"}
+  function ask(){
+    var x=Q[idx%Q.length];locked=false;$('qq').textContent=x.q;$('qm').textContent="";$('qo').textContent="";
+    x.o.forEach(function(t,i){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(){pick(i,b)};$('qo').appendChild(b)});
+  }
+  function pick(i,b){
+    if(locked||left<=0)return;locked=true;var x=Q[idx%Q.length],bs=$('qo').children;
+    if(i===x.c){b.className='ok';score+=10;$('qm').style.color='var(--g)';$('qm').textContent='Sahi jawab! +10 pts'}
+    else{b.className='no';bs[x.c].className='ok';$('qm').style.color='var(--r)';$('qm').textContent='Oops! The right answer is highlighted.'}
+    paint();idx++;setTimeout(function(){if(left>0)ask()},1300);
+  }
+  function finish(){
+    clearInterval(timer);left=0;paint();$('qo').textContent="";
+    $('qq').textContent="Your Ustaad or Sakhi has arrived!";
+    $('qm').style.color='var(--y)';$('qm').textContent="You scored "+score+" pts. Ride safe!";
+    $('qgo').style.display='';$('qgo').textContent='Play again';
+  }
+  $('qgo').onclick=function(){
+    left=T;score=0;idx=0;paint();$('qgo').style.display='none';ask();
+    clearInterval(timer);timer=setInterval(function(){left--;paint();if(left<=0)finish()},1000);
+  };
 })();
 </script>
 </body>
