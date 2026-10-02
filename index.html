@@ -15,12 +15,12 @@
 
   <style>
     :root {
-      --primary: #facc15;
-      --primary-accent: #ef4444;
+      --primary: #facc15;        /* nineO Yellow */
+      --primary-accent: #ef4444; /* nineO Red */
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
-      --glass-bg: rgba(15, 23, 42, 0.88);
-      --input-bg: rgba(11, 17, 32, 0.90);
+      --glass-bg: rgba(15, 23, 42, 0.92);
+      --input-bg: rgba(11, 17, 32, 0.92);
       --text: #f8fafc;
       --text-dim: #94a3b8;
     }
@@ -49,8 +49,8 @@
       width: 100%;
       max-width: 430px;
       background: var(--glass-bg);
-      backdrop-filter: blur(18px);
-      -webkit-backdrop-filter: blur(18px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 28px;
       border: 1px solid var(--border);
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(250, 204, 21, 0.08);
@@ -110,6 +110,7 @@
       50% { opacity: 1; }
     }
 
+    /* Voice Bar */
     .voice-bar {
       display: flex;
       align-items: center;
@@ -354,7 +355,8 @@
     .route-dist { font-size: 14px; font-weight: 800; color: white; }
     .route-dist span { color: var(--primary); }
 
-    #routeMap {
+    /* Map Slot Container */
+    .map-container-box {
       width: 100%;
       height: 190px;
       border-radius: 14px;
@@ -362,6 +364,11 @@
       border: 1.5px solid var(--border);
       overflow: hidden;
       background: #090d16;
+    }
+
+    #routeMap {
+      width: 100%;
+      height: 100%;
     }
 
     #routeMap .leaflet-tile-pane {
@@ -634,6 +641,104 @@
       border-radius: 12px;
       margin-bottom: 8px;
       letter-spacing: 0.8px;
+    }
+
+    /* Punctuality Guarantee & Live Quiz Banner */
+    .guarantee-box {
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px solid rgba(250, 204, 21, 0.35);
+      border-radius: 14px;
+      padding: 12px;
+      margin: 12px 0;
+      text-align: left;
+    }
+
+    .guarantee-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .guarantee-text {
+      font-size: 11px;
+      color: #cbd5e1;
+      line-height: 1.45;
+    }
+
+    .quiz-card {
+      background: #111827;
+      border: 1.5px solid rgba(56, 189, 248, 0.35);
+      border-radius: 16px;
+      padding: 14px;
+      margin: 12px 0 16px;
+      text-align: left;
+    }
+
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .quiz-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #38bdf8;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quiz-score-pill {
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(56, 189, 248, 0.15);
+      color: #38bdf8;
+      padding: 2px 7px;
+      border-radius: 10px;
+    }
+
+    .quiz-question {
+      font-size: 13px;
+      font-weight: 700;
+      color: white;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+
+    .quiz-options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+    }
+
+    .quiz-opt-btn {
+      background: #1e293b;
+      border: 1px solid var(--border);
+      color: #f1f5f9;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s;
+    }
+
+    .quiz-opt-btn:active { transform: scale(0.97); }
+    .quiz-opt-btn.correct { background: #065f46; border-color: #10b981; color: white; }
+    .quiz-opt-btn.wrong { background: #7f1d1d; border-color: #ef4444; color: white; }
+
+    .quiz-feedback {
+      font-size: 11px;
+      font-weight: 700;
+      margin-top: 8px;
+      display: none;
     }
 
     .plate-box {
@@ -1073,6 +1178,7 @@
       opacity: 0.85;
     }
 
+    /* Terms Modal Styles - Comprehensive 14 Clause View */
     .terms-overlay {
       display: none;
       position: fixed;
@@ -1163,7 +1269,7 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Voice Bar -->
+    <!-- Voice AI Bar -->
     <div class="voice-bar">
       <div>
         <div class="voice-bar-text" id="voiceStatusText">🎙️ <b>Voice Order:</b> Tap mic & speak</div>
@@ -1218,7 +1324,8 @@
           <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
-        <div id="bookingMapSlot">
+        <!-- Dedicated Leaflet Map Container -->
+        <div class="map-container-box">
           <div id="routeMap"></div>
         </div>
 
@@ -1266,10 +1373,8 @@
     <div class="captain-display-card" id="captainDisplayCard">
       <div class="ride-id-pill" id="dispRideId">RIDE #--</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;" id="dispTripStatusText">
-        ● Captain Assigned
+        ● Captain Assigned (Arriving)
       </div>
-
-      <div id="captainMapSlot" style="margin: 12px 0;"></div>
 
       <div id="dispOtpWrap">
         <div class="otp-badge">
@@ -1278,6 +1383,25 @@
         <div style="font-size:11px; color:var(--text-dim); margin-top:-6px; margin-bottom:10px;">
           Share this 4-digit PIN with captain upon arrival to begin trip
         </div>
+      </div>
+
+      <!-- ₹5 Punctuality Promise Banner -->
+      <div class="guarantee-box">
+        <div class="guarantee-title">⚡ ₹5 Punctuality Guarantee</div>
+        <div class="guarantee-text">
+          If your Captain fails to reach your pickup location on time, you get a flat <b>₹5 discount</b> on this ride. If your Captain reaches on time, 100% of the fare is awarded directly to them with zero penalty! 🎯 Till then, play our Ranchi Flash Quiz while your Captain arrives!
+        </div>
+      </div>
+
+      <!-- Interactive Waiting Trivia Quiz -->
+      <div class="quiz-card" id="waitingQuizBox">
+        <div class="quiz-header">
+          <div class="quiz-title">🎮 Ranchi Waiting Quiz</div>
+          <div class="quiz-score-pill" id="quizStreak">Score: 0 pts</div>
+        </div>
+        <div class="quiz-question" id="quizQuestionText">Loading quiz question...</div>
+        <div class="quiz-options" id="quizOptionsWrap"></div>
+        <div class="quiz-feedback" id="quizFeedback"></div>
       </div>
 
       <div class="in-trip-pass-box" id="inTripPassBox">
@@ -1361,7 +1485,7 @@
       </button>
     </div>
 
-    <!-- 4. PASS CONFIRMATION DISPLAY -->
+    <!-- 4. PASS CONFIRMATION DISPLAY (With 2-Second Auto-Redirect) -->
     <div class="pass-confirm-card" id="passConfirmCard">
       <div class="check-icon-circle">✓</div>
       <div style="font-size: 12px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1387,7 +1511,7 @@
       </button>
     </div>
 
-    <!-- 5. TRIP COMPLETE SCREEN -->
+    <!-- 5. DEDICATED TRIP COMPLETE SCREEN -->
     <div class="trip-complete-card" id="tripCompleteCard">
       <div class="check-icon-circle">🏁</div>
       <div style="font-size: 13px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1438,7 +1562,7 @@
 
       <div class="feedback-tags" id="feedbackTags">
         <span class="tag-chip" onclick="toggleTag(this)">⚡ Polite Captain</span>
-        <span class="tag-chip" onclick="toggleTag(this)">🛡️️ Safe Driving</span>
+        <span class="tag-chip" onclick="toggleTag(this)">🛡️ Safe Driving</span>
         <span class="tag-chip" onclick="toggleTag(this)">⏱️ On-time Pickup</span>
         <span class="tag-chip" onclick="toggleTag(this)">🏍️ Clean Helmet</span>
         <span class="tag-chip" onclick="toggleTag(this)">📍 Route Issue</span>
@@ -1496,7 +1620,7 @@
     </div>
   </div>
 
-  <!-- 8. TERMS MODAL -->
+  <!-- 8. TERMS MODAL - COMPLETE 14 CLAUSES RESTORED -->
   <div class="terms-overlay" id="termsModalOverlay" onclick="if(event.target===this) closeTermsModal()">
     <div class="terms-modal">
       <div class="terms-header">
@@ -1504,12 +1628,98 @@
         <button class="terms-close" onclick="closeTermsModal()">✕</button>
       </div>
       <div class="terms-body">
-        <p style="font-weight: 700; color: #facc15;">BY ACCESSING OR USING THE PLATFORM, YOU AGREE TO BE BOUND BY THESE TERMS.</p>
+        <p style="font-weight: 700; color: #facc15;">BY ACCESSING OR USING THE PLATFORM, YOU AGREE TO BE BOUND BY THESE TERMS. IF YOU DO NOT AGREE, DO NOT ACCESS OR USE THE PLATFORM.</p>
         <hr>
-        <h3>1. Fares & Passes</h3>
-        <p>Dynamic Fares are calculated on standard base rates, per-kilometer travel, duration, and statutory taxes. Daily Passes provide bundled travel quotas valid for 24 hours.</p>
-        <h3>2. Distance Overages</h3>
-        <p>Trips that exceed the balance of an active daily pass incur an overage fee of ₹9/km payable directly upon arrival.</p>
+
+        <h3>1. The Nature of the Platform</h3>
+        <p>NINEO provides a technology platform that connects individual riders ("Riders") with independent third-party transport operators or drivers ("Captains" or "Drivers").</p>
+        <p>Unless explicitly stated otherwise in writing, NINEO is a technology services provider and does not directly operate transportation services, nor does it function as a common carrier. Independent Drivers are solely responsible for providing transportation services requested through the Platform.</p>
+
+        <h3>2. User Eligibility and Account Registration</h3>
+        <ul>
+          <li><b>Age Requirement:</b> You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to create an account and use the Platform.</li>
+          <li><b>Account Security:</b> Registration requires providing accurate, up-to-date personal details, including a valid mobile phone number. Verification is conducted via One-Time Passwords (OTP), PINs, or digital credentials.</li>
+          <li><b>Account Ownership:</b> You may not assign, transfer, or authorize any third party to use your account. You are strictly responsible for all activity conducted under your account credentials.</li>
+        </ul>
+
+        <h3>3. Location Tracking and Telemetry</h3>
+        <p>To deliver essential transit routing, dispatching, and pricing services:</p>
+        <ul>
+          <li>You grant NINEO permission to access and monitor your device's <b>precise GPS location data</b> while using the Platform.</li>
+          <li>Location data is recorded to match you with nearby Drivers, calculate transit distances, determine fare tiers or overage charges, and provide real-time trip monitoring for safety.</li>
+          <li>Disabling device location permissions will render the Platform's core dispatch and transport functionalities inoperable. For details on telemetry storage, refer to our Privacy Policy.</li>
+        </ul>
+
+        <h3>4. Pricing, Passes, and Payment Terms</h3>
+        <ul>
+          <li><b>Dynamic Fares & Structured Passes:</b> Single trip fares are calculated based on Base Fare (₹21), Road Distance Rate (₹6.75/km), and Travel Time (₹0.30/min), plus applicable platform fees (₹3 for fares ≤ ₹50, ₹4 for fares > ₹50) and statutory 5% GST. Captain earnings are integrated directly into the fare. Structured Daily Passes (5 KM, 9 KM, 18 KM) offer prepaid 24-hour quota balances.</li>
+          <li><b>Distance Overages:</b> Any trip exceeding the pre-purchased pass distance or standard quota will incur additional per-kilometer overage charges (₹9/km), calculated automatically by our GPS telemetry engine.</li>
+          <li><b>Taxes and Fees:</b> You agree to pay all applicable fares, toll fees, dynamic peak-pricing surcharges, and local statutory taxes associated with your booking.</li>
+          <li><b>Payment Processing:</b> Payments are processed through secure, PCI-DSS-compliant third-party payment gateways. You authorize NINEO and its payment partners to charge your designated payment method for all incurred amounts.</li>
+          <li><b>Refund Policy:</b> Pre-purchased passes, promotional packages, and completed trips are strictly non-refundable except where required by applicable consumer protection laws or due to a documented technical failure verified by our support team.</li>
+        </ul>
+
+        <h3>5. Cancellations and Wait-Time Fees</h3>
+        <ul>
+          <li><b>Cancellation Windows:</b> You may cancel a booking request free of charge within 2 minutes of a Driver accepting the request. Cancellations made after this grace period may incur a standard cancellation fee.</li>
+          <li><b>No-Show and Wait Time:</b> If a Driver arrives at the designated pickup location and you fail to board within 5 minutes, the Driver may cancel the ride, and a no-show cancellation fee will be billed to your account.</li>
+        </ul>
+
+        <h3>6. Masked Communications and Messaging</h3>
+        <ul>
+          <li>To protect the personal privacy of both parties, the Platform utilizes call and SMS masking proxies.</li>
+          <li>When you communicate with a Driver regarding a booking, your personal telephone number is concealed behind a temporary virtual relay.</li>
+          <li>By using the Platform, you consent to receive operational communications, ride receipts, system alerts, and security verification codes via SMS, automated push notifications, and telephone calls.</li>
+        </ul>
+
+        <h3>7. User Conduct and Safety Obligations</h3>
+        <p>You agree to maintain safety and decorum at all times while using the Platform. You shall NOT:</p>
+        <ol>
+          <li>Impair or attempt to impair the safe operation of any vehicle.</li>
+          <li>Refuse to comply with local road safety mandates, including mandatory helmet regulations for two-wheeler transport.</li>
+          <li>Carry hazardous, flammable, illicit, or oversized goods that violate vehicle capacity limits.</li>
+          <li>Verbally abuse, harass, intimidate, or physically harm any Driver, passenger, or Platform representative.</li>
+          <li>Tamper with the Platform's digital systems, reverse-engineer proprietary algorithms, or manipulate GPS coordinates (spoofing).</li>
+        </ol>
+        <p>Violation of these standards will result in immediate and permanent account termination, forfeiture of unused passes, and potential reporting to local law enforcement.</p>
+
+        <h3>8. Intellectual Property Rights</h3>
+        <p>All software, trademarks, logos, system algorithms, user interface designs, and intellectual assets associated with the Platform are the exclusive property of NINEO or its licensors. You are granted a limited, revocable, non-exclusive, non-transferable license strictly to access the mobile application for personal, non-commercial use.</p>
+
+        <h3>9. Disclaimer of Warranties</h3>
+        <p>THE PLATFORM IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, NINEO EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT GUARANTEE THAT THE PLATFORM WILL OPERATE UNINTERRUPTED, SECURE, OR ERROR-FREE, NOR DO WE WARRANT THE RELIABILITY, TIMELINESS, OR SAFETY OF ANY THIRD-PARTY TRANSPORT OPERATOR.</p>
+
+        <h3>10. Limitation of Liability</h3>
+        <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL NINEO, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA LOSS, PERSONAL INJURY, OR PROPERTY DAMAGE ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE PLATFORM OR ANY RIDE TRANSACTIONS, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
+        <p>OUR TOTAL AGGREGATE LIABILITY TO YOU FOR ALL CLAIMS ARISING UNDER THESE TERMS SHALL NOT EXCEED THE TOTAL AMOUNT PAID BY YOU TO NINEO IN THE THREE (3) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY, OR ₹1,000, WHICHEVER IS LESS.</p>
+
+        <h3>11. Indemnification</h3>
+        <p>You agree to defend, indemnify, and hold harmless Nineo, its officers, affiliates, and employees from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable legal fees) arising from:</p>
+        <ul>
+          <li>Your violation of these Terms or applicable laws;</li>
+          <li>Your interaction with, transport by, or disputes with any third-party Driver;</li>
+          <li>Your infringement of any third-party rights, including privacy or intellectual property rights.</li>
+        </ul>
+
+        <h3>12. Governing Law and Dispute Resolution</h3>
+        <ul>
+          <li><b>Governing Law:</b> These Terms shall be governed by, interpreted, and construed in accordance with the laws of India, without regard to conflict of law principles.</li>
+          <li><b>Dispute Escalation:</b> Before initiating formal legal proceedings, you agree to submit any claim or dispute to informal resolution by contacting our legal department at harshjaiswal@nineo.in.</li>
+          <li><b>Jurisdiction:</b> Any unresolved dispute, controversy, or claim arising out of these Terms shall be subject to the exclusive jurisdiction of the competent courts located in Ranchi, Jharkhand.</li>
+        </ul>
+
+        <h3>13. Modifications to the Terms</h3>
+        <p>We reserve the right to amend or update these Terms at any time. Material changes will be communicated via in-app notification, email, or by revising the terms on the Platform. Your continued use of the Platform following published changes signifies your legal acceptance of the revised Terms.</p>
+
+        <h3>14. Contact and Legal Notices</h3>
+        <p>For questions, regulatory inquiries, or legal notices concerning these Terms, contact our compliance officer at:</p>
+        <ul>
+          <li><b>Entity Name:</b> Nineo Mobility</li>
+          <li><b>Attn:</b> Legal & Compliance Department</li>
+          <li><b>Physical Address:</b> Prasad Hostel, Ranchi, Jharkhand</li>
+          <li><b>Support Email:</b> harshjaiswal@nineo.in</li>
+          <li><b>Customer Support Contact:</b> +91-9525054247</li>
+        </ul>
       </div>
       <div class="terms-footer">
         <button class="btn-submit" style="padding: 12px; font-size: 13px;" onclick="closeTermsModal()">
@@ -1531,6 +1741,7 @@
       return Math.round((val - 9) / 10) * 10 + 9;
     }
 
+    // Dynamic Fare Calculation (Base ₹21, ₹6.75/km, ₹0.30/min, tiered platform fee + 5% GST)
     function calculateSingleRideFare(km, minutes) {
       const dist = parseFloat(km) || 0;
       const duration = (minutes && minutes > 0) ? minutes : Math.max(5, Math.round((dist / 22) * 60));
@@ -1539,20 +1750,13 @@
       const perKmRate = 6.75;
       const perMinRate = 0.30;
       
+      // Dynamic ride component (Captain micro-fee is integrated directly into the fare)
       const rideFare = baseFare + (dist * perKmRate) + (duration * perMinRate);
       
-      let platformFee = 0;
-      let captainMicroFee = 0;
+      // Tiered Platform Fee only
+      const platformFee = rideFare <= 50 ? 3 : 4;
       
-      if (rideFare <= 50) {
-        platformFee = 3;
-        captainMicroFee = 2;
-      } else {
-        platformFee = 4;
-        captainMicroFee = 3;
-      }
-      
-      const subtotal = rideFare + platformFee + captainMicroFee;
+      const subtotal = rideFare + platformFee;
       const totalWithGst = subtotal * 1.05;
       
       return Math.round(totalWithGst);
@@ -1599,6 +1803,77 @@
     let captainMarker = null;
     let captainRoutePolyline = null;
     let captainMotionTimer = null;
+
+    // --- Ranchi Waiting Quiz Database & Engine ---
+    const RANCHI_QUIZ_DATA = [
+      {
+        q: "Which iconic waterfall near Ranchi falls from a height of ~320 feet along the Subarnarekha River?",
+        options: ["Hundru Falls", "Dassam Falls", "Jonha Falls", "Hirni Falls"],
+        correct: 0
+      },
+      {
+        q: "What premier international cricket stadium in Ranchi hosts IPL and ODI matches?",
+        options: ["Keenan Stadium", "JSCA International Stadium", "Birsa Munda Ground", "Morabadi Stadium"],
+        correct: 1
+      },
+      {
+        q: "Which hilltop temple in Ranchi offers an expansive panoramic view of the entire city?",
+        options: ["Pahari Mandir", "Jagannath Temple", "Sun Temple", "Deori Mandir"],
+        correct: 0
+      },
+      {
+        q: "Ranchi is popularly known across India by which environmental nickname?",
+        options: ["City of Lakes", "City of Waterfalls", "Coal Capital", "Steel City"],
+        correct: 1
+      }
+    ];
+
+    let currentQuizIndex = 0;
+    let quizStreakScore = 0;
+
+    function renderNextQuiz() {
+      const qObj = RANCHI_QUIZ_DATA[currentQuizIndex % RANCHI_QUIZ_DATA.length];
+      document.getElementById("quizQuestionText").innerText = qObj.q;
+      const optsWrap = document.getElementById("quizOptionsWrap");
+      optsWrap.innerHTML = "";
+      const fb = document.getElementById("quizFeedback");
+      fb.style.display = "none";
+
+      qObj.options.forEach((opt, idx) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "quiz-opt-btn";
+        btn.innerText = opt;
+        btn.onclick = () => checkQuizAnswer(idx, qObj.correct, btn);
+        optsWrap.appendChild(btn);
+      });
+    }
+
+    function checkQuizAnswer(selectedIdx, correctIdx, btnEl) {
+      const allBtns = document.querySelectorAll(".quiz-opt-btn");
+      allBtns.forEach(b => b.disabled = true);
+      const fb = document.getElementById("quizFeedback");
+
+      if (selectedIdx === correctIdx) {
+        btnEl.classList.add("correct");
+        quizStreakScore += 10;
+        document.getElementById("quizStreak").innerText = `Score: ${quizStreakScore} pts`;
+        fb.style.display = "block";
+        fb.style.color = "var(--green)";
+        fb.innerText = "🎉 Sahi Jawab! (+10 pts) Loading next question...";
+      } else {
+        btnEl.classList.add("wrong");
+        allBtns[correctIdx].classList.add("correct");
+        fb.style.display = "block";
+        fb.style.color = "var(--primary-accent)";
+        fb.innerText = "❌ Oops! Next question coming up...";
+      }
+
+      setTimeout(() => {
+        currentQuizIndex++;
+        renderNextQuiz();
+      }, 1900);
+    }
 
     function openTermsModal() {
       document.getElementById("termsModalOverlay").style.display = "flex";
@@ -1852,8 +2127,6 @@
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
-
-      mapContainer.style.display = "block";
 
       if (!mapInstance) {
         mapInstance = L.map('routeMap', {
@@ -2629,6 +2902,9 @@
         document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
       }
 
+      // Initialize Waiting Ranchi Trivia Quiz
+      renderNextQuiz();
+
       const callBtn = document.getElementById("btnCallCaptain");
       if (data.captain.phone) {
         callBtn.href = `tel:+91${data.captain.phone}`;
@@ -2637,16 +2913,11 @@
         callBtn.style.display = "none";
       }
 
-      const mapEl = document.getElementById("routeMap");
-      const capSlot = document.getElementById("captainMapSlot");
-      if (mapEl && capSlot) {
-        capSlot.appendChild(mapEl);
-        if (mapInstance) {
-          setTimeout(() => { 
-            mapInstance.invalidateSize(); 
-            if (pickupCoords) startCaptainLiveTracking(pickupCoords);
-          }, 250);
-        }
+      if (mapInstance && pickupCoords) {
+        setTimeout(() => {
+          mapInstance.invalidateSize();
+          startCaptainLiveTracking(pickupCoords);
+        }, 200);
       }
 
       startRidePolling(currentRideId);
@@ -2681,12 +2952,16 @@
             showTripCompletionTransition();
           }
         } catch (e) {}
-      }, 3500);
+      }, 4000);
     }
 
     function transitionToInTripView() {
       document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>RIDE IN PROGRESS • EN ROUTE</b>";
       document.getElementById("dispOtpWrap").style.display = "none";
+      
+      const quizBox = document.getElementById("waitingQuizBox");
+      if (quizBox) quizBox.style.display = "none";
+
       const cancelBtn = document.getElementById("btnCancelBooking");
       if (cancelBtn) cancelBtn.style.display = "none";
 
@@ -2770,10 +3045,6 @@
       if (captainMarker && mapInstance) mapInstance.removeLayer(captainMarker);
       if (captainRoutePolyline && mapInstance) mapInstance.removeLayer(captainRoutePolyline);
 
-      const mapEl = document.getElementById("routeMap");
-      const bookSlot = document.getElementById("bookingMapSlot");
-      if (mapEl && bookSlot) bookSlot.appendChild(mapEl);
-
       document.getElementById("captainDisplayCard").style.display = "none";
       document.getElementById("tripCompleteCard").style.display = "none";
       document.getElementById("feedbackCard").style.display = "none";
@@ -2781,6 +3052,9 @@
       document.getElementById("navTabs").style.display = "grid";
       document.getElementById("phoneFieldWrap").style.display = "block";
       
+      const quizBox = document.getElementById("waitingQuizBox");
+      if (quizBox) quizBox.style.display = "block";
+
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
         b.disabled = false;
       });
@@ -2928,13 +3202,13 @@
       const q = query.toLowerCase();
 
       if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
-        appendBotMessage("🎟️️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
+        appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
       } 
       else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
         appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
       }
       else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost")) {
-        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Instant dynamic fare based on road distance, duration, and statutory taxes.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
+        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Dynamic fare based on road distance, duration, tiered platform fee, and statutory taxes. Captain earnings are integrated directly into the fare.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
       }
       else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {
         appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);
