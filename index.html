@@ -21,7 +21,8 @@ a{color:inherit}
 nav{display:flex;justify-content:space-between;align-items:center;padding:18px 5vw}
 .logo{font-weight:800;font-size:28px;color:var(--y);text-decoration:none;letter-spacing:-1px}
 .logo b{color:var(--r)}
-.btn{display:inline-block;background:var(--y);color:#0f172a;font-weight:800;padding:13px 24px;border-radius:14px;text-decoration:none;border:0;cursor:pointer;font:inherit;font-weight:800;transition:transform .15s}
+.nav-links{display:flex;gap:10px;align-items:center}
+.btn{display:inline-block;background:var(--y);color:#0f172a;font-weight:800;padding:13px 24px;border-radius:14px;text-decoration:none;border:0;cursor:pointer;font:inherit;transition:transform .15s}
 .btn:hover{transform:translateY(-2px)}
 .btn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line)}
 .hero{padding:6vh 5vw 0;max-width:1100px;margin:auto}
@@ -53,6 +54,15 @@ h1{font-size:clamp(44px,9vw,104px);line-height:.95;font-weight:800;letter-spacin
 section{padding:80px 5vw;max-width:1100px;margin:auto}
 h2{font-size:clamp(30px,5vw,52px);letter-spacing:-1.5px;line-height:1.05;margin-bottom:12px}
 .sub{color:var(--dim);max-width:52ch;margin-bottom:34px}
+
+/* Group Booking Feature Card */
+.group-feature-card{background:linear-gradient(145deg,rgba(250,204,21,.15),var(--card));border:1.5px solid var(--y);border-radius:24px;padding:32px;margin-bottom:40px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.group-badge{display:inline-block;background:var(--y);color:#0f172a;font-size:12px;font-weight:800;padding:4px 10px;border-radius:99px;margin-bottom:12px;text-transform:uppercase;letter-spacing:0.5px}
+.group-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-top:20px}
+.group-stat{background:rgba(11,17,32,.7);border:1px solid var(--line);border-radius:16px;padding:16px}
+.group-stat b{display:block;font-size:22px;color:var(--y);margin-bottom:4px}
+.group-stat p{font-size:13px;color:var(--dim)}
+
 .passes{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px}
 .pass{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:26px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s,border-color .25s}
 .pass:hover{transform:translateY(-6px);border-color:var(--y)}
@@ -134,7 +144,10 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
 
 <nav>
   <a class="logo" href="#top">nine<b>O</b></a>
-  <a class="btn" href="book.html">Book a ride</a>
+  <div class="nav-links">
+    <a class="btn ghost" href="book.html">Group (2–4)</a>
+    <a class="btn" href="book.html">Book a ride</a>
+  </div>
 </nav>
 
 <header class="hero" id="top">
@@ -148,6 +161,7 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   <div class="speed">
     <div><b>5–10 sec</b><span>to assign your captain</span></div>
     <div><b>~2 min</b><span>typical pickup ETA</span></div>
+    <div><b>2–4 Riders</b><span>group booking ready</span></div>
   </div>
 </header>
 
@@ -169,6 +183,34 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
     </svg>
   </div>
 </div>
+
+<!-- Group Booking Feature Section Added Seamlessly -->
+<section id="group">
+  <div class="group-feature-card">
+    <span class="group-badge">New: Group Booking</span>
+    <h2>Traveling with friends or colleagues?</h2>
+    <p class="sub" style="margin-bottom:18px;">Now you can book for <b>2, 3, or 4 riders</b> in a single tap. nineO dispatches multiple two-wheelers simultaneously to your exact pickup spot, keeping your group together without the hassle of multiple bookings.</p>
+    
+    <div class="group-grid">
+      <div class="group-stat">
+        <b>1-Tap Dispatch</b>
+        <p>Book up to 4 Captains simultaneously under a single booking session.</p>
+      </div>
+      <div class="group-stat">
+        <b>Individual OTPs</b>
+        <p>Each passenger receives their own security PIN to match with their Captain.</p>
+      </div>
+      <div class="group-stat">
+        <b>Clear Fares</b>
+        <p>Transparent per-rider rates with zero hidden surge multipliers.</p>
+      </div>
+    </div>
+    
+    <div style="margin-top: 24px;">
+      <a class="btn" href="book.html">Try Group Booking ➔</a>
+    </div>
+  </div>
+</section>
 
 <section id="passes">
   <h2>Daily passes that pay for themselves</h2>
@@ -244,7 +286,17 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
 <section>
   <h2>Built for Ranchi roads</h2>
   <p class="sub">Local captains, local support on WhatsApp, and no surprise charges.</p>
-  <div class="safe"><span>Verified Ustaads and Sakhis</span><span>₹5 punctuality guarantee</span><span>Captain assigned in 5–10 sec</span><span>~2 min ETA</span><span>Live ride tracking</span><span>Upfront fares</span><span>Rate every ride</span><span>WhatsApp support</span></div>
+  <div class="safe">
+    <span>Verified Ustaads and Sakhis</span>
+    <span>👥 Group Booking (2–4 Bikes)</span>
+    <span>₹5 punctuality guarantee</span>
+    <span>Captain assigned in 5–10 sec</span>
+    <span>~2 min ETA</span>
+    <span>Live ride tracking</span>
+    <span>Upfront fares</span>
+    <span>Rate every ride</span>
+    <span>WhatsApp support</span>
+  </div>
 </section>
 
 <section id="founder">
