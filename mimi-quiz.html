@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quiz with Mimi – nineO</title>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#14123a;--panel:#1f1c55;--line:#3a3690;--gold:#f5b82e;--ok:#2fbf71;--bad:#e5484d;--tx:#f4f1ff;--mut:#b4afe8;--cream:#fff1dc;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px);color-scheme:dark}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:'Baloo 2','Noto Sans Devanagari','Mangal',system-ui,sans-serif;min-height:100vh}
+#wall{position:fixed;inset:0;background:radial-gradient(circle at 20% 10%,#3a2f9a 0,#14123a 55%) center/cover}
+#dim{position:fixed;inset:0;background:#000;opacity:.2}
+.app{max-width:980px;margin:0 auto;padding:12px 14px 24px;position:relative;z-index:1}
+.top{display:flex;align-items:center;gap:8px}
+.brand{font-weight:800;font-size:22px}.brand b{color:var(--gold)}
+.eta{margin-left:auto;text-align:right;line-height:1;margin-right:6px}
+#clock{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;color:var(--gold)}
+.eta small{display:block;font-size:12px;color:var(--mut)}
+.eta.urgent #clock{color:var(--bad);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:.5}}
+button{font:inherit;cursor:pointer}
+.ibtn{background:rgba(31,28,85,.85);color:var(--tx);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:14px}
+button:focus-visible,input:focus-visible{outline:3px solid #fff;outline-offset:2px}
+button:disabled{opacity:.4;cursor:not-allowed}
+.stage{display:grid;grid-template-columns:190px 1fr 120px;gap:14px;margin-top:12px;align-items:start}
+.bubble{background:var(--cream);color:#2a2150;border-radius:16px;padding:8px 12px;font-size:15px;line-height:1.35;position:relative;min-height:44px;margin-bottom:12px}
+.bubble::after{content:"";position:absolute;left:50%;bottom:-8px;margin-left:-8px;border:8px solid transparent;border-top-color:var(--cream);border-bottom:0}
+#note{font-size:12px;color:var(--mut);margin:0 0 8px}
+#mimi{width:100%;max-width:190px;aspect-ratio:200/245;display:block;margin:0 auto}
+.board{background:rgba(31,28,85,.9);border:1px solid var(--line);border-radius:18px;padding:16px;backdrop-filter:blur(6px)}
+.qn{font-size:13px;color:var(--mut)}
+.q{font-size:21px;font-weight:700;line-height:1.35;margin:4px 0 14px;min-height:58px}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.opt{display:flex;gap:8px;align-items:center;text-align:left;background:#2a2670;color:var(--tx);border:1.5px solid var(--line);border-radius:999px;padding:9px 14px;font-size:16px;min-height:46px}
+.opt i{font-style:normal;color:var(--gold);font-weight:800}
+.opt.sel{background:var(--gold);color:#2a2150;border-color:var(--gold)}.opt.sel i{color:#2a2150}
+.opt.ok{background:var(--ok);border-color:var(--ok);color:#fff}.opt.ok i,.opt.bad i{color:#fff}
+.opt.bad{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt.hid{visibility:hidden}
+.opt.hint{box-shadow:0 0 0 3px rgba(245,184,46,.7)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;align-items:center}
+.life{background:transparent;color:var(--tx);border:1.5px solid var(--gold);border-radius:999px;padding:6px 12px;font-size:14px}
+.go{background:var(--gold);color:#2a2150;border:0;border-radius:999px;padding:10px 20px;font-weight:800;font-size:16px}
+#lock{margin-left:auto}
+[hidden]{display:none!important}
+.center{text-align:center;padding:14px 0}
+.center h1{font-size:26px;margin:0 0 6px;line-height:1.25}
+.center p{color:var(--mut);margin:0 0 16px}
+.ladder{list-style:none;margin:0;padding:10px;display:flex;flex-direction:column;gap:4px;background:rgba(31,28,85,.9);border:1px solid var(--line);border-radius:18px}
+.ladder li{display:flex;justify-content:space-between;gap:8px;font-size:14px;padding:3px 8px;border-radius:8px;color:var(--mut)}
+.ladder li.cur{background:var(--gold);color:#2a2150;font-weight:800}
+.ladder li.done{color:var(--ok)}
+.ladder li.leg{font-size:12px;justify-content:center}
+#wpPanel{position:fixed;right:14px;top:56px;z-index:5;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;width:min(280px,calc(100% - 28px));display:grid;gap:10px;font-size:14px}
+#wpPanel h3{margin:0;font-size:16px}
+#wpPanel input[type=file]{width:100%;color:var(--mut);font-size:13px}
+#wpPanel input[type=range]{width:100%}
+/* Mimi */
+.eye{transform-box:fill-box;transform-origin:center;animation:blink 4s infinite}
+@keyframes blink{0%,94%,100%{transform:scaleY(1)}97%{transform:scaleY(.1)}}
+.eyes{transform-box:fill-box;transform-origin:center}
+.tail{transform-box:fill-box;transform-origin:0% 100%;animation:sway 2.4s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-12deg)}to{transform:rotate(14deg)}}
+.mo{transform-box:fill-box;transform-origin:center;opacity:0}
+.talk .mo{opacity:1;animation:talk .28s infinite alternate}
+@keyframes talk{from{transform:scaleY(.6)}to{transform:scaleY(4)}}
+.talk .smile{opacity:0}
+.armr{transform-box:fill-box;transform-origin:0% 100%}
+.talk .armr{animation:wave .5s infinite alternate}
+@keyframes wave{from{transform:rotate(-8deg)}to{transform:rotate(14deg)}}
+#head{transform-box:fill-box;transform-origin:50% 100%;transition:transform .3s}
+.sad #head{transform:rotate(-8deg) translateY(4px)}
+.sad .eyes{transform:translateY(3px) scaleY(.7)}
+
+@keyframes hop{50%{transform:translateY(-14px)}}
+@media(max-width:760px){
+ .stage{grid-template-columns:1fr}
+ .host{display:grid;grid-template-columns:110px 1fr;gap:10px;align-items:center}
+ .host .bubble{grid-column:2;grid-row:1;margin:0}
+ .host .bubble::after{left:-8px;bottom:auto;top:16px;margin:0;border:8px solid transparent;border-left:0;border-right-color:var(--cream)}
+ #mimi{grid-column:1;grid-row:1;max-width:110px}
+ #note{grid-column:1/-1;grid-row:2}
+ .ladder{flex-direction:row-reverse;overflow-x:auto;padding:8px}
+ .ladder li{white-space:nowrap;font-size:12px;padding:3px 6px}
+ .opts{grid-template-columns:1fr}
+ .q{font-size:19px}
+}
+html.embed .brand,html.embed #wpBtn{display:none}
+html.embed .app{padding-top:8px}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="wall"></div><div id="dim"></div>
+<main class="app">
+ <header class="top">
+  <div class="brand">nine<b>O</b></div>
+  <div class="eta" id="eta"><span id="clock">2:00</span><small>Captain arriving in</small></div>
+  <button class="ibtn" id="wpBtn" aria-expanded="false">Wallpaper</button>
+  <button class="ibtn" id="snd" aria-label="Mute Mimi">🔊</button>
+ </header>
+
+ <section class="stage">
+  <div class="host">
+   <div class="bubble" id="bubble" aria-live="polite">Hi! I'm Mimi.</div>
+   <p id="note" hidden>No Hindi voice found on this device, so Mimi's words will show as text only.</p>
+   <div id="mimi" role="img" aria-label="Mimi, a cartoon white cat in a robe and glasses" title="Drag to turn Mimi"></div>
+  </div>
+
+  <div class="board">
+   <div id="intro" class="center">
+    <h1>Hot seat with Mimi</h1>
+    <p>8 questions and 3 lifelines until your captain arrives. Answer right, win points!</p>
+    <button class="go" id="start">Start the game</button>
+   </div>
+   <div id="play" hidden>
+    <div class="qn" id="qn"></div>
+    <div class="q" id="q"></div>
+    <div class="opts" id="opts"></div>
+    <div class="row">
+     <button class="life" id="lf">50-50</button>
+     <button class="life" id="ls">Change question</button>
+     <button class="life" id="la">Ask Mimi</button>
+     <button class="go" id="lock" hidden>Lock it</button>
+    </div>
+   </div>
+   <div id="end" class="center" hidden>
+    <h1 id="endT"></h1><p id="endS"></p>
+    <button class="go" id="again">Play again</button>
+   </div>
+  </div>
+
+  <ol class="ladder" id="ladder" aria-label="Points ladder"></ol>
+ </section>
+</main>
+
+<div id="wpPanel" hidden>
+ <h3>Your wallpaper</h3>
+ <input type="file" id="wpFile" accept="image/*" aria-label="Choose an image">
+ <label>Dim the wallpaper<input type="range" id="wpDim" min="0" max="80" value="20"></label>
+ <div class="row" style="margin:0"><button class="life" id="wpReset">Reset</button><button class="ibtn" id="wpClose" style="margin-left:auto">Close</button></div>
+</div>
+
+<script>
+const $=s=>document.querySelector(s);
+const ETA=Math.max(30,parseInt(new URLSearchParams(location.search).get('eta'))||120);
+const PTS=[10,20,40,80,160,320,640,1000],SAFE=3,L='ए,बी,सी,डी'.split(',');
+// first option is always the correct one; options are shuffled when shown. q/o = shown (English), h/oh = spoken (Hindi)
+const BANK=[
+{q:'What is the capital of Jharkhand?',h:'झारखंड की राजधानी कौन सी है?',o:['Ranchi','Patna','Jamshedpur','Dhanbad'],oh:['रांची','पटना','जमशेदपुर','धनबाद']},
+{q:'Which is the national animal of India?',h:'भारत का राष्ट्रीय पशु कौन सा है?',o:['Tiger','Lion','Elephant','Leopard'],oh:['बाघ','शेर','हाथी','तेंदुआ']},
+{q:"What was M.S. Dhoni's jersey number?",h:'महेंद्र सिंह धोनी की जर्सी का नंबर क्या था?',o:['7','10','18','45'],oh:['सात','दस','अठारह','पैंतालीस']},
+{q:'When was Jharkhand state formed?',h:'झारखंड राज्य कब बना?',o:['15 Nov 2000','15 Aug 1947','26 Jan 1950','2 Oct 2000'],oh:['पंद्रह नवंबर दो हज़ार','पंद्रह अगस्त उन्नीस सौ सैंतालीस','छब्बीस जनवरी उन्नीस सौ पचास','दो अक्टूबर दो हज़ार']},
+{q:'Which is the state bird of Jharkhand?',h:'झारखंड का राज्य पक्षी कौन सा है?',o:['Koel','Peacock','Parrot','Sparrow'],oh:['कोयल','मोर','तोता','गौरैया']},
+{q:'Which is the largest planet in our solar system?',h:'हमारे सौरमंडल का सबसे बड़ा ग्रह कौन सा है?',o:['Jupiter','Saturn','Earth','Mars'],oh:['बृहस्पति','शनि','पृथ्वी','मंगल']},
+{q:"Hundru Falls near Ranchi is on which river?",h:'रांची का हुंडरू जलप्रपात किस नदी पर है?',o:['Subarnarekha','Damodar','Koel','Ganga'],oh:['स्वर्णरेखा','दामोदर','कोयल','गंगा']},
+{q:'Jamshedpur is famous for which company?',h:'जमशेदपुर शहर किस कंपनी के लिए मशहूर है?',o:['Tata Steel','Bajaj','Reliance','Mahindra'],oh:['टाटा स्टील','बजाज','रिलायंस','महिंद्रा']}];
+const SPARE=[
+{q:'Which city is also called the City of Waterfalls?',h:'किस शहर को झरनों का शहर भी कहा जाता है?',o:['Ranchi','Patna','Lucknow','Bhopal'],oh:['रांची','पटना','लखनऊ','भोपाल']},
+{q:'What do people call Birsa Munda?',h:'बिरसा मुंडा को लोग किस नाम से पुकारते हैं?',o:['Dharti Aaba','Iron Man of India','Netaji','Bapu'],oh:['धरती आबा','भारत का लौह पुरुष','नेताजी','बापू']},
+{q:'In which city is the Taj Mahal?',h:'ताजमहल किस शहर में है?',o:['Agra','Jaipur','Delhi','Lucknow'],oh:['आगरा','जयपुर','दिल्ली','लखनऊ']}];
+const PRAISE=[['That is correct! Meow!','बिल्कुल सही जवाब! म्याऊँ!'],['Wow, well done!','वाह! क्या बात है!'],['Spot on! You are amazing!','सही पकड़ा! आप तो कमाल हैं!'],["Bravo! Let's move ahead.",'शाबाश! चलिए आगे बढ़ते हैं।']];
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+
+let S,left=ETA,timer=null,snd=true,voice=null,tm=null,sayId=0;
+const mimi=$('#mimi'),bubble=$('#bubble');
+
+function pickVoice(){if(!('speechSynthesis' in window))return;const v=speechSynthesis.getVoices();voice=v.find(x=>/^hi[-_]IN/i.test(x.lang))||v.find(x=>/^hi/i.test(x.lang))||null}
+if('speechSynthesis' in window){speechSynthesis.onvoiceschanged=pickVoice;pickVoice()}
+
+function say(show,spk){
+  const id=++sayId;bubble.textContent=show;clearTimeout(tm);mimi.classList.add('talk');
+  return new Promise(res=>{
+    let done=false;
+    const fin=()=>{if(done)return;done=true;clearTimeout(tm);if(id===sayId)mimi.classList.remove('talk');res()};
+    const txt=spk||show,wait=txt.length*85+700;
+    if(snd&&'speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u=new SpeechSynthesisUtterance(txt);u.lang='hi-IN';if(voice)u.voice=voice;u.pitch=1.6;u.rate=.95;u.onend=fin;u.onerror=fin;
+      speechSynthesis.speak(u);tm=setTimeout(fin,wait*2.2);
+    }else tm=setTimeout(fin,wait);
+  });
+}
+
+function newGame(){S={i:0,score:0,sel:null,lock:false,rev:false,hint:null,hidden:[],fl:{f:1,s:1,a:1},spare:shuffle(SPARE.slice()),q:null,opts:[],done:false}}
+
+function render(){
+  $('#qn').textContent=`Question ${S.i+1}/8 · ${PTS[S.i]} pts · Your score: ${S.score}`;
+  $('#q').textContent=S.q.q;
+  $('#opts').innerHTML=S.opts.map((o,k)=>{
+    let c='opt';
+    if(S.hidden.includes(k))c+=' hid';
+    if(S.rev){if(o.ok)c+=' ok';else if(k===S.sel)c+=' bad'}
+    else if(k===S.sel)c+=' sel';
+    if(k===S.hint&&!S.rev)c+=' hint';
+    return `<button class="${c}" data-k="${k}" ${S.lock||S.done?'disabled':''}><i>${'ABCD'[k]}</i>${o.t}</button>`}).join('');
+  $('#lock').hidden=S.sel==null||S.lock||S.done;
+  [['lf','f'],['ls','s'],['la','a']].forEach(([id,k])=>$('#'+id).disabled=!S.fl[k]||S.lock||S.done);
+  $('#ladder').innerHTML=PTS.map((p,k)=>`<li class="${k===S.i?'cur':k<S.i?'done':''}"><span>${k+1}</span><b>${p}${k===SAFE?' ★':''}</b></li>`).reverse().join('')+'<li class="leg">★ Safe checkpoint</li>';
+}
+
+function ask(q){
+  const b=q||BANK[S.i];
+  S.q=b;S.opts=shuffle(b.o.map((t,k)=>({t,s:b.oh[k],ok:k===0})));S.sel=null;S.lock=false;S.rev=false;S.hint=null;S.hidden=[];
+  mimi.classList.remove('sad','happy');render();
+  say(`Question ${S.i+1}, for ${PTS[S.i]} points!`,`सवाल नंबर ${S.i+1}, ${PTS[S.i]} अंक के लिए! ${b.h} `+S.opts.map((o,k)=>L[k]+', '+o.s).join(', '));
+}
+
+$('#opts').onclick=e=>{
+  const b=e.target.closest('.opt');if(!b||S.lock||S.done)return;
+  const k=+b.dataset.k;if(S.hidden.includes(k))return;
+  S.sel=k;render();say(`${'ABCD'[k]}? Shall I lock it?`,`${L[k]}? लॉक किया जाए?`);
+};
+
+$('#lock').onclick=()=>{
+  if(S.sel==null||S.lock||S.done)return;
+  const s=S;S.lock=true;render();say('Locked... and the correct answer is...','लॉक कर दिया... और सही जवाब है...');
+  setTimeout(()=>{if(s===S&&!S.done)reveal()},1600);
+};
+
+function reveal(){
+  const s=S,ok=S.opts[S.sel].ok;S.rev=true;
+  if(ok){
+    S.score=PTS[S.i];render();mimi.classList.add('happy');setTimeout(()=>mimi.classList.remove('happy'),1100);
+    if(S.i===PTS.length-1){S.done=true;render();showEnd('🎉 You became a Mimi-pati!',`All answers right! Your score: ${S.score} pts`);say(`Wow! You won every question and became a Mimi-pati! You scored ${S.score} points.`,`वाह वाह! आपने सारे सवाल जीत लिए! आप तो मिमी-पति बन गए! आपके ${S.score} अंक।`);return}
+    const p=PRAISE[Math.floor(Math.random()*PRAISE.length)];say(p[0],p[1]).then(()=>{if(s!==S||S.done)return;S.i++;ask()});
+  }else{
+    S.score=S.i>SAFE?PTS[SAFE]:0;S.done=true;render();mimi.classList.add('sad');
+    const r=S.opts.find(o=>o.ok);
+    showEnd('Oh no, wrong answer',`Correct answer: ${r.t} · Your score: ${S.score} pts`);
+    say(`Oh no! Wrong answer. The correct answer was ${r.t}. You scored ${S.score} points.`,`ओह! गलत जवाब। सही जवाब था ${r.s}। आपके ${S.score} अंक हुए।`);
+  }
+}
+
+// लाइफ़लाइन
+$('#lf').onclick=()=>{
+  if(!S.fl.f||S.lock||S.done)return;S.fl.f=0;
+  S.hidden=shuffle(S.opts.map((o,k)=>k).filter(k=>!S.opts[k].ok)).slice(0,2);
+  if(S.hidden.includes(S.sel))S.sel=null;S.hint=null;render();say('Two wrong answers removed!','दो गलत जवाब हटा दिए!');
+};
+$('#ls').onclick=()=>{
+  if(!S.fl.s||S.lock||S.done||!S.spare.length)return;S.fl.s=0;say("Okay, let's change the question!",'ठीक है, सवाल बदल देते हैं!');
+  const q=S.spare.pop();setTimeout(()=>ask(q),900);
+};
+$('#la').onclick=()=>{
+  if(!S.fl.a||S.lock||S.done)return;S.fl.a=0;
+  const vis=S.opts.map((o,k)=>k).filter(k=>!S.hidden.includes(k)),good=vis.find(k=>S.opts[k].ok);
+  const pick=(Math.random()<.8||vis.length<2)?good:shuffle(vis.filter(k=>k!==good))[0];
+  S.hint=pick;render();
+  say(`My heart says... ${'ABCD'[pick]}, ${S.opts[pick].t}! Not fully sure, but meow, that is my feeling.`,`मेरा मन कहता है... ${L[pick]}, ${S.opts[pick].s}! पक्का तो नहीं, पर म्याऊँ, मुझे यही लग रहा है।`);
+};
+
+function show(id){['intro','play','end'].forEach(x=>$('#'+x).hidden=x!==id)}
+function showEnd(t,s,noAgain){$('#endT').textContent=t;$('#endS').textContent=s;$('#again').hidden=!!noAgain||left<=20;show('end')}
+function clock(){$('#clock').textContent=Math.floor(left/60)+':'+String(left%60).padStart(2,'0');$('#eta').classList.toggle('urgent',left>0&&left<=15)}
+
+function finish(){
+  clearInterval(timer);timer=null;S.done=true;render();mimi.classList.remove('sad');
+  showEnd('🏍️ Your captain has arrived!',`Your score: ${S.score} pts · Enjoy a safe ride`,true);
+  say(`Your captain has arrived! You scored ${S.score} points. Enjoy a safe ride!`,`आपका कप्तान पहुँच गया है! आपके ${S.score} अंक हैं। सुरक्षित सवारी का मज़ा लीजिए!`);
+  document.dispatchEvent(new CustomEvent('mimi:end',{detail:{score:S.score}}));
+}
+
+$('#start').onclick=()=>{
+  pickVoice();if(snd&&!voice&&'speechSynthesis' in window&&speechSynthesis.getVoices().length)$('#note').hidden=false;
+  left=ETA;clock();clearInterval(timer);
+  timer=setInterval(()=>{left--;clock();if(left<=0)finish()},1000);
+  newGame();show('play');render();
+  const s=S;say("Hi! I'm Mimi. Welcome to the hot seat! Let's play.",'नमस्ते! मैं मिमी हूँ। हॉट सीट पर आपका स्वागत है! चलिए खेलते हैं।').then(()=>{if(s===S&&!S.done)ask()});
+};
+$('#again').onclick=()=>{newGame();show('play');ask()};
+$('#snd').onclick=()=>{snd=!snd;$('#snd').textContent=snd?'🔊':'🔇';$('#snd').setAttribute('aria-label',snd?'Mute Mimi':'Unmute Mimi');if(!snd&&'speechSynthesis' in window)speechSynthesis.cancel()};
+
+// वॉलपेपर
+const wall=$('#wall'),dimEl=$('#dim'),dimIn=$('#wpDim');
+const setWall=u=>{wall.style.background=u?`url("${u}") center/cover no-repeat`:''};
+const setDim=v=>{dimEl.style.opacity=v/100};
+try{const u=localStorage.getItem('mimi.wall');if(u)setWall(u);const d=localStorage.getItem('mimi.dim');if(d!==null)dimIn.value=d}catch(e){}
+setDim(dimIn.value);
+$('#wpBtn').onclick=()=>{const p=$('#wpPanel');p.hidden=!p.hidden;$('#wpBtn').setAttribute('aria-expanded',!p.hidden)};
+$('#wpClose').onclick=()=>{$('#wpPanel').hidden=true;$('#wpBtn').setAttribute('aria-expanded','false')};
+dimIn.oninput=()=>{setDim(dimIn.value);try{localStorage.setItem('mimi.dim',dimIn.value)}catch(e){}};
+$('#wpFile').onchange=e=>{
+  const f=e.target.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{const im=new Image();im.onload=()=>{
+    const k=Math.min(1,1400/Math.max(im.width,im.height)),c=document.createElement('canvas');
+    c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);
+    const u=c.toDataURL('image/jpeg',.8);setWall(u);try{localStorage.setItem('mimi.wall',u)}catch(e){}};
+    im.src=r.result};
+  r.readAsDataURL(f);
+};
+$('#wpReset').onclick=()=>{setWall('');dimIn.value=20;setDim(20);$('#wpFile').value='';try{localStorage.removeItem('mimi.wall');localStorage.removeItem('mimi.dim')}catch(e){}};
+
+newGame();S.q=BANK[0];S.opts=[];render();clock();
+
+// ---- embedding in another page (e.g. nineo.in) ----
+// iframe src: mimi-quiz.html?embed=1&eta=120
+if(new URLSearchParams(location.search).get('embed')==='1')document.documentElement.classList.add('embed');
+if(parent!==window){
+  const app=document.querySelector('.app'),sendH=()=>parent.postMessage({type:'mimi-height',h:app.offsetHeight+8},'*');
+  addEventListener('load',sendH);addEventListener('resize',sendH);
+  if('ResizeObserver' in window)new ResizeObserver(sendH).observe(app);
+  document.addEventListener('mimi:end',e=>parent.postMessage({type:'mimi-end',score:e.detail.score},'*'));
+  // parent can end the quiz when the real captain arrives: iframe.contentWindow.postMessage({type:'captain-arrived'},'*')
+  addEventListener('message',e=>{if(e.source===parent&&e.data&&e.data.type==='captain-arrived'&&timer)finish()});
+}
+</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+const el=document.getElementById('mimi');
+try{
+const W=()=>el.clientWidth||190,H=()=>el.clientHeight||233;
+const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+const cv=renderer.domElement;cv.style.cssText='width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab';
+el.appendChild(cv);
+const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(30,W()/H(),.1,50);
+cam.position.set(0,1.9,7.6);cam.lookAt(0,1.65,0);
+scene.add(new THREE.AmbientLight(0xffffff,.65));
+const key=new THREE.DirectionalLight(0xffffff,.9);key.position.set(2,4,5);scene.add(key);
+const rim=new THREE.DirectionalLight(0x8a7bff,.5);rim.position.set(-3,2,-3);scene.add(rim);
+// cartoon (toon) look: stepped shading + dark outlines
+const gm=new THREE.DataTexture(new Uint8Array([130,205,255]),3,1,renderer.capabilities.isWebGL2?THREE.RedFormat:THREE.LuminanceFormat);
+gm.minFilter=gm.magFilter=THREE.NearestFilter;gm.needsUpdate=true;
+const T=c=>new THREE.MeshToonMaterial({color:c,gradientMap:gm}),B=c=>new THREE.MeshBasicMaterial({color:c});
+const fur=T(0xf7f5f0),cream=T(0xffffff),pinkIn=T(0xe9aaa6),nose=T(0xe58a96),eyeM=T(0x6d8470),coat=T(0xfafaf8),leather=T(0x5a3328),gold=T(0xd1a84e);
+const dark=B(0x1f1b3a),mouthM=B(0x7a2e2e),whisk=B(0xcfcac2);
+coat.side=THREE.DoubleSide;
+const OL=new THREE.MeshBasicMaterial({color:0x4a4470,side:THREE.BackSide});
+const outline=(m,k)=>{const o=new THREE.Mesh(m.geometry,OL);o.scale.setScalar(k||1.045);m.add(o)};
+const V=(x,y,z)=>new THREE.Vector3(x,y,z);
+const cat=new THREE.Group();scene.add(cat);
+const sph=(r,m,sx,sy,sz,x,y,z,par,no)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(r,28,20),m);o.scale.set(sx,sy,sz);o.position.set(x,y,z);(par||cat).add(o);if(!no)outline(o);return o};
+const bar=(a,b,r,m,par)=>{const d=b.clone().sub(a),o=new THREE.Mesh(new THREE.CylinderGeometry(r,r,d.length(),6),m);o.position.copy(a).add(b).multiplyScalar(.5);o.quaternion.setFromUnitVectors(V(0,1,0),d.clone().normalize());(par||cat).add(o);return o};
+// head: big, round and fluffy with cheek tufts
+const head=new THREE.Group();head.position.set(0,2.25,0);cat.add(head);
+sph(.9,fur,1.08,.9,.96,0,0,0,head);
+sph(.45,fur,1,.8,.8,-.62,-.2,.3,head);sph(.45,fur,1,.8,.8,.62,-.2,.3,head);
+sph(.3,fur,1.3,.7,.8,0,.62,.3,head);
+sph(.3,cream,1.2,.8,.8,0,-.3,.78,head);
+sph(.07,nose,1.3,.9,.9,0,-.15,1,head,1);
+const mouth=sph(.12,mouthM,1.2,.15,.4,0,-.38,1,head,1);
+const eyes=new THREE.Group();eyes.position.set(0,.1,0);head.add(eyes);
+[-1,1].forEach(s=>{
+ const x=s*.36;
+ const e=new THREE.Mesh(new THREE.ConeGeometry(.34,.62,4),fur);e.position.set(s*.62,.82,0);e.rotation.set(0,Math.PI/4,-s*.45);head.add(e);outline(e,1.06);
+ const i=new THREE.Mesh(new THREE.ConeGeometry(.22,.42,4),pinkIn);i.position.set(s*.62,.78,.12);i.rotation.set(0,Math.PI/4,-s*.45);head.add(i);
+ sph(.17,eyeM,1,1.2,.5,x,0,.78,eyes,1);
+ sph(.09,dark,1,1.2,.4,x,0,.84,eyes,1);
+ sph(.04,B(0xffffff),1,1,1,x+.05,.07,.87,eyes,1);
+ const g=new THREE.Mesh(new THREE.TorusGeometry(.25,.024,8,32),dark);g.position.set(x,.1,.9);head.add(g);
+ bar(V(s*.6,.1,.9),V(s*.92,.12,.45),.015,dark,head);
+ for(let a=-1;a<=1;a++)bar(V(s*.62,-.28+a*.08,.9),V(s*1.35,-.28+a*.2,.75),.007,whisk,head);
+});
+bar(V(-.11,.14,.91),V(.11,.14,.91),.017,dark,head);
+// white belted robe
+const prof=[[.001,0],[.95,0],[.93,.2],[.86,.55],[.7,.95],[.6,1.3],[.5,1.58]].map(p=>new THREE.Vector2(p[0],p[1]));
+const robe=new THREE.Mesh(new THREE.LatheGeometry(prof,32),coat);cat.add(robe);outline(robe,1.025);
+const col=new THREE.Mesh(new THREE.TorusGeometry(.58,.16,12,32),coat);col.rotation.x=Math.PI/2;col.position.y=1.5;cat.add(col);outline(col,1.06);
+sph(.3,fur,1.25,1,.7,0,1.35,.55);
+[-1,1].forEach(s=>{const l=new THREE.Mesh(new THREE.BoxGeometry(.2,.8,.05),coat);l.position.set(s*.2,1.1,.62);l.rotation.z=-s*.35;cat.add(l)});
+const belt=new THREE.Mesh(new THREE.TorusGeometry(.78,.065,10,32),coat);belt.rotation.x=Math.PI/2;belt.position.y=.78;cat.add(belt);outline(belt,1.1);
+sph(.1,coat,1.3,1,.8,.1,.78,.82);
+[-1,1].forEach(s=>{sph(.1,coat,1.4,.7,.5,.1+s*.17,.82,.82);bar(V(.1+s*.04,.74,.84),V(.1+s*.1,.38,.86),.026,coat)});
+sph(.05,cream,1,1,.6,-.1,.52,.88);sph(.05,cream,1,1,.6,-.1,.22,.93);
+// arms in wide sleeves
+const arm=s=>{const g=new THREE.Group();g.position.set(s*.66,1.4,.05);
+ const c=new THREE.Mesh(new THREE.CylinderGeometry(.19,.24,.64,16,1,true),coat);c.position.y=-.32;g.add(c);
+ const cf=new THREE.Mesh(new THREE.TorusGeometry(.23,.045,8,20),coat);cf.rotation.x=Math.PI/2;cf.position.y=-.64;g.add(cf);
+ sph(.15,cream,1,1,1,0,-.72,0,g);cat.add(g);return g};
+const armL=arm(-1),armR=arm(1);armR.rotation.z=2.3;armL.rotation.z=-.2;
+[-1,1].forEach(s=>sph(.2,cream,1,.6,1.5,s*.3,-.02,.9));
+// tail
+const tail=new THREE.Group();tail.position.set(0,.5,-.7);cat.add(tail);
+const curve=new THREE.CatmullRomCurve3([V(0,0,0),V(.3,-.1,-.4),V(.9,.2,-.4),V(1.15,.8,-.1),V(1,1.3,.1)]);
+const tm=new THREE.Mesh(new THREE.TubeGeometry(curve,28,.13,10),fur);tail.add(tm);outline(tm,1.12);
+sph(.14,cream,1,1,1,1,1.3,.1,tail);
+// brown crossbody bag
+const bag=new THREE.Group();bag.position.set(-.95,.6,.45);bag.rotation.y=-.6;cat.add(bag);
+const bb=new THREE.Mesh(new THREE.BoxGeometry(.42,.34,.18),leather);bag.add(bb);outline(bb,1.08);
+const fl=new THREE.Mesh(new THREE.BoxGeometry(.43,.14,.19),T(0x6b3d30));fl.position.y=.1;bag.add(fl);
+sph(.035,gold,1,1,.6,0,.03,.11,bag,1);
+bar(V(-.5,1.5,.38),V(-.93,.78,.5),.025,leather);
+// floor shadow
+const sh=new THREE.Mesh(new THREE.CircleGeometry(1.1,28),new THREE.MeshBasicMaterial({color:0x000000,transparent:true,opacity:.25}));
+sh.rotation.x=-Math.PI/2;sh.scale.set(1,.7,1);sh.position.y=-.06;scene.add(sh);
+// drag to turn
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches,A=RM?0:1;
+let yaw=0,drag=false,lx=0;
+cv.addEventListener('pointerdown',e=>{drag=true;lx=e.clientX;cv.setPointerCapture(e.pointerId);cv.style.cursor='grabbing'});
+cv.addEventListener('pointermove',e=>{if(!drag)return;yaw=Math.max(-1.3,Math.min(1.3,yaw+(e.clientX-lx)*.012));lx=e.clientX});
+const up=()=>{drag=false;cv.style.cursor='grab'};cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);
+const lerp=(a,b,k)=>a+(b-a)*k;
+function fit(){const w=W(),h=H();renderer.setSize(w,h,false);cam.aspect=w/h;cam.updateProjectionMatrix()}
+fit();addEventListener('resize',fit);
+// animation driven by the talk/happy/sad classes the quiz sets on #mimi
+const clock=new THREE.Clock();
+(function loop(){
+ requestAnimationFrame(loop);
+ const t=clock.getElapsedTime(),talk=el.classList.contains('talk'),happy=el.classList.contains('happy'),sad=el.classList.contains('sad');
+ if(!drag)yaw*=.94;
+ cat.rotation.y=yaw+Math.sin(t*.6)*.12*A;
+ cat.position.y=Math.sin(t*2)*.03*A+(happy?Math.abs(Math.sin(t*9))*.35:0);
+ head.rotation.y=Math.sin(t*.8)*.12*A;
+ head.rotation.x=lerp(head.rotation.x,sad?.28:(talk?Math.sin(t*9)*.06*A:0),.15);
+ head.rotation.z=lerp(head.rotation.z,sad?-.18:0,.1);
+ mouth.scale.y=lerp(mouth.scale.y,talk?.2+(Math.sin(t*22)*.5+.5)*1.1:.15,.4);
+ eyes.scale.y=lerp(eyes.scale.y,(sad?.65:1)*((t%3.6)>3.45?.1:1),.5);
+ const tr=sad?.4:(happy?2.7:2.3)+((talk||happy)?Math.sin(t*10)*.35:Math.sin(t*2)*.05)*A;
+ armR.rotation.z=lerp(armR.rotation.z,tr,.3);
+ armL.rotation.z=lerp(armL.rotation.z,happy?-2.5+Math.sin(t*10)*.3*A:(sad?-.35:-.2),.2);
+ tail.rotation.y=Math.sin(t*2.2)*.35*A;
+ renderer.render(scene,cam);
+})();
+}catch(err){el.innerHTML='<div style="font-size:84px;text-align:center;line-height:1.2">🐱</div>'}
+})();
+</script>
+</body>
+</html>
