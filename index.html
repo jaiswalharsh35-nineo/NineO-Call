@@ -215,14 +215,20 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
 <section id="quiz">
   <h2>Play a quiz until your captain arrives</h2>
   <p class="sub">Your Ustaad or Sakhi usually reaches you in about 2 minutes. Try the Ranchi Flash Quiz while you wait.</p>
-  <div class="quiz" aria-live="polite">
-    <div class="qtop"><div class="qtime" id="qt">2:00<small>Captain arriving in</small></div><div class="qscore" id="qs">Score: 0 pts</div></div>
-    <div class="bar" aria-hidden="true"><i id="qb"></i></div>
-    <div class="qq" id="qq">Tap start and answer as many questions as you can in 2 minutes.</div>
-    <div class="qo" id="qo"></div>
-    <div class="qmsg" id="qm"></div>
-    <button class="btn" id="qgo" style="margin-top:14px">Start the 2-minute quiz</button>
-  </div>
+
+  <iframe id="mimiFrame"
+    src="mimi-quiz.html?embed=1&eta=120"
+    title="Ranchi Flash Quiz with Mimi"
+    style="width:100%;height:700px;border:0;border-radius:18px"
+    loading="lazy" allow="autoplay"></iframe>
+
+  <script>
+  addEventListener('message', function (e) {
+    if (e.origin !== location.origin) return;
+    if (e.data && e.data.type === 'mimi-height')
+      document.getElementById('mimiFrame').style.height = e.data.h + 'px';
+  });
+  </script>
 </section>
 
 <section>
