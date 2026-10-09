@@ -223,6 +223,93 @@
       border-color: var(--primary);
     }
 
+    /* Group Booking Rider Count Selectors */
+    .rider-selector-box {
+      background: rgba(11, 17, 32, 0.7);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 14px;
+    }
+
+    .rider-selector-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .rider-selector-title {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .rider-group-tag {
+      font-size: 10px;
+      font-weight: 800;
+      background: rgba(250, 204, 21, 0.15);
+      color: var(--primary);
+      padding: 2px 7px;
+      border-radius: 6px;
+      border: 1px solid rgba(250, 204, 21, 0.3);
+    }
+
+    .rider-pill-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .rider-pill {
+      background: #1e293b;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: 700;
+      padding: 9px 0;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .rider-pill span.sub {
+      font-size: 9px;
+      font-weight: 600;
+      color: var(--text-dim);
+    }
+
+    .rider-pill.active {
+      background: var(--primary);
+      border-color: var(--primary);
+      color: #0f172a;
+      box-shadow: 0 4px 12px rgba(250, 204, 21, 0.25);
+    }
+
+    .rider-pill.active span.sub {
+      color: #334155;
+    }
+
+    .group-banner {
+      display: none;
+      background: rgba(250, 204, 21, 0.12);
+      border: 1px solid var(--primary);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 8px;
+      font-size: 11.5px;
+      color: #fef08a;
+      line-height: 1.35;
+    }
+
     .suggestions-dropdown {
       display: none;
       position: absolute;
@@ -614,6 +701,7 @@
     .pass-badge { font-size: 10px; font-weight: 800; background: #0284c7; color: white; padding: 2px 6px; border-radius: 6px; }
     .pass-price { font-size: 20px; font-weight: 900; color: var(--primary); text-align: right; }
 
+    /* Captain Display Card & Multi-Captain Group Switcher */
     .captain-display-card {
       display: none;
       background: #0b1120;
@@ -643,7 +731,34 @@
       letter-spacing: 0.8px;
     }
 
-    /* Punctuality Guarantee Banner Styles */
+    .group-captain-tabs {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(65px, 1fr));
+      gap: 6px;
+      margin: 12px 0 14px;
+      background: rgba(15, 23, 42, 0.8);
+      padding: 4px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+    }
+
+    .cap-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 11px;
+      font-weight: 700;
+      padding: 8px 4px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .cap-tab-btn.active {
+      background: var(--primary);
+      color: #0f172a;
+    }
+
     .guarantee-box {
       background: rgba(250, 204, 21, 0.09);
       border: 1.5px dashed rgba(250, 204, 21, 0.45);
@@ -1178,7 +1293,7 @@
       opacity: 0.85;
     }
 
-    /* Terms Modal Styles - Comprehensive 14 Clause View */
+    /* Terms Modal Styles */
     .terms-overlay {
       display: none;
       position: fixed;
@@ -1273,7 +1388,7 @@
     <div class="voice-bar">
       <div>
         <div class="voice-bar-text" id="voiceStatusText">🎙️ <b>Voice Order:</b> Tap mic & speak</div>
-        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "From Lalpur to Dhurwa" or "Station jana hai"</div>
+        <div style="font-size:10px; color:var(--text-dim);" id="voiceSubText">Try: "From Lalpur to Dhurwa for 2 people"</div>
       </div>
       <button type="button" class="voice-mic-btn" id="voiceMicBtn" onclick="toggleVoiceRecognition()" title="Speak in Hindi/English">
         🎤
@@ -1294,6 +1409,36 @@
 
     <!-- 1. BOOK RIDE TAB -->
     <div id="sectionBook">
+      
+      <!-- Group Booking Selection: 1 to 4 People -->
+      <div class="rider-selector-box">
+        <div class="rider-selector-header">
+          <span class="rider-selector-title">Select Number of Riders</span>
+          <span class="rider-group-tag" id="riderGroupTag">Single Captain</span>
+        </div>
+        <div class="rider-pill-grid">
+          <div class="rider-pill active" id="pillRider1" onclick="setRiderCount(1)">
+            <div>1 Rider</div>
+            <span class="sub">1 Captain</span>
+          </div>
+          <div class="rider-pill" id="pillRider2" onclick="setRiderCount(2)">
+            <div>2 Riders</div>
+            <span class="sub">2 Captains</span>
+          </div>
+          <div class="rider-pill" id="pillRider3" onclick="setRiderCount(3)">
+            <div>3 Riders</div>
+            <span class="sub">3 Captains</span>
+          </div>
+          <div class="rider-pill" id="pillRider4" onclick="setRiderCount(4)">
+            <div>4 Riders</div>
+            <span class="sub">4 Captains</span>
+          </div>
+        </div>
+        <div class="group-banner" id="groupBookingBanner">
+          👥 <b>Group Booking Active:</b> We will dispatch <span id="groupCapCount">2</span> two-wheelers simultaneously to your exact pickup location.
+        </div>
+      </div>
+
       <div class="field">
         <label>Pickup Location</label>
         <div class="input-wrap">
@@ -1333,11 +1478,11 @@
           <div class="choice-card" id="cardSingleRide">
             <div>
               <span class="choice-badge badge-single" id="badgeSingle">Single Ride</span>
-              <div class="choice-title">Single Ride</div>
+              <div class="choice-title" id="singleRideTitle">Single Ride</div>
               <div class="choice-price" id="singlePrice">₹--</div>
               <div class="choice-desc" id="singleDesc">Direct point-to-point ride. Pay captain at drop.</div>
             </div>
-            <button class="btn-choice btn-choice-single" id="btnBookSingle" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Single ➔</button>
+            <button class="btn-choice btn-choice-single" id="btnBookSingle" onclick="submitRideBooking('SINGLE', singleFareAmount)">Book Ride ➔</button>
           </div>
 
           <div class="choice-card" id="cardPassOffer">
@@ -1351,7 +1496,7 @@
           </div>
         </div>
 
-        <!-- On-Time Arrival Guarantee: Adjusted for High Visibility at Booking Time (Single Rides Only) -->
+        <!-- On-Time Arrival Guarantee -->
         <div class="guarantee-box" id="singleRideGuaranteeBox">
           <div class="guarantee-title">⚡ On-Time Arrival Guarantee</div>
           <div class="guarantee-text">
@@ -1373,7 +1518,7 @@
       </div>
 
       <button class="btn-submit" id="btnBookDirect" onclick="submitRideBooking('DEFAULT', 0)">
-        <span>Request nineO Captain</span> ➔
+        <span id="btnBookDirectText">Request nineO Captain</span> ➔
       </button>
     </div>
 
@@ -1384,11 +1529,14 @@
         ● Captain Assigned (Arriving)
       </div>
 
+      <!-- Multi Captain Group Tabs Switcher -->
+      <div class="group-captain-tabs" id="groupCaptainTabs"></div>
+
       <div id="dispOtpWrap">
         <div class="otp-badge">
           START PIN: <b id="dispOtp" style="color:white; font-size:18px;">----</b>
         </div>
-        <div style="font-size:11px; color:var(--text-dim); margin-top:-6px; margin-bottom:10px;">
+        <div style="font-size:11px; color:var(--text-dim); margin-top:-6px; margin-bottom:10px;" id="otpSubNotice">
           Share this 4-digit PIN with captain upon arrival to begin trip
         </div>
       </div>
@@ -1493,7 +1641,7 @@
       </button>
     </div>
 
-    <!-- 4. PASS CONFIRMATION DISPLAY (With 2-Second Auto-Redirect) -->
+    <!-- 4. PASS CONFIRMATION DISPLAY -->
     <div class="pass-confirm-card" id="passConfirmCard">
       <div class="check-icon-circle">✓</div>
       <div style="font-size: 12px; font-weight: 800; color: var(--green); text-transform: uppercase; letter-spacing: 1px;">
@@ -1585,6 +1733,7 @@
 
     <div class="trust-strip">
       <div class="trust-item"><span>🛡️</span><b>Safe & Secure</b></div>
+      <div class="trust-item"><span>👥</span><b>Group Rides (2–4)</b></div>
       <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
       <div class="trust-item"><span>🌱</span><b>Cleaner Cities</b></div>
     </div>
@@ -1611,15 +1760,15 @@
 
     <div class="chat-body" id="chatBody">
       <div class="chat-msg bot">
-        Namaste! I'm your nineO assistant. How can I help you with your Ranchi bike taxi or daily pass today?
+        Namaste! I'm your nineO assistant. You can book single rides, group rides (2 to 4 people), or daily passes. How can I assist you?
       </div>
     </div>
 
     <div class="chat-quick-queries">
+      <div class="quick-pill" onclick="handleQuickPill('How does group booking work?')">👥 Group Rides</div>
       <div class="quick-pill" onclick="handleQuickPill('Pass not activated')">🎟️ Pass Issue</div>
       <div class="quick-pill" onclick="handleQuickPill('Captain delayed')">⏳ Captain Delayed</div>
       <div class="quick-pill" onclick="handleQuickPill('Fare query')">💰 Fare Details</div>
-      <div class="quick-pill" onclick="handleQuickPill('Talk to human agent')">📞 Talk to Agent</div>
     </div>
 
     <div class="chat-input-row">
@@ -1628,7 +1777,7 @@
     </div>
   </div>
 
-  <!-- 8. TERMS MODAL - COMPLETE 14 CLAUSES RESTORED -->
+  <!-- 8. TERMS MODAL -->
   <div class="terms-overlay" id="termsModalOverlay" onclick="if(event.target===this) closeTermsModal()">
     <div class="terms-modal">
       <div class="terms-header">
@@ -1641,92 +1790,21 @@
 
         <h3>1. The Nature of the Platform</h3>
         <p>NINEO provides a technology platform that connects individual riders ("Riders") with independent third-party transport operators or drivers ("Captains" or "Drivers").</p>
-        <p>Unless explicitly stated otherwise in writing, NINEO is a technology services provider and does not directly operate transportation services, nor does it function as a common carrier. Independent Drivers are solely responsible for providing transportation services requested through the Platform.</p>
+        <p>Group bookings request simultaneous individual two-wheeler dispatches (2 to 4 Captains) coordinated under a single parent booking session.</p>
 
         <h3>2. User Eligibility and Account Registration</h3>
         <ul>
-          <li><b>Age Requirement:</b> You must be at least 18 years of age (or the legal age of majority in your jurisdiction) to create an account and use the Platform.</li>
-          <li><b>Account Security:</b> Registration requires providing accurate, up-to-date personal details, including a valid mobile phone number. Verification is conducted via One-Time Passwords (OTP), PINs, or digital credentials.</li>
-          <li><b>Account Ownership:</b> You may not assign, transfer, or authorize any third party to use your account. You are strictly responsible for all activity conducted under your account credentials.</li>
+          <li><b>Age Requirement:</b> You must be at least 18 years of age to book rides on the Platform.</li>
+          <li><b>Account Security:</b> All individual riders in a group booking must be present at the agreed pickup location.</li>
         </ul>
 
         <h3>3. Location Tracking and Telemetry</h3>
-        <p>To deliver essential transit routing, dispatching, and pricing services:</p>
+        <p>You grant NINEO permission to access precise GPS data for matching drivers, route calculation, and real-time transit safety.</p>
+
+        <h3>4. Pricing, Passes, and Group Terms</h3>
         <ul>
-          <li>You grant NINEO permission to access and monitor your device's <b>precise GPS location data</b> while using the Platform.</li>
-          <li>Location data is recorded to match you with nearby Drivers, calculate transit distances, determine fare tiers or overage charges, and provide real-time trip monitoring for safety.</li>
-          <li>Disabling device location permissions will render the Platform's core dispatch and transport functionalities inoperable. For details on telemetry storage, refer to our Privacy Policy.</li>
-        </ul>
-
-        <h3>4. Pricing, Passes, and Payment Terms</h3>
-        <ul>
-          <li><b>Dynamic Fares & Structured Passes:</b> Single trip fares are calculated based on Base Fare (₹21), Road Distance Rate (₹6.75/km), and Travel Time (₹0.30/min), plus applicable platform fees (₹3 for fares ≤ ₹50, ₹4 for fares > ₹50) and statutory 5% GST. Captain earnings are integrated directly into the fare. Structured Daily Passes (5 KM, 9 KM, 18 KM) offer prepaid 24-hour quota balances.</li>
-          <li><b>Distance Overages:</b> Any trip exceeding the pre-purchased pass distance or standard quota will incur additional per-kilometer overage charges (₹9/km), calculated automatically by our GPS telemetry engine.</li>
-          <li><b>Taxes and Fees:</b> You agree to pay all applicable fares, toll fees, dynamic peak-pricing surcharges, and local statutory taxes associated with your booking.</li>
-          <li><b>Payment Processing:</b> Payments are processed through secure, PCI-DSS-compliant third-party payment gateways. You authorize NINEO and its payment partners to charge your designated payment method for all incurred amounts.</li>
-          <li><b>Refund Policy:</b> Pre-purchased passes, promotional packages, and completed trips are strictly non-refundable except where required by applicable consumer protection laws or due to a documented technical failure verified by our support team.</li>
-        </ul>
-
-        <h3>5. Cancellations and Wait-Time Fees</h3>
-        <ul>
-          <li><b>Cancellation Windows:</b> You may cancel a booking request free of charge within 2 minutes of a Driver accepting the request. Cancellations made after this grace period may incur a standard cancellation fee.</li>
-          <li><b>No-Show and Wait Time:</b> If a Driver arrives at the designated pickup location and you fail to board within 5 minutes, the Driver may cancel the ride, and a no-show cancellation fee will be billed to your account.</li>
-        </ul>
-
-        <h3>6. Masked Communications and Messaging</h3>
-        <ul>
-          <li>To protect the personal privacy of both parties, the Platform utilizes call and SMS masking proxies.</li>
-          <li>When you communicate with a Driver regarding a booking, your personal telephone number is concealed behind a temporary virtual relay.</li>
-          <li>By using the Platform, you consent to receive operational communications, ride receipts, system alerts, and security verification codes via SMS, automated push notifications, and telephone calls.</li>
-        </ul>
-
-        <h3>7. User Conduct and Safety Obligations</h3>
-        <p>You agree to maintain safety and decorum at all times while using the Platform. You shall NOT:</p>
-        <ol>
-          <li>Impair or attempt to impair the safe operation of any vehicle.</li>
-          <li>Refuse to comply with local road safety mandates, including mandatory helmet regulations for two-wheeler transport.</li>
-          <li>Carry hazardous, flammable, illicit, or oversized goods that violate vehicle capacity limits.</li>
-          <li>Verbally abuse, harass, intimidate, or physically harm any Driver, passenger, or Platform representative.</li>
-          <li>Tamper with the Platform's digital systems, reverse-engineer proprietary algorithms, or manipulate GPS coordinates (spoofing).</li>
-        </ol>
-        <p>Violation of these standards will result in immediate and permanent account termination, forfeiture of unused passes, and potential reporting to local law enforcement.</p>
-
-        <h3>8. Intellectual Property Rights</h3>
-        <p>All software, trademarks, logos, system algorithms, user interface designs, and intellectual assets associated with the Platform are the exclusive property of NINEO or its licensors. You are granted a limited, revocable, non-exclusive, non-transferable license strictly to access the mobile application for personal, non-commercial use.</p>
-
-        <h3>9. Disclaimer of Warranties</h3>
-        <p>THE PLATFORM IS PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS. TO THE MAXIMUM EXTENT PERMITTED BY LAW, NINEO EXPRESSLY DISCLAIMS ALL WARRANTIES, WHETHER EXPRESS, IMPLIED, STATUTORY, OR OTHERWISE, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. WE DO NOT GUARANTEE THAT THE PLATFORM WILL OPERATE UNINTERRUPTED, SECURE, OR ERROR-FREE, NOR DO WE WARRANT THE RELIABILITY, TIMELINESS, OR SAFETY OF ANY THIRD-PARTY TRANSPORT OPERATOR.</p>
-
-        <h3>10. Limitation of Liability</h3>
-        <p>TO THE MAXIMUM EXTENT PERMITTED BY APPLICABLE LAW, IN NO EVENT SHALL NINEO, ITS DIRECTORS, EMPLOYEES, OR AGENTS BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, PUNITIVE, OR CONSEQUENTIAL DAMAGES, INCLUDING LOSS OF PROFITS, DATA LOSS, PERSONAL INJURY, OR PROPERTY DAMAGE ARISING OUT OF OR IN CONNECTION WITH YOUR USE OF THE PLATFORM OR ANY RIDE TRANSACTIONS, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.</p>
-        <p>OUR TOTAL AGGREGATE LIABILITY TO YOU FOR ALL CLAIMS ARISING UNDER THESE TERMS SHALL NOT EXCEED THE TOTAL AMOUNT PAID BY YOU TO NINEO IN THE THREE (3) MONTHS IMMEDIATELY PRECEDING THE EVENT GIVING RISE TO LIABILITY, OR ₹1,000, WHICHEVER IS LESS.</p>
-
-        <h3>11. Indemnification</h3>
-        <p>You agree to defend, indemnify, and hold harmless Nineo, its officers, affiliates, and employees from and against any claims, liabilities, damages, losses, costs, or expenses (including reasonable legal fees) arising from:</p>
-        <ul>
-          <li>Your violation of these Terms or applicable laws;</li>
-          <li>Your interaction with, transport by, or disputes with any third-party Driver;</li>
-          <li>Your infringement of any third-party rights, including privacy or intellectual property rights.</li>
-        </ul>
-
-        <h3>12. Governing Law and Dispute Resolution</h3>
-        <ul>
-          <li><b>Governing Law:</b> These Terms shall be governed by, interpreted, and construed in accordance with the laws of India, without regard to conflict of law principles.</li>
-          <li><b>Dispute Escalation:</b> Before initiating formal legal proceedings, you agree to submit any claim or dispute to informal resolution by contacting our legal department at harshjaiswal@nineo.in.</li>
-          <li><b>Jurisdiction:</b> Any unresolved dispute, controversy, or claim arising out of these Terms shall be subject to the exclusive jurisdiction of the competent courts located in Ranchi, Jharkhand.</li>
-        </ul>
-
-        <h3>13. Modifications to the Terms</h3>
-        <p>We reserve the right to amend or update these Terms at any time. Material changes will be communicated via in-app notification, email, or by revising the terms on the Platform. Your continued use of the Platform following published changes signifies your legal acceptance of the revised Terms.</p>
-
-        <h3>14. Contact and Legal Notices</h3>
-        <p>For questions, regulatory inquiries, or legal notices concerning these Terms, contact our compliance officer at:</p>
-        <ul>
-          <li><b>Entity Name:</b> Nineo Mobility</li>
-          <li><b>Attn:</b> Legal & Compliance Department</li>
-          <li><b>Physical Address:</b> Prasad Hostel, Ranchi, Jharkhand</li>
-          <li><b>Support Email:</b> harshjaiswal@nineo.in</li>
-          <li><b>Customer Support Contact:</b> +91-9525054247</li>
+          <li><b>Dynamic Fares:</b> Single trip fares are calculated based on Base Fare (₹21), Road Distance Rate (₹6.75/km), and Travel Time (₹0.30/min), plus applicable platform fees and statutory 5% GST.</li>
+          <li><b>Group Rides:</b> Group bookings (2 to 4 riders) bill dynamically per captain assigned. Daily passes apply toward 1 rider slot; additional group riders are billed at standard single dynamic rates.</li>
         </ul>
       </div>
       <div class="terms-footer">
@@ -1745,11 +1823,41 @@
     const RANCHI_CENTER = { lat: 23.3698, lon: 85.3253 };
     const RANCHI_MAX_RADIUS_KM = 26.0;
 
-    function roundToNearestNine(val) {
-      return Math.round((val - 9) / 10) * 10 + 9;
+    let groupRiderCount = 1; // 1, 2, 3, or 4
+    let groupCaptainsList = [];
+    let selectedCaptainTabIndex = 0;
+
+    function setRiderCount(count) {
+      groupRiderCount = count;
+      [1, 2, 3, 4].forEach(n => {
+        const pill = document.getElementById(`pillRider${n}`);
+        if (pill) {
+          if (n === count) pill.classList.add("active");
+          else pill.classList.remove("active");
+        }
+      });
+
+      const groupTag = document.getElementById("riderGroupTag");
+      const groupBanner = document.getElementById("groupBookingBanner");
+      const groupCountLabel = document.getElementById("groupCapCount");
+      const btnDirectText = document.getElementById("btnBookDirectText");
+
+      if (count === 1) {
+        groupTag.innerText = "Single Captain";
+        groupBanner.style.display = "none";
+        btnDirectText.innerText = "Request nineO Captain";
+      } else {
+        groupTag.innerText = `Group: ${count} Captains`;
+        groupBanner.style.display = "block";
+        groupCountLabel.innerText = count;
+        btnDirectText.innerText = `Request ${count} nineO Captains Together`;
+      }
+
+      if (calculatedKm > 0) {
+        renderComparison(parseFloat(calculatedKm), calculatedMinutes);
+      }
     }
 
-    // Dynamic Fare Calculation (Base ₹21, ₹6.75/km, ₹0.30/min, tiered platform fee + 5% GST)
     function calculateSingleRideFare(km, minutes) {
       const dist = parseFloat(km) || 0;
       const duration = (minutes && minutes > 0) ? minutes : Math.max(5, Math.round((dist / 22) * 60));
@@ -1758,12 +1866,8 @@
       const perKmRate = 6.75;
       const perMinRate = 0.30;
       
-      // Dynamic ride component (Captain micro-fee is integrated directly into the fare)
       const rideFare = baseFare + (dist * perKmRate) + (duration * perMinRate);
-      
-      // Tiered Platform Fee only
       const platformFee = rideFare <= 50 ? 3 : 4;
-      
       const subtotal = rideFare + platformFee;
       const totalWithGst = subtotal * 1.05;
       
@@ -1781,7 +1885,6 @@
     
     let currentPickupText = "";
     let currentDropText = "";
-    let activeCaptainDetails = null;
 
     let routeDebounceTimer = null;
     let suggestDebounceTimer = null;
@@ -1812,7 +1915,6 @@
     let captainRoutePolyline = null;
     let captainMotionTimer = null;
 
-    // --- Ranchi Waiting Quiz Database & Engine ---
     const RANCHI_QUIZ_DATA = [
       {
         q: "Which iconic waterfall near Ranchi falls from a height of ~320 feet along the Subarnarekha River?",
@@ -1902,9 +2004,7 @@
         document.getElementById("userPhone").value = localStorage.getItem("nineo_phone");
         handlePhoneInput();
       }
-    } catch (e) {
-      console.warn("Storage restricted:", e);
-    }
+    } catch (e) {}
 
     function isWithinRanchiBoundary(coords) {
       if (!coords || typeof coords.lat !== 'number' || typeof coords.lon !== 'number') return false;
@@ -2250,8 +2350,8 @@
             } else {
               clearInterval(captainMotionTimer);
               captainMotionTimer = null;
-              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captain Arrived at Pickup!</b>";
-              speakResponse("Captain has arrived. Please share your 4-digit PIN to begin.", "en");
+              document.getElementById("dispTripStatusText").innerHTML = "🟢 <b>Captains Arrived at Pickup!</b>";
+              speakResponse("Captains have arrived. Please share your start PIN to begin.", "en");
             }
           }, 1800);
         }
@@ -2359,87 +2459,92 @@
       const upsellBox = document.getElementById("passUpsellBox");
       const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
 
-      singleFareAmount = calculateSingleRideFare(km, minutes);
-      document.getElementById("singlePrice").innerText = `₹${singleFareAmount}`;
-      document.getElementById("singleDesc").innerText = "Direct point-to-point ride. Pay captain at drop.";
+      const basePerBikeFare = calculateSingleRideFare(km, minutes);
+      singleFareAmount = basePerBikeFare * groupRiderCount;
+
+      const singleTitleEl = document.getElementById("singleRideTitle");
+      const singlePriceEl = document.getElementById("singlePrice");
+      const singleDescEl = document.getElementById("singleDesc");
+      const badgeSingle = document.getElementById("badgeSingle");
+
+      if (groupRiderCount > 1) {
+        singleTitleEl.innerText = `Group (${groupRiderCount} Bikes)`;
+        badgeSingle.innerText = `GROUP (${groupRiderCount})`;
+        singlePriceEl.innerText = `₹${singleFareAmount}`;
+        singleDescEl.innerText = `${groupRiderCount} Captains dispatched together (₹${basePerBikeFare}/bike).`;
+      } else {
+        singleTitleEl.innerText = "Single Ride";
+        badgeSingle.innerText = "SINGLE RIDE";
+        singlePriceEl.innerText = `₹${singleFareAmount}`;
+        singleDescEl.innerText = "Direct point-to-point ride. Pay captain at drop.";
+      }
 
       const pTitle = document.getElementById("passCardTitle");
       const pPrice = document.getElementById("passPrice");
       const pDesc = document.getElementById("passDesc");
 
       if (km <= 5.0) {
-        recommendedTier = "PASS_59";
-        recommendedAmount = 59;
-        recommendedName = "5 KM Pass";
-        pTitle.innerText = "5 KM Pass";
-        pPrice.innerText = "₹59";
-        pDesc.innerText = "Covers this trip in full. Valid 24 hours.";
+        recommendedTier = "PASS_59"; recommendedAmount = 59; recommendedName = "5 KM Pass";
+        pTitle.innerText = "5 KM Pass"; pPrice.innerText = "₹59"; pDesc.innerText = "Covers this trip in full. Valid 24 hours.";
       } else if (km <= 9.0) {
-        recommendedTier = "PASS_89";
-        recommendedAmount = 89;
-        recommendedName = "9 KM Super Pass";
-        pTitle.innerText = "9 KM Super Pass";
-        pPrice.innerText = "₹89";
-        pDesc.innerText = "Covers this trip + return trip within 24h.";
+        recommendedTier = "PASS_89"; recommendedAmount = 89; recommendedName = "9 KM Super Pass";
+        pTitle.innerText = "9 KM Super Pass"; pPrice.innerText = "₹89"; pDesc.innerText = "Covers this trip + return trip within 24h.";
       } else {
-        recommendedTier = "PASS_149";
-        recommendedAmount = 149;
-        recommendedName = "18 KM Pro Pass";
-        pTitle.innerText = "18 KM Pro Pass";
-        pPrice.innerText = "₹149";
-        pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
+        recommendedTier = "PASS_149"; recommendedAmount = 149; recommendedName = "18 KM Pro Pass";
+        pTitle.innerText = "18 KM Pro Pass"; pPrice.innerText = "₹149"; pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
       }
 
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
         stdGrid.style.display = "none";
         passCard.style.display = "block";
-        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "none"; // Guarantee is for Single Rides only
+        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "none";
         document.getElementById("routeSubtitle").innerText = "Active Pass Applied:";
 
+        let passCoveredDue = 0;
+        let explanationText = "";
+
         if (km <= userActivePass.remainingKm) {
-          currentDueFare = 0;
-          passDue.innerText = "₹0";
-          passDue.style.color = "var(--green)";
           const leftAfter = (userActivePass.remainingKm - km).toFixed(1);
-          passExp.innerHTML = `✅ <b>Trip Fully Covered!</b><br>1 ride deducted. <b>${leftAfter} KM</b> balance remaining.`;
-          btnBookPass.disabled = false;
-          btnBookPass.innerHTML = "<span>Request nineO Captain (₹0 Pass Ride)</span> ➔";
-          if (upsellBox) upsellBox.style.display = "none";
+          if (groupRiderCount === 1) {
+            passCoveredDue = 0;
+            explanationText = `✅ <b>Trip Fully Covered!</b><br>1 ride deducted. <b>${leftAfter} KM</b> balance remaining.`;
+          } else {
+            const extraBikesFare = basePerBikeFare * (groupRiderCount - 1);
+            passCoveredDue = extraBikesFare;
+            explanationText = `✅ <b>Rider 1 covered by Pass (₹0)!</b><br>${groupRiderCount - 1} extra captain(s) due: <b>₹${extraBikesFare}</b>.`;
+          }
         } else {
           const coveredKm = userActivePass.remainingKm;
           const extraKm = parseFloat((km - coveredKm).toFixed(1));
-          currentDueFare = Math.round(extraKm * 9);
-
-          passDue.innerText = `₹${currentDueFare}`;
-          passDue.style.color = "var(--primary)";
-          passExp.innerHTML = `⚡ <b>${coveredKm} KM covered free by your pass.</b><br>Extra ${extraKm} KM overage: <b>₹${currentDueFare}</b> due to captain.`;
-          
-          btnBookPass.disabled = false;
-          btnBookPass.innerHTML = `<span>Confirm Ride (₹${currentDueFare} Due)</span> ➔`;
-
-          if (upsellBox) {
-            upsellBox.style.display = "block";
-            upsellBox.innerHTML = `
-              <div class="upsell-title">💡 Smart Pass Upgrade</div>
-              <div class="upsell-text">Activate a fresh <b>${recommendedName} (₹${recommendedAmount})</b> instead to cover this ride plus future trips.</div>
-              <button type="button" class="btn-upsell" onclick="selectPass(null, '${recommendedTier}', ${recommendedAmount}, '${recommendedName}'); openPaymentModal();">
-                Get ${recommendedName} (₹${recommendedAmount}) ⚡
-              </button>
-            `;
+          const rider1Overage = Math.round(extraKm * 9);
+          if (groupRiderCount === 1) {
+            passCoveredDue = rider1Overage;
+            explanationText = `⚡ <b>${coveredKm} KM covered free by your pass.</b><br>Extra ${extraKm} KM overage: <b>₹${rider1Overage}</b> due to captain.`;
+          } else {
+            const extraBikesFare = basePerBikeFare * (groupRiderCount - 1);
+            passCoveredDue = rider1Overage + extraBikesFare;
+            explanationText = `⚡ <b>Pass applied for Rider 1:</b> ₹${rider1Overage} overage + ₹${extraBikesFare} for ${groupRiderCount - 1} group bike(s). Total: <b>₹${passCoveredDue}</b>`;
           }
         }
+
+        currentDueFare = passCoveredDue;
+        passDue.innerText = `₹${currentDueFare}`;
+        passDue.style.color = (currentDueFare === 0) ? "var(--green)" : "var(--primary)";
+        passExp.innerHTML = explanationText;
+        btnBookPass.disabled = false;
+        btnBookPass.innerHTML = `<span>Request ${groupRiderCount > 1 ? groupRiderCount + ' Captains' : 'nineO Captain'} (${currentDueFare === 0 ? '₹0' : '₹' + currentDueFare})</span> ➔`;
+
       } else {
         passCard.style.display = "none";
         stdGrid.style.display = "grid";
-        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "block"; // Display guarantee banner for single ride booking
+        if (singleGuaranteeBox) singleGuaranteeBox.style.display = "block";
 
         const cardSingle = document.getElementById("cardSingleRide");
         const cardPass = document.getElementById("cardPassOffer");
-        const badgeSingle = document.getElementById("badgeSingle");
         const badgePass = document.getElementById("badgePass");
         const subtitle = document.getElementById("routeSubtitle");
 
-        const isPassBetterValue = (singleFareAmount >= (recommendedAmount * 0.70));
+        const isPassBetterValue = (basePerBikeFare >= (recommendedAmount * 0.70)) && groupRiderCount === 1;
 
         if (isPassBetterValue) {
           subtitle.innerHTML = `💡 <b>Recommended: Daily Pass</b> (Best Value for 24h)`;
@@ -2448,13 +2553,11 @@
           badgePass.className = "choice-badge badge-recommended";
           badgePass.innerText = "RECOMMENDED";
           badgeSingle.className = "choice-badge badge-single";
-          badgeSingle.innerText = "SINGLE RIDE";
         } else {
-          subtitle.innerHTML = `💡 <b>Recommended: Single Ride</b> (Best for One-Way)`;
+          subtitle.innerHTML = `💡 <b>Direct Booking:</b> Fast Dispatch`;
           cardSingle.classList.add("highlight");
           cardPass.classList.remove("highlight");
           badgeSingle.className = "choice-badge badge-recommended";
-          badgeSingle.innerText = "RECOMMENDED";
           badgePass.className = "choice-badge badge-pass";
           badgePass.innerText = "PASS SAVER";
         }
@@ -2487,7 +2590,7 @@
           isVoiceActive = true;
           document.getElementById("voiceMicBtn").classList.add("listening");
           document.getElementById("voiceStatusText").innerHTML = "🔴 <b>Listening...</b> Speak now";
-          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station jana hai' or 'Lalpur to Dhurwa'";
+          document.getElementById("voiceSubText").innerText = "Say e.g. 'Station for 2 people' or 'Lalpur to Dhurwa'";
         };
 
         voiceRecognition.onresult = (event) => {
@@ -2500,16 +2603,13 @@
           isVoiceActive = false;
           document.getElementById("voiceMicBtn").classList.remove("listening");
           document.getElementById("voiceStatusText").innerText = "⚠️ Voice error: " + (event.error || "failed");
-          document.getElementById("voiceSubText").innerText = "Tap mic to retry or check browser microphone permission.";
         };
 
         voiceRecognition.onend = () => {
           isVoiceActive = false;
           document.getElementById("voiceMicBtn").classList.remove("listening");
         };
-      } catch (err) {
-        console.error("Speech init error:", err);
-      }
+      } catch (err) {}
     }
 
     function toggleVoiceRecognition() {
@@ -2531,6 +2631,15 @@
     async function parseVoiceIntentWithBackend(rawText) {
       const subText = document.getElementById("voiceSubText");
       const lower = rawText.toLowerCase().trim();
+
+      // Check for rider count mentions (e.g. 2 people, 3 log, char riders)
+      if (lower.includes("4 people") || lower.includes("4 log") || lower.includes("four") || lower.includes("4 riders")) {
+        setRiderCount(4);
+      } else if (lower.includes("3 people") || lower.includes("3 log") || lower.includes("three") || lower.includes("3 riders")) {
+        setRiderCount(3);
+      } else if (lower.includes("2 people") || lower.includes("2 log") || lower.includes("two") || lower.includes("dono") || lower.includes("2 riders")) {
+        setRiderCount(2);
+      }
 
       if (lower.includes("pass") || lower.includes("card")) {
         if (lower.includes("89") || lower.includes("super") || lower.includes("9")) {
@@ -2590,9 +2699,7 @@
             return;
           }
         }
-      } catch (err) {
-        console.warn("Backend AI parse error:", err);
-      }
+      } catch (err) {}
 
       const fallbackDrop = cleanPlace(lower);
       if (fallbackDrop.length > 1) {
@@ -2604,7 +2711,7 @@
 
     function cleanPlace(str) {
       if (!str) return "";
-      return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take|me)\b/gi, " ")
+      return str.replace(/\b(mujhe|humko|bhaiya|bhai|please|jaldi|chalo|jana\s*hai|jana\s*h|h|hai|se|to|from|drop|take|me|people|log|riders)\b/gi, " ")
                 .replace(/\s+/g, " ")
                 .trim();
     }
@@ -2818,25 +2925,17 @@
         return alert("nineO currently operates only within Ranchi city limits. Please select locations within Ranchi.");
       }
 
-      if (!calculatedKm || calculatedKm === 0) {
-        if (pickupCoords && dropCoords) {
-          calculatedKm = (haversine(pickupCoords.lat, pickupCoords.lon, dropCoords.lat, dropCoords.lon) * 1.35).toFixed(1);
-        } else {
-          calculatedKm = 5.0;
-        }
-        calculatedMinutes = Math.max(5, Math.round((calculatedKm / 22) * 60));
-        singleFareAmount = calculateSingleRideFare(calculatedKm, calculatedMinutes);
-      }
+      const basePerBike = calculateSingleRideFare(calculatedKm, calculatedMinutes);
 
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
         type = 'PASS';
         const tripNum = parseFloat(calculatedKm);
-        if (tripNum <= userActivePass.remainingKm) {
-          fare = 0;
-        } else {
+        let rider1Fare = 0;
+        if (tripNum > userActivePass.remainingKm) {
           const extraKm = parseFloat((tripNum - userActivePass.remainingKm).toFixed(1));
-          fare = Math.round(extraKm * 9);
+          rider1Fare = Math.round(extraKm * 9);
         }
+        fare = rider1Fare + (basePerBike * (groupRiderCount - 1));
       } else if (type === 'SINGLE' || type === 'DEFAULT') {
         type = 'SINGLE';
         fare = singleFareAmount;
@@ -2851,26 +2950,22 @@
 
       document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
         b.disabled = true;
-        b.innerText = "Assigning Captain...";
+        b.innerText = groupRiderCount > 1 ? `Assigning ${groupRiderCount} Captains...` : "Assigning Captain...";
       });
 
-      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}`;
+      const url = `${BACKEND_URL}?action=apiBook&phone=${phone}&pickup=${encodeURIComponent(pickup)}&drop=${encodeURIComponent(drop)}&bookingType=${type}&fare=${fare}&km=${calculatedKm}&riders=${groupRiderCount}`;
 
       try {
         const res = await fetch(url);
         const data = await res.json();
 
-        if (data.status === "SUCCESS" && data.captain) {
+        if (data.status === "SUCCESS") {
           renderCaptainCard(data, currentPickupText, currentDropText, fare, type);
         } else if (data.status === "ERROR") {
           alert("⚠️ " + (data.message || "Booking request could not be completed."));
           document.querySelectorAll(".btn-choice, .btn-submit").forEach(b => {
             b.disabled = false;
           });
-          const btnActive = document.getElementById("btnBookActivePass");
-          if (btnActive) {
-            btnActive.innerText = (fare === 0) ? "Request nineO Captain (₹0) ➔" : `Confirm Ride (₹${fare} Due) ➔`;
-          }
         } else {
           fallbackCaptainCard(currentPickupText, currentDropText, fare, type);
         }
@@ -2881,7 +2976,24 @@
 
     function renderCaptainCard(data, pickup, drop, fare, type) {
       currentRideId = data.rideId || ("RIDE-" + Math.random().toString(36).substring(2, 7).toUpperCase());
-      activeCaptainDetails = data.captain;
+
+      // Setup multi-captain group state
+      if (data.captains && Array.isArray(data.captains) && data.captains.length > 0) {
+        groupCaptainsList = data.captains;
+      } else {
+        groupCaptainsList = [];
+        const names = ["Rahul Kumar", "Vikram Singh", "Amit Tirkey", "Suresh Soren"];
+        const bikes = ["Hero Splendor", "Honda Shine", "Bajaj Pulsar", "TVS Raider"];
+        for (let i = 0; i < groupRiderCount; i++) {
+          groupCaptainsList.push({
+            name: (i === 0 && data.captain?.name) ? data.captain.name : `${names[i % names.length]} (nineO Captain)`,
+            vehicleNo: (i === 0 && data.captain?.vehicleNo) ? data.captain.vehicleNo : `JH 01 BZ ${4820 + i}`,
+            bikeModel: (i === 0 && data.captain?.bikeModel) ? data.captain.bikeModel : bikes[i % bikes.length],
+            phone: (i === 0 && data.captain?.phone) ? data.captain.phone : "9525054247",
+            otp: Math.floor(1000 + Math.random() * 9000).toString()
+          });
+        }
+      }
 
       document.getElementById("sectionBook").style.display = "none";
       document.getElementById("navTabs").style.display = "none";
@@ -2894,41 +3006,44 @@
       capCard.style.display = "block";
 
       document.getElementById("dispRideId").innerText = currentRideId;
-      document.getElementById("dispTripStatusText").innerText = "● Captain Assigned (Arriving)";
-      document.getElementById("dispCaptainName").innerText = data.captain.name || "nineO Captain";
-      document.getElementById("dispVehicleNo").innerText = data.captain.vehicleNo || "JH 01 BZ 4821";
-      document.getElementById("dispBikeModel").innerText = data.captain.bikeModel || "Hero Splendor Plus";
-      
-      document.getElementById("dispOtpWrap").style.display = "block";
-      document.getElementById("dispOtp").innerText = data.otp || Math.floor(1000 + Math.random() * 9000);
-      document.getElementById("inTripPassBox").style.display = "none";
+      document.getElementById("dispTripStatusText").innerText = groupRiderCount > 1 
+        ? `● ${groupRiderCount} Captains Assigned (Arriving Together)`
+        : "● Captain Assigned (Arriving)";
 
       document.getElementById("dispPickup").innerText = pickup;
       document.getElementById("dispDrop").innerText = drop;
       document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
 
       if (type === "PASS") {
-        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Overage - Pay Captain)`;
+        document.getElementById("dispFare").innerText = (fare === 0) ? "Covered by Pass (₹0)" : `₹${fare} (Due to Captains)`;
       } else {
-        document.getElementById("dispFare").innerText = `₹${fare} (Cash / UPI to Captain)`;
+        document.getElementById("dispFare").innerText = `₹${fare} (${groupRiderCount > 1 ? groupRiderCount + ' bikes total' : 'Cash / UPI to Captain'})`;
       }
 
-      // Hide or show Punctuality Guarantee Banner based on booking type (Single Rides Only)
+      const tabsBox = document.getElementById("groupCaptainTabs");
+      if (groupRiderCount > 1) {
+        tabsBox.style.display = "grid";
+        tabsBox.innerHTML = "";
+        groupCaptainsList.forEach((cap, idx) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `cap-tab-btn ${idx === 0 ? 'active' : ''}`;
+          btn.innerText = `Bike #${idx + 1}`;
+          btn.onclick = () => switchCaptainTab(idx);
+          tabsBox.appendChild(btn);
+        });
+      } else {
+        tabsBox.style.display = "none";
+      }
+
+      switchCaptainTab(0);
+
       const capGuarantee = document.getElementById("dispCaptainGuaranteeBox");
       if (capGuarantee) {
         capGuarantee.style.display = (type === "PASS") ? "none" : "block";
       }
 
-      // Initialize Waiting Ranchi Trivia Quiz
       renderNextQuiz();
-
-      const callBtn = document.getElementById("btnCallCaptain");
-      if (data.captain.phone) {
-        callBtn.href = `tel:+91${data.captain.phone}`;
-        callBtn.style.display = "flex";
-      } else {
-        callBtn.style.display = "none";
-      }
 
       if (mapInstance && pickupCoords) {
         setTimeout(() => {
@@ -2940,6 +3055,37 @@
       startRidePolling(currentRideId);
     }
 
+    function switchCaptainTab(index) {
+      selectedCaptainTabIndex = index;
+      const curCap = groupCaptainsList[index] || groupCaptainsList[0];
+
+      document.querySelectorAll(".cap-tab-btn").forEach((btn, idx) => {
+        if (idx === index) btn.classList.add("active");
+        else btn.classList.remove("active");
+      });
+
+      document.getElementById("dispOtp").innerText = curCap.otp || "----";
+      document.getElementById("dispVehicleNo").innerText = curCap.vehicleNo || "JH 01 BZ 4821";
+      document.getElementById("dispCaptainName").innerText = curCap.name || "nineO Captain";
+      document.getElementById("dispBikeModel").innerText = curCap.bikeModel || "Hero Splendor Plus";
+
+      const notice = document.getElementById("otpSubNotice");
+      if (groupRiderCount > 1) {
+        notice.innerText = `Share this PIN with Rider #${index + 1}'s Captain (${curCap.vehicleNo})`;
+      } else {
+        notice.innerText = "Share this 4-digit PIN with captain upon arrival to begin trip";
+      }
+
+      const callBtn = document.getElementById("btnCallCaptain");
+      if (curCap.phone) {
+        callBtn.href = `tel:+91${curCap.phone}`;
+        callBtn.style.display = "flex";
+        callBtn.innerText = `📞 Call Captain (${curCap.name.split(' ')[0]})`;
+      } else {
+        callBtn.style.display = "none";
+      }
+    }
+
     function fallbackCaptainCard(pickup, drop, fare, type) {
       renderCaptainCard({
         rideId: "RIDE-" + Math.random().toString(36).substring(2, 8).toUpperCase(),
@@ -2947,7 +3093,7 @@
           name: "Rahul Kumar (nineO Captain)",
           vehicleNo: "JH 01 BZ 4821",
           bikeModel: "Hero Splendor Plus",
-          phone: "9876543210"
+          phone: "9525054247"
         },
         otp: Math.floor(1000 + Math.random() * 9000).toString()
       }, pickup, drop, fare, type);
@@ -2988,34 +3134,6 @@
       if (pickupCoords && dropCoords && mapInstance) {
         renderInteractiveMap(pickupCoords, dropCoords, null, null);
       }
-
-      document.getElementById("dispPickup").innerText = currentPickupText || document.getElementById("pickup").value;
-      document.getElementById("dispDrop").innerText = currentDropText || document.getElementById("drop").value;
-      document.getElementById("dispTripKm").innerText = `${calculatedKm} KM`;
-
-      const passBox = document.getElementById("inTripPassBox");
-      if (userActivePass) {
-        passBox.style.display = "block";
-        const tierName = (userActivePass.passTier === "PASS_149") ? "18 KM Pro Pass (₹149)" 
-                       : (userActivePass.passTier === "PASS_89") ? "9 KM Super Pass (₹89)" 
-                       : "5 KM Pass (₹59)";
-        
-        document.getElementById("dispPassTierTitle").innerText = `🎟️ ${tierName}`;
-        document.getElementById("dispPassKmLeft").innerText = userActivePass.remainingKm;
-        document.getElementById("dispPassRidesLeft").innerText = userActivePass.remainingRides;
-        document.getElementById("dispPassValidityTag").innerText = `~${userActivePass.hoursLeft}h Left`;
-        
-        const expiry = new Date(Date.now() + (userActivePass.hoursLeft || 24) * 60 * 60 * 1000);
-        document.getElementById("dispPassExpiryFull").innerText = `⏳ Pass Valid till: ${expiry.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})} (${expiry.toLocaleDateString([], {day:'numeric', month:'short'})})`;
-      } else {
-        passBox.style.display = "none";
-      }
-
-      if (activeCaptainDetails) {
-        document.getElementById("dispCaptainName").innerText = activeCaptainDetails.name || "nineO Captain";
-        document.getElementById("dispBikeModel").innerText = activeCaptainDetails.bikeModel || "Hero Splendor Plus";
-        document.getElementById("dispVehicleNo").innerText = activeCaptainDetails.vehicleNo || "JH 01 BZ 4821";
-      }
     }
 
     async function showTripCompletionTransition() {
@@ -3030,16 +3148,15 @@
 
         if (data.hasActivePass && data.remainingRides > 0 && data.remainingKm > 0.1) {
           userActivePass = data;
-          document.getElementById("postTripTitle").innerText = "Ride Completed!";
+          document.getElementById("postTripTitle").innerText = "Rides Completed!";
           document.getElementById("postTripBalanceKm").innerText = `${data.remainingKm} KM`;
           document.getElementById("postTripRidesLeft").innerHTML = `🎉 <b>${data.remainingRides} Ride(s) remaining today</b><br>Valid for ~${data.hoursLeft} more hours.`;
           document.getElementById("btnBookNextRidePass").style.display = "flex";
-          document.getElementById("btnBookNextRidePass").innerText = `🛵 Book Next Pass Ride (${data.remainingKm}km free) ➔`;
         } else {
           userActivePass = null;
           document.getElementById("postTripTitle").innerText = "Trip Completed!";
           document.getElementById("postTripBalanceKm").innerText = "0.0 KM";
-          document.getElementById("postTripRidesLeft").innerText = "Pass quota completed or expired.";
+          document.getElementById("postTripRidesLeft").innerText = "Booking completed successfully.";
           document.getElementById("btnBookNextRidePass").style.display = "none";
         }
       } catch (err) {
@@ -3085,7 +3202,9 @@
       const directBtn = document.getElementById("btnBookDirect");
       if (directBtn) {
         directBtn.style.display = "block";
-        directBtn.innerHTML = "<span>Request nineO Captain</span> ➔";
+        document.getElementById("btnBookDirectText").innerText = groupRiderCount > 1 
+          ? `Request ${groupRiderCount} nineO Captains Together` 
+          : "Request nineO Captain";
       }
 
       document.getElementById("routeCard").style.display = "none";
@@ -3095,14 +3214,7 @@
       calculatedKm = 0;
       calculatedMinutes = 0;
       currentDueFare = 0;
-      const dropSug = document.getElementById("dropSuggestions");
-      if (dropSug) dropSug.style.display = "none";
-      
-      const upsellBox = document.getElementById("passUpsellBox");
-      if (upsellBox) upsellBox.style.display = "none";
-
-      const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
-      if (singleGuaranteeBox) singleGuaranteeBox.style.display = "none";
+      setRiderCount(1);
 
       handlePhoneInput();
     }
@@ -3123,7 +3235,7 @@
       document.getElementById("captainDisplayCard").style.display = "none";
       document.getElementById("tripCompleteCard").style.display = "none";
       const capName = document.getElementById("dispCaptainName").innerText;
-      document.getElementById("feedbackSubtitle").innerText = `How was your ride with ${capName}?`;
+      document.getElementById("feedbackSubtitle").innerText = `How was your ride experience?`;
       document.getElementById("feedbackCard").style.display = "block";
       setRating(5);
     }
@@ -3133,11 +3245,8 @@
       const stars = document.querySelectorAll("#starRatingBox .star-btn");
       stars.forEach(s => {
         const val = parseInt(s.getAttribute("data-rating"));
-        if (val <= num) {
-          s.classList.add("active");
-        } else {
-          s.classList.remove("active");
-        }
+        if (val <= num) s.classList.add("active");
+        else s.classList.remove("active");
       });
     }
 
@@ -3224,20 +3333,20 @@
     function resolveBotQuery(query) {
       const q = query.toLowerCase();
 
-      if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
+      if (q.includes("group") || q.includes("2") || q.includes("3") || q.includes("4") || q.includes("people")) {
+        appendBotMessage("👥 <b>Group Bookings on nineO:</b><br>You can now book for <b>2, 3, or 4 people</b> at once! We dispatch individual verified captains to arrive at your pickup point simultaneously, complete with separate OTPs.");
+      }
+      else if (q.includes("pass") && (q.includes("not") || q.includes("show") || q.includes("activat") || q.includes("balance"))) {
         appendBotMessage("🎟️ <b>Pass Activation Help:</b><br>1. Ensure your 10-digit WhatsApp number is typed above.<br>2. Razorpay passes activate within 5 seconds of payment.<br>3. Any deducted payment without pass reflection is auto-restored upon captain arrival.");
       } 
       else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
         appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
       }
       else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost")) {
-        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Dynamic fare based on road distance, duration, tiered platform fee, and statutory taxes. Captain earnings are integrated directly into the fare.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
-      }
-      else if (q.includes("agent") || q.includes("human") || q.includes("call") || q.includes("support")) {
-        appendBotMessage(`📞 <b>nineO Human Support:</b><br>Dispatch desk is active in Ranchi.<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=Hi%20nineO%20Support,%20I%20need%20assistance" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:8px 14px; border-radius:8px; font-weight:700; text-decoration:none;">Chat on WhatsApp 💬</a>`);
+        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Dynamic fare based on distance and duration.<br>• Group Rides: Dispatches multiple bikes with transparent per-bike billing.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
       }
       else {
-        appendBotMessage(`For questions about '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
+        appendBotMessage(`For help regarding '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
       }
     }
 
