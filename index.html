@@ -122,6 +122,23 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
 .guar b.big{display:block;font-size:40px;letter-spacing:-1.5px;line-height:1.05;color:var(--g)}
 .guar p{color:var(--dim);font-size:15px;margin-top:8px}
 .guar em{font-style:normal;font-weight:700;color:var(--y)}
+
+/* Helmet cleaning pod */
+.pod{display:grid;grid-template-columns:minmax(240px,.8fr) 1.4fr;gap:34px;align-items:center}
+@media(max-width:820px){.pod{grid-template-columns:1fr}}
+.pod-img{background:radial-gradient(circle at 50% 38%,rgba(56,189,248,.28),transparent 62%),var(--card);border:1px solid var(--line);border-radius:28px;padding:24px 16px 8px;text-align:center;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.pod-img img{width:100%;max-width:330px;height:auto;display:block;margin:auto;filter:drop-shadow(0 22px 28px rgba(0,0,0,.45))}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 8px}
+.chips span{border:1px solid var(--r);color:var(--r);border-radius:99px;padding:4px 12px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+.pod h3.kick{font-size:clamp(26px,3.6vw,40px);letter-spacing:-1px;line-height:1.05;margin:6px 0 8px}
+.boxes{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:20px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);transition:transform .25s,border-color .25s}
+.box:hover{transform:translateY(-4px);border-color:var(--y)}
+.box svg{width:34px;height:34px;stroke:#38bdf8;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:8px}
+.box h4{font-size:18px;letter-spacing:-.3px;line-height:1.15;margin-bottom:4px}
+.box p{font-size:14px;color:var(--dim)}
+.box.wide{border-color:var(--y);background:linear-gradient(160deg,rgba(250,204,21,.18),var(--card))}
+.box.wide p+p{margin-top:8px;color:var(--ink);font-weight:600}
 /* Wallpaper control */
 #wpBtn{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:10;box-shadow:0 8px 24px rgba(0,0,0,.4)}
 #wpPanel{position:fixed;right:16px;bottom:calc(72px + env(safe-area-inset-bottom,0px));z-index:10;width:min(320px,calc(100vw - 32px));background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);display:none}
@@ -160,7 +177,7 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   </div>
   <div class="speed">
     <div><b>5–10 sec</b><span>to assign your captain</span></div>
-    <div><b>~2 min</b><span>typical pickup ETA</span></div>
+    <div><b>Live ETA</b><span>shown on the map before you ride</span></div>
     <div><b>2–4 Riders</b><span>group booking ready</span></div>
   </div>
 </header>
@@ -217,9 +234,31 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   <p class="sub">Pay once and ride within 24 hours. The kilometres and number of rides are included in the price.</p>
   <div class="passes">
     <div class="pass"><small>Short hops</small><div class="price">₹59</div><ul><li>5 KM for 24 hours</li><li>1 ride</li></ul></div>
-    <div class="pass hot"><small>Most picked</small><div class="price">₹89</div><ul><li>9 KM for 24 hours</li><li>2 rides</li></ul></div>
-    <div class="pass"><small>Full day</small><div class="price">₹149</div><ul><li>18 KM for 24 hours</li><li>2 rides</li></ul></div>
+    <div class="pass hot"><small>Most picked</small><div class="price">₹99</div><ul><li>9 KM for 24 hours</li><li>2 rides</li></ul></div>
+    <div class="pass"><small>Full day</small><div class="price">₹179</div><ul><li>18 KM for 24 hours</li><li>2 rides</li></ul></div>
   </div>
+</section>
+
+<section id="helmet">
+  <h2>Your helmet is fresh outside. Dirty inside.</h2>
+  <p class="sub">The inside of a helmet never sees sunlight, never gets air and never gets cleaned. Our helmet cleaning pod deep-cleans it from the inside, the parts you can’t reach, in just 4 minutes.</p>
+  <div class="pod">
+    <div class="pod-img"><img src="pod.webp" alt="Helmet cleaning pod with a glowing glass chamber holding a white helmet" width="292" height="690"></div>
+    <div>
+      <h3 class="kick">Walk in with a sweaty, smelly helmet. Walk out with a fresh, cleaned, bacteria-free one.</h3>
+      <div class="chips"><span>Acne</span><span>Hairfall</span><span>Dandruff</span><span>Scalp irritation</span><span>Bad odour</span></div>
+      <p class="sub" style="margin:10px 0 0">A 4-step hygiene technology built to kill bacteria, remove odour and restore freshness.</p>
+    </div>
+  </div>
+  <div class="boxes">
+    <div class="box"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4c-2 3 2 4 0 7M16 4c-2 3 2 4 0 7M24 4c-2 3 2 4 0 7"/><path d="M4 18h24M7 24h18"/></svg><h4>Vapor Cleaning</h4><p>Breaks down odor, sweat, oils &amp; dust on outer shell + visor.</p></div>
+    <div class="box"><svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="5"/><path d="M16 3v4M16 25v4M3 16h4M25 16h4M7 7l3 3M22 22l3 3M25 7l-3 3M10 22l-3 3"/></svg><h4>UVC Sanitizing</h4><p>Powerful medical-grade UVC light eliminates invisible bacteria.</p></div>
+    <div class="box"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M9 20a5 5 0 0 1 1-9.9A7 7 0 0 1 23.5 11 4.5 4.5 0 0 1 23 20z"/><path d="M8 25h16M11 29h10"/></svg><h4>Fog Deep Cleaning</h4><p>Eliminates bacteria even in hidden and hard-to-reach areas.</p></div>
+    <div class="box"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M3 11h16a3.5 3.5 0 1 0-3.5-3.5"/><path d="M3 17h23a3.5 3.5 0 1 1-3.5 3.5"/><path d="M3 23h11"/></svg><h4>Turbo Air Purge</h4><p>Rapid drying with engineered airflow followed by a subtle fresh scent finish.</p></div>
+    <div class="box"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 14V4M16 14V4M22 14V4M7 7l3-4 3 4M13 7l3-4 3 4M19 7l3-4 3 4"/><path d="M4 28h24M4 22h24"/></svg><h4>Thermal Air Drying</h4><p>Removes moisture, odor and any remaining residue for a fresh finish.</p></div>
+    <div class="box wide"><svg viewBox="0 0 32 32" aria-hidden="true"><rect x="3" y="6" width="26" height="17" rx="3"/><path d="M12 28h8M16 23v5"/></svg><h4>Built-in display + free wipe</h4><p>Integrated display that can run ads, offers, safety tips or brand promos at your location.</p><p>Every user gets a free Anti-Fog Visor Wipe to ride fog-free in any weather.</p></div>
+  </div>
+  <div class="cta" style="margin-top:26px"><a class="btn" href="https://wa.me/919525054247?text=Hi%20nineO%2C%20I%20want%20to%20know%20about%20the%20helmet%20cleaning%20pod" target="_blank" rel="noopener">Ask about helmet cleaning</a></div>
 </section>
 
 <section id="captains">
@@ -237,7 +276,7 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
         <circle class="ring" cx="380" cy="200" r="14" fill="#10b981"/>
         <circle cx="380" cy="200" r="9" fill="#10b981" stroke="#fff" stroke-width="3"/>
         <text x="392" y="188">Pickup</text>
-        <g class="eta"><rect x="330" y="214" width="100" height="26" rx="13"/><text x="380" y="232">ETA ~2 min</text></g>
+        <g class="eta"><rect x="330" y="214" width="100" height="26" rx="13"/><text x="380" y="232">ETA on map</text></g>
         <g class="mk"><circle r="14" fill="#facc15" stroke="#fff" stroke-width="3"/><text y="5">U</text>
           <animateMotion dur="7s" repeatCount="indefinite"><mpath href="#rU"/></animateMotion></g>
         <g class="mk"><circle r="14" fill="#ef4444" stroke="#fff" stroke-width="3"/><text y="5" style="fill:#fff">S</text>
@@ -248,15 +287,15 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
     <div class="col">
       <div class="cap u"><h3>Ustaad</h3><p>Our male captains. Verified riders who know Ranchi's lanes and shortcuts.</p></div>
       <div class="cap s"><h3>Sakhi</h3><p>Our female captains. Verified riders with the same upfront fares and live tracking.</p></div>
-      <div class="guar"><b class="big">₹5 off if we're late</b>
-        <p>If your captain doesn't reach your pickup on time, a flat ₹5 discount applies automatically. On-time arrivals send 100% of the fare to the captain. <em>Single rides only.</em></p></div>
+      <div class="guar"><b class="big">₹5 off if we miss the map ETA</b>
+        <p>The expected time shown on the map to reach your pickup location is our promise. If your captain hasn’t arrived by then, ₹5 comes off your fare automatically. On-time arrivals send 100% of the fare to the captain. <em>Single rides only.</em></p></div>
     </div>
   </div>
 </section>
 
 <section id="quiz">
   <h2>Play a quiz until your captain arrives</h2>
-  <p class="sub">Your Ustaad or Sakhi usually reaches you in about 2 minutes. Try the Ranchi Flash Quiz while you wait.</p>
+  <p class="sub">Your Ustaad or Sakhi reaches you by the ETA shown on the map. Try the Ranchi Flash Quiz while you wait.</p>
 
   <iframe id="mimiFrame"
     src="mimi-quiz.html?embed=1&eta=120"
@@ -278,7 +317,7 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   <p class="sub">Here is how a nineO ride works.</p>
   <div class="steps">
     <div class="step"><h3>Enter your drop</h3><p>Type or say where you're going. The route and fare appear instantly.</p></div>
-    <div class="step"><h3>Meet your Ustaad or Sakhi</h3><p>Your captain is assigned in 5–10 seconds and usually reaches you in about 2 minutes. Play a quick quiz while you wait, and watch them move on the live map and call them from the ride card.</p></div>
+    <div class="step"><h3>Meet your Ustaad or Sakhi</h3><p>Your captain is assigned in 5–10 seconds and reaches your pickup by the ETA shown on the map. Play a quick quiz while you wait, and watch them move on the live map and call them from the ride card.</p></div>
     <div class="step"><h3>Ride and rate</h3><p>Pay with your pass or Razorpay, then rate the ride to keep nineO safe.</p></div>
   </div>
 </section>
@@ -289,9 +328,9 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
   <div class="safe">
     <span>Verified Ustaads and Sakhis</span>
     <span>👥 Group Booking (2–4 Bikes)</span>
-    <span>₹5 punctuality guarantee</span>
+    <span>₹5 off if we miss the map ETA</span>
     <span>Captain assigned in 5–10 sec</span>
-    <span>~2 min ETA</span>
+    <span>Live map ETA</span>
     <span>Live ride tracking</span>
     <span>Upfront fares</span>
     <span>Rate every ride</span>
@@ -369,37 +408,6 @@ footer{text-align:center;color:var(--dim);font-size:14px;padding:0 5vw 40px}
     if(w)setBg(w);if(d){dim.value=d;setDim(d)}
   }catch(e){}
   if(matchMedia('(prefers-reduced-motion:reduce)').matches){document.querySelectorAll('.map svg').forEach(function(v){v.pauseAnimations()})}
-})();
-</script>
-<script>
-(function(){
-  var Q=[{q:"Which waterfall near Ranchi drops about 320 feet along the Subarnarekha River?",o:["Hundru Falls","Dassam Falls","Jonha Falls","Hirni Falls"],c:0},
-  {q:"Which international cricket stadium in Ranchi hosts IPL and ODI matches?",o:["Keenan Stadium","JSCA International Stadium","Birsa Munda Ground","Morabadi Stadium"],c:1},
-  {q:"Which hilltop temple in Ranchi gives a wide view of the whole city?",o:["Pahari Mandir","Jagannath Temple","Sun Temple","Deori Mandir"],c:0},
-  {q:"By which nickname is Ranchi popularly known?",o:["City of Lakes","City of Waterfalls","Coal Capital","Steel City"],c:1}];
-  var $=function(i){return document.getElementById(i)},T=120,left=T,score=0,idx=0,timer=null,locked=false;
-  function fmt(n){return Math.floor(n/60)+":"+("0"+n%60).slice(-2)}
-  function paint(){$('qt').firstChild.nodeValue=fmt(left);$('qb').style.width=(left/T*100)+"%";$('qs').textContent="Score: "+score+" pts"}
-  function ask(){
-    var x=Q[idx%Q.length];locked=false;$('qq').textContent=x.q;$('qm').textContent="";$('qo').textContent="";
-    x.o.forEach(function(t,i){var b=document.createElement('button');b.type='button';b.textContent=t;b.onclick=function(){pick(i,b)};$('qo').appendChild(b)});
-  }
-  function pick(i,b){
-    if(locked||left<=0)return;locked=true;var x=Q[idx%Q.length],bs=$('qo').children;
-    if(i===x.c){b.className='ok';score+=10;$('qm').style.color='var(--g)';$('qm').textContent='Sahi jawab! +10 pts'}
-    else{b.className='no';bs[x.c].className='ok';$('qm').style.color='var(--r)';$('qm').textContent='Oops! The right answer is highlighted.'}
-    paint();idx++;setTimeout(function(){if(left>0)ask()},1300);
-  }
-  function finish(){
-    clearInterval(timer);left=0;paint();$('qo').textContent="";
-    $('qq').textContent="Your Ustaad or Sakhi has arrived!";
-    $('qm').style.color='var(--y)';$('qm').textContent="You scored "+score+" pts. Ride safe!";
-    $('qgo').style.display='';$('qgo').textContent='Play again';
-  }
-  $('qgo').onclick=function(){
-    left=T;score=0;idx=0;paint();$('qgo').style.display='none';ask();
-    clearInterval(timer);timer=setInterval(function(){left--;paint();if(left<=0)finish()},1000);
-  };
 })();
 </script>
 </body>
