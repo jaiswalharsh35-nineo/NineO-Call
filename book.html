@@ -461,7 +461,7 @@
     .route-dist { font-size: 14px; font-weight: 800; color: white; }
     .route-dist span { color: var(--primary); }
 
-    /* Dedicated Leaflet Map Container */
+    /* Map Slot Container with Reliable Unblocked Styling */
     .map-container-box {
       width: 100%;
       height: 190px;
@@ -475,7 +475,14 @@
     #routeMap {
       width: 100%;
       height: 100%;
-      background: #090d16;
+    }
+
+    #routeMap .leaflet-tile-pane {
+      filter: brightness(0.6) invert(1) contrast(3) hue-rotate(200deg) saturate(0.3) brightness(0.7);
+    }
+
+    #routeMap .leaflet-overlay-pane path {
+      filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.9));
     }
 
     .custom-pin {
@@ -1384,7 +1391,7 @@
     <!-- Sanitized Helmet Assurance Strip -->
     <div class="helmet-strip">
       <span style="font-size: 18px;">🪖</span>
-      <div><b>Sanitized Helmet Included:</b> Clean ISI-certified safety helmet + fresh disposable hygiene cap provided for every ride (₹4 included in fare).</div>
+      <div><b>Sanitized Helmet Included:</b> Clean ISI safety helmet + fresh disposable hygiene hair cap for every ride (₹4 included in fare).</div>
     </div>
 
     <!-- Voice AI Bar -->
@@ -1472,7 +1479,7 @@
           <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
-        <!-- Dedicated Leaflet Map Container with CARTO Dark Tiles -->
+        <!-- Dedicated Leaflet Map Container -->
         <div class="map-container-box">
           <div id="routeMap"></div>
         </div>
@@ -1807,7 +1814,7 @@
 
         <h3>4. Pricing, Passes, and Group Terms</h3>
         <ul>
-          <li><b>Single Ride Fares:</b> Single trip fares are calculated based on Base Fare (₹21 for 1st km), Road Distance Rate (₹7/km for additional km), and Travel Time (₹0.30/min). Statutory 5% GST is computed on the trip fare, along with a flat ₹4 platform fee and ₹4 sanitized helmet fee. What you see is the final all-inclusive payable fare.</li>
+          <li><b>Dynamic Fares:</b> Single trip fares are calculated based on Base Fare (₹21 for 1st km), Road Distance Rate (₹7/km for additional km), and Travel Time (₹0.30/min). Statutory 5% GST is computed on the trip fare, along with a flat ₹4 platform fee and ₹4 sanitized helmet fee. What you see is the final all-inclusive payable fare.</li>
           <li><b>Sanitized Helmet Service:</b> For your safety and hygiene, a sanitized ISI-certified helmet and fresh disposable hair cap are provided on each trip.</li>
           <li><b>Daily Passes:</b> Valid for 24 hours from purchase. Includes 5 KM Pass (₹59, 1 ride), 9 KM Super Pass (₹99, 2 rides), and 18 KM Pro Pass (₹179, 3 rides).</li>
           <li><b>Group Rides:</b> Group bookings (2 to 4 riders) bill dynamically per captain assigned. Daily passes apply toward 1 rider slot; additional group riders are billed at standard single dynamic rates.</li>
@@ -2249,7 +2256,7 @@
       return null;
     }
 
-    /* Reliable Leaflet Map Initialization with CARTO Dark Tiles (Completely fixes 403 Access Blocked) */
+    /* Reliable Leaflet Map Initialization (Unblocked High-Availability Carto Provider) */
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
@@ -2260,7 +2267,8 @@
           attributionControl: false
         }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
+        // Uses reliable high-availability Carto tile servers without 403 access blocks
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
           subdomains: 'abcd',
           maxZoom: 19
         }).addTo(mapInstance);
@@ -2465,7 +2473,7 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    /* Clean Exact Fare Display (No math formulas visible on user side) */
+    /* Clean Exact Fare Display (No complicated breakdown on user UI) */
     function renderComparison(km, minutes) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -2475,6 +2483,7 @@
       const passDue = document.getElementById("activePassDue");
       const passExp = document.getElementById("activePassExplanation");
       const btnBookPass = document.getElementById("btnBookActivePass");
+      const upsellBox = document.getElementById("passUpsellBox");
       const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
 
       const basePerBikeFare = calculateSingleRideFare(km, minutes);
@@ -2650,7 +2659,7 @@
       const subText = document.getElementById("voiceSubText");
       const lower = rawText.toLowerCase().trim();
 
-      // Check for rider count mentions (e.g. 2 people, 3 log, char riders)
+      // Check for rider count mentions (e.g. 2 people, 3 log, 4 riders)
       if (lower.includes("4 people") || lower.includes("4 log") || lower.includes("four") || lower.includes("4 riders")) {
         setRiderCount(4);
       } else if (lower.includes("3 people") || lower.includes("3 log") || lower.includes("three") || lower.includes("3 riders")) {
