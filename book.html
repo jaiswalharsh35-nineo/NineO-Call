@@ -62,7 +62,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
 
     .brand-title {
@@ -108,25 +108,6 @@
     @keyframes pulse {
       0%, 100% { opacity: 0.4; }
       50% { opacity: 1; }
-    }
-
-    /* Sanitized Helmet Strip */
-    .helmet-strip {
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(16, 185, 129, 0.35);
-      border-radius: 12px;
-      padding: 8px 12px;
-      margin-bottom: 12px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 11.5px;
-      color: #a7f3d0;
-      line-height: 1.35;
-    }
-
-    .helmet-strip b {
-      color: #ffffff;
     }
 
     /* Voice Bar */
@@ -609,7 +590,7 @@
     .badge-recommended { background: var(--primary); color: #0f172a; font-weight: 900; }
 
     .choice-title { font-size: 13px; color: var(--text); font-weight: 800; }
-    .choice-price { font-size: 24px; font-weight: 900; margin: 4px 0; color: white; line-height: 1.2; }
+    .choice-price { font-size: 23px; font-weight: 900; margin: 4px 0; color: white; line-height: 1.2; }
     .choice-desc { font-size: 11px; color: #94a3b8; line-height: 1.35; margin-bottom: 10px; min-height: 28px; }
 
     .btn-choice {
@@ -661,6 +642,21 @@
     }
 
     .upsell-text { font-size: 11.5px; color: #cbd5e1; line-height: 1.4; }
+
+    .btn-upsell {
+      display: inline-block;
+      width: 100%;
+      background: var(--primary);
+      color: #0f172a;
+      border: none;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      margin-top: 8px;
+      text-align: center;
+    }
 
     .btn-submit {
       width: 100%;
@@ -1388,12 +1384,6 @@
       <div class="live-status"><div class="live-dot"></div> Captains Live</div>
     </div>
 
-    <!-- Sanitized Helmet Assurance Strip -->
-    <div class="helmet-strip">
-      <span style="font-size: 18px;">🪖</span>
-      <div><b>Sanitized Helmet Included:</b> Clean ISI-certified helmet + fresh disposable hygiene cap provided for every ride (₹4 included in fare).</div>
-    </div>
-
     <!-- Voice AI Bar -->
     <div class="voice-bar">
       <div>
@@ -1603,7 +1593,6 @@
         <div>🏁 <b>Destination:</b> <span id="dispDrop">--</span></div>
         <div>📏 <b>Booked Distance:</b> <span id="dispTripKm" style="color:var(--primary); font-weight:800;">0.0 KM</span></div>
         <div>💰 <b>Fare Due:</b> <span id="dispFare" style="color:var(--primary); font-weight:800;">₹0</span></div>
-        <div style="color: #6ee7b7; font-size: 11.5px; margin-top: 5px;">🪖 <b>Sanitized Helmet:</b> Captain carries sanitized helmet + fresh hair cap</div>
       </div>
 
       <a id="btnCallCaptain" href="#" class="btn-call-cap">
@@ -1631,20 +1620,20 @@
         <div class="pass-price">₹59</div>
       </div>
 
-      <div class="pass-card selected" id="card_PASS_99" onclick="selectPass(this, 'PASS_99', 99, '9 KM Super Pass (2 Rides)')">
+      <div class="pass-card selected" id="card_PASS_89" onclick="selectPass(this, 'PASS_89', 89, '9 KM Super Pass (2 Rides)')">
         <div>
           <div class="pass-title">9 KM Super Pass <span class="pass-badge">POPULAR</span></div>
           <div style="font-size:12px; color:var(--text-dim);">9 KM Total • 2 Rides included • 24h</div>
         </div>
-        <div class="pass-price">₹99</div>
+        <div class="pass-price">₹89</div>
       </div>
 
-      <div class="pass-card" id="card_PASS_179" onclick="selectPass(this, 'PASS_179', 179, '18 KM Pro Pass (3 Rides)')">
+      <div class="pass-card" id="card_PASS_149" onclick="selectPass(this, 'PASS_149', 149, '18 KM Pro Pass (3 Rides)')">
         <div>
           <div class="pass-title">18 KM Pro Pass</div>
           <div style="font-size:12px; color:var(--text-dim);">18 KM Total • 3 Rides included • 24h</div>
         </div>
-        <div class="pass-price">₹179</div>
+        <div class="pass-price">₹149</div>
       </div>
 
       <button class="btn-submit" id="btnActivatePassGateway" style="background:#0284c7;" onclick="openPaymentModal()">
@@ -1659,7 +1648,7 @@
         Payment Received • Pass Activated
       </div>
       <div style="font-size: 22px; font-weight: 900; color: white; margin: 4px 0;" id="confPassTitle">9 KM Super Pass</div>
-      <div style="font-size: 13px; color: var(--primary); font-weight: 800;" id="confPassAmount">₹99 Paid via UPI</div>
+      <div style="font-size: 13px; color: var(--primary); font-weight: 800;" id="confPassAmount">₹89 Paid via UPI</div>
 
       <div class="pass-ticket-stub">
         <div class="ticket-row"><span>Registered User</span><b id="confPassPhone">+91 ----------</b></div>
@@ -1731,7 +1720,7 @@
         <span class="tag-chip" onclick="toggleTag(this)">⚡ Polite Captain</span>
         <span class="tag-chip" onclick="toggleTag(this)">🛡️ Safe Driving</span>
         <span class="tag-chip" onclick="toggleTag(this)">⏱️ On-time Pickup</span>
-        <span class="tag-chip" onclick="toggleTag(this)">🪖 Clean Sanitized Helmet</span>
+        <span class="tag-chip" onclick="toggleTag(this)">🏍️ Clean Helmet</span>
         <span class="tag-chip" onclick="toggleTag(this)">📍 Route Issue</span>
       </div>
 
@@ -1743,7 +1732,7 @@
     </div>
 
     <div class="trust-strip">
-      <div class="trust-item"><span>🪖</span><b>Sanitized Helmet</b></div>
+      <div class="trust-item"><span>🛡️</span><b>Safe & Secure</b></div>
       <div class="trust-item"><span>👥</span><b>Group Rides (2–4)</b></div>
       <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
       <div class="trust-item"><span>🌱</span><b>Cleaner Cities</b></div>
@@ -1771,7 +1760,7 @@
 
     <div class="chat-body" id="chatBody">
       <div class="chat-msg bot">
-        Namaste! I'm your nineO assistant. You can book single rides, group rides (2 to 4 people), or daily passes (₹59, ₹99, ₹179). Sanitized helmets are provided with every ride! How can I assist you?
+        Namaste! I'm your nineO assistant. You can book single rides, group rides (2 to 4 people), or daily passes. How can I assist you?
       </div>
     </div>
 
@@ -1814,9 +1803,7 @@
 
         <h3>4. Pricing, Passes, and Group Terms</h3>
         <ul>
-          <li><b>Dynamic Fares:</b> Single trip fares are calculated based on Base Fare (₹21 for 1st km), Road Distance Rate (₹7/km for additional km), and Travel Time (₹0.30/min). Statutory 5% GST is computed on the trip fare, along with a flat ₹4 platform fee and ₹4 sanitized helmet fee. What you see is the final all-inclusive payable fare.</li>
-          <li><b>Sanitized Helmet Service:</b> For your safety and hygiene, a sanitized ISI-certified helmet and fresh disposable hair cap are provided on each trip.</li>
-          <li><b>Daily Passes:</b> Valid for 24 hours from purchase. Includes 5 KM Pass (₹59, 1 ride), 9 KM Super Pass (₹99, 2 rides), and 18 KM Pro Pass (₹179, 3 rides).</li>
+          <li><b>Dynamic Fares:</b> Single trip fares are calculated based on Base Fare (₹21), Road Distance Rate (₹6.75/km), and Travel Time (₹0.30/min), plus applicable platform fees and statutory 5% GST.</li>
           <li><b>Group Rides:</b> Group bookings (2 to 4 riders) bill dynamically per captain assigned. Daily passes apply toward 1 rider slot; additional group riders are billed at standard single dynamic rates.</li>
         </ul>
       </div>
@@ -1871,35 +1858,24 @@
       }
     }
 
-    /*
-      Exact Single Ride Fare Formula:
-      - Base fare: ₹21 for 1st km
-      - Additional distance: ₹7 per km
-      - Travel time: ₹0.30 per minute
-      - 5% GST on the ride fare excluding platform & helmet fees
-      - + ₹4 platform fee
-      - + ₹4 sanitized helmet fee
-    */
     function calculateSingleRideFare(km, minutes) {
       const dist = parseFloat(km) || 0;
       const duration = (minutes && minutes > 0) ? minutes : Math.max(5, Math.round((dist / 22) * 60));
       
-      let rideFare = 21.0;
-      if (dist > 1.0) {
-        rideFare += (dist - 1.0) * 7.0;
-      }
-      rideFare += (duration * 0.30);
-
-      const gstOnFare = rideFare * 0.05;
-      const platformFee = 4.0;
-      const sanitizedHelmetFee = 4.0;
-
-      const totalFare = rideFare + gstOnFare + platformFee + sanitizedHelmetFee;
-      return Math.round(totalFare);
+      const baseFare = 21.0;
+      const perKmRate = 6.75;
+      const perMinRate = 0.30;
+      
+      const rideFare = baseFare + (dist * perKmRate) + (duration * perMinRate);
+      const platformFee = rideFare <= 50 ? 3 : 4;
+      const subtotal = rideFare + platformFee;
+      const totalWithGst = subtotal * 1.05;
+      
+      return Math.round(totalWithGst);
     }
 
-    let selectedPassCode = "PASS_99";
-    let selectedAmount = 99;
+    let selectedPassCode = "PASS_89";
+    let selectedAmount = 89;
     let selectedPassName = "9 KM Super Pass (2 Rides)";
     
     let pickupCoords = null;
@@ -1925,8 +1901,8 @@
     let selectedRating = 5;
     let selectedFeedbackTags = [];
 
-    let recommendedTier = "PASS_99";
-    let recommendedAmount = 99;
+    let recommendedTier = "PASS_89";
+    let recommendedAmount = 89;
     let recommendedName = "9 KM Super Pass";
 
     let mapInstance = null;
@@ -2256,7 +2232,6 @@
       return null;
     }
 
-    /* Reliable Leaflet Map Initialization (No API Key Required, No 403 Access Blocked) */
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
@@ -2267,20 +2242,10 @@
           attributionControl: false
         }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
-        // OpenStreetMap Humanitarian tile layer with multi-server subdomains + automatic fallback
-        const primaryTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
           maxZoom: 19,
-          subdomains: ['a', 'b', 'c'],
           attribution: '&copy; OpenStreetMap contributors'
-        });
-
-        // Fail-safe: if any tile fails, automatically loads from Esri World Street Map (100% free, no API key)
-        primaryTileLayer.on('tileerror', function(error) {
-          const coords = error.coords;
-          error.tile.src = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${coords.z}/${coords.y}/${coords.x}`;
-        });
-
-        primaryTileLayer.addTo(mapInstance);
+        }).addTo(mapInstance);
       }
 
       if (routeOutline) mapInstance.removeLayer(routeOutline);
@@ -2482,7 +2447,6 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    /* Clean Exact Fare Display on User Side */
     function renderComparison(km, minutes) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -2507,7 +2471,7 @@
         singleTitleEl.innerText = `Group (${groupRiderCount} Bikes)`;
         badgeSingle.innerText = `GROUP (${groupRiderCount})`;
         singlePriceEl.innerText = `₹${singleFareAmount}`;
-        singleDescEl.innerText = `${groupRiderCount} Captains dispatched together. Pay captain at drop.`;
+        singleDescEl.innerText = `${groupRiderCount} Captains dispatched together (₹${basePerBikeFare}/bike).`;
       } else {
         singleTitleEl.innerText = "Single Ride";
         badgeSingle.innerText = "SINGLE RIDE";
@@ -2523,11 +2487,11 @@
         recommendedTier = "PASS_59"; recommendedAmount = 59; recommendedName = "5 KM Pass";
         pTitle.innerText = "5 KM Pass"; pPrice.innerText = "₹59"; pDesc.innerText = "Covers this trip in full. Valid 24 hours.";
       } else if (km <= 9.0) {
-        recommendedTier = "PASS_99"; recommendedAmount = 99; recommendedName = "9 KM Super Pass";
-        pTitle.innerText = "9 KM Super Pass"; pPrice.innerText = "₹99"; pDesc.innerText = "Covers this trip + return trip within 24h.";
+        recommendedTier = "PASS_89"; recommendedAmount = 89; recommendedName = "9 KM Super Pass";
+        pTitle.innerText = "9 KM Super Pass"; pPrice.innerText = "₹89"; pDesc.innerText = "Covers this trip + return trip within 24h.";
       } else {
-        recommendedTier = "PASS_179"; recommendedAmount = 179; recommendedName = "18 KM Pro Pass";
-        pTitle.innerText = "18 KM Pro Pass"; pPrice.innerText = "₹179"; pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
+        recommendedTier = "PASS_149"; recommendedAmount = 149; recommendedName = "18 KM Pro Pass";
+        pTitle.innerText = "18 KM Pro Pass"; pPrice.innerText = "₹149"; pDesc.innerText = "Covers this trip + up to 2 extra trips today.";
       }
 
       if (userActivePass && userActivePass.remainingRides > 0 && userActivePass.remainingKm > 0.1) {
@@ -2678,12 +2642,12 @@
       }
 
       if (lower.includes("pass") || lower.includes("card")) {
-        if (lower.includes("99") || lower.includes("super") || lower.includes("9")) {
-          selectPass(document.getElementById("card_PASS_99"), "PASS_99", 99, "9 KM Super Pass (2 Rides)");
+        if (lower.includes("89") || lower.includes("super") || lower.includes("9")) {
+          selectPass(document.getElementById("card_PASS_89"), "PASS_89", 89, "9 KM Super Pass (2 Rides)");
           switchTab('pass'); openPaymentModal(); return;
         }
-        if (lower.includes("179") || lower.includes("pro") || lower.includes("18")) {
-          selectPass(document.getElementById("card_PASS_179"), "PASS_179", 179, "18 KM Pro Pass (3 Rides)");
+        if (lower.includes("149") || lower.includes("pro") || lower.includes("18")) {
+          selectPass(document.getElementById("card_PASS_149"), "PASS_149", 149, "18 KM Pro Pass (3 Rides)");
           switchTab('pass'); openPaymentModal(); return;
         }
         if (lower.includes("59") || lower.includes("5")) {
@@ -2719,10 +2683,10 @@
           if (passTier) {
             const tierMap = {
               "PASS_59": { id: "card_PASS_59", amt: 59, name: "5 KM Pass (1 Ride)" },
-              "PASS_99": { id: "card_PASS_99", amt: 99, name: "9 KM Super Pass (2 Rides)" },
-              "PASS_179": { id: "card_PASS_179", amt: 179, name: "18 KM Pro Pass (3 Rides)" }
+              "PASS_89": { id: "card_PASS_89", amt: 89, name: "9 KM Super Pass (2 Rides)" },
+              "PASS_149": { id: "card_PASS_149", amt: 149, name: "18 KM Pro Pass (3 Rides)" }
             };
-            const p = tierMap[passTier] || tierMap["PASS_99"];
+            const p = tierMap[passTier] || tierMap["PASS_89"];
             selectPass(document.getElementById(p.id), passTier, p.amt, p.name);
             switchTab('pass');
             speakResponse(`Selected ${p.name}. Opening checkout.`, 'en');
@@ -2830,8 +2794,8 @@
           handler: async function (response) {
             const tierMap = {
               "PASS_59": { km: 5.0, rides: 1, name: "5 KM Pass" },
-              "PASS_99": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
-              "PASS_179": { km: 18.0, rides: 3, name: "18 KM Pro Pass" }
+              "PASS_89": { km: 9.0, rides: 2, name: "9 KM Super Pass" },
+              "PASS_149": { km: 18.0, rides: 3, name: "18 KM Pro Pass" }
             };
             const pInfo = tierMap[selectedPassCode] || { km: 9.0, rides: 2, name: "Daily Pass" };
             userActivePass = {
@@ -2871,8 +2835,8 @@
       userActivePass = {
         hasActivePass: true,
         passTier: selectedPassCode,
-        remainingKm: selectedPassCode === 'PASS_179' ? 18.0 : selectedPassCode === 'PASS_99' ? 9.0 : 5.0,
-        remainingRides: selectedPassCode === 'PASS_179' ? 3 : selectedPassCode === 'PASS_99' ? 2 : 1,
+        remainingKm: selectedPassCode === 'PASS_149' ? 18.0 : selectedPassCode === 'PASS_89' ? 9.0 : 5.0,
+        remainingRides: selectedPassCode === 'PASS_149' ? 3 : selectedPassCode === 'PASS_89' ? 2 : 1,
         hoursLeft: 24
       };
       showPassConfirmationCard(mockPayId, phone, selectedPassCode, selectedAmount);
@@ -2889,8 +2853,8 @@
 
       const quotaMap = {
         "PASS_59": { title: "5 KM Pass", km: "5.0 KM", rides: "1 Ride Included" },
-        "PASS_99": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },
-        "PASS_179": { title: "18 KM Pro Pass", km: "18.0 KM", rides: "3 Rides Included" }
+        "PASS_89": { title: "9 KM Super Pass", km: "9.0 KM", rides: "2 Rides Included" },
+        "PASS_149": { title: "18 KM Pro Pass", km: "18.0 KM", rides: "3 Rides Included" }
       };
 
       const passInfo = quotaMap[passCode] || { title: selectedPassName, km: "Quota Active", rides: "24h Validity" };
@@ -3378,8 +3342,8 @@
       else if (q.includes("captain") || q.includes("delay") || q.includes("late") || q.includes("wait")) {
         appendBotMessage("⏳ <b>Captain Delay:</b><br>Ranchi peak traffic can cause a short delay. Tap the green <b>'📞 Call Captain'</b> button on your active ride card to coordinate live.");
       }
-      else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost") || q.includes("helmet")) {
-        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Exact all-inclusive fare shown upfront including sanitized ISI helmet & hair cap.<br>• Group Rides: Dispatches multiple bikes with transparent per-bike billing.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹99 (9 KM), and ₹179 (18 KM).");
+      else if (q.includes("fare") || q.includes("price") || q.includes("rate") || q.includes("cost")) {
+        appendBotMessage("💰 <b>nineO Fare Details:</b><br>• Single Rides: Dynamic fare based on distance and duration.<br>• Group Rides: Dispatches multiple bikes with transparent per-bike billing.<br>• Daily Passes: Bundled 24h quotas starting at ₹59 (5 KM), ₹89 (9 KM), and ₹149 (18 KM).");
       }
       else {
         appendBotMessage(`For help regarding '${query}', connect directly with our Ranchi support team:<br><br><a href="https://wa.me/${SUPPORT_WHATSAPP}?text=${encodeURIComponent('Hi nineO, question: ' + query)}" target="_blank" style="display:inline-block; background:#16a34a; color:white; padding:7px 12px; border-radius:8px; font-weight:700; text-decoration:none;">Ask on WhatsApp 💬</a>`);
