@@ -19,7 +19,7 @@
       --primary-accent: #ef4444; /* nineO Red */
       --green: #10b981;
       --border: rgba(255, 255, 255, 0.15);
-      --glass-bg: rgba(15, 23, 42, 0.94);
+      --glass-bg: rgba(15, 23, 42, 0.92);
       --input-bg: rgba(11, 17, 32, 0.92);
       --text: #f8fafc;
       --text-dim: #94a3b8;
@@ -34,7 +34,7 @@
     }
 
     body {
-      background: linear-gradient(180deg, rgba(9, 13, 22, 0.55) 0%, rgba(9, 13, 22, 0.95) 100%), 
+      background: linear-gradient(180deg, rgba(9, 13, 22, 0.45) 0%, rgba(9, 13, 22, 0.92) 100%), 
                   url('bg.png') no-repeat center center fixed;
       background-size: cover;
       color: var(--text);
@@ -49,11 +49,11 @@
       width: 100%;
       max-width: 430px;
       background: var(--glass-bg);
-      backdrop-filter: blur(14px);
-      -webkit-backdrop-filter: blur(14px);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-radius: 28px;
       border: 1px solid var(--border);
-      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.7), 0 0 40px rgba(250, 204, 21, 0.08);
+      box-shadow: 0 25px 50px rgba(0, 0, 0, 0.65), 0 0 40px rgba(250, 204, 21, 0.08);
       padding: 24px 20px;
       position: relative;
     }
@@ -134,8 +134,8 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: rgba(250, 204, 21, 0.08);
-      border: 1px dashed rgba(250, 204, 21, 0.7);
+      background: rgba(250, 204, 21, 0.1);
+      border: 1px dashed var(--primary);
       border-radius: 14px;
       padding: 10px 12px;
       margin-bottom: 14px;
@@ -233,7 +233,7 @@
       color: white;
       padding: 12px 14px;
       border-radius: 12px;
-      font-size: 15px;
+      font-size: 16px;
       outline: none;
       transition: border-color 0.2s;
     }
@@ -461,7 +461,7 @@
     .route-dist { font-size: 14px; font-weight: 800; color: white; }
     .route-dist span { color: var(--primary); }
 
-    /* Dedicated Map Container */
+    /* Dedicated Leaflet Map Container */
     .map-container-box {
       width: 100%;
       height: 190px;
@@ -470,7 +470,6 @@
       border: 1.5px solid var(--border);
       overflow: hidden;
       background: #090d16;
-      position: relative;
     }
 
     #routeMap {
@@ -1385,7 +1384,7 @@
     <!-- Sanitized Helmet Assurance Strip -->
     <div class="helmet-strip">
       <span style="font-size: 18px;">🪖</span>
-      <div><b>Sanitized Helmet Included:</b> Clean ISI helmet + fresh disposable cap on every ride (₹4 included in fare).</div>
+      <div><b>Sanitized Helmet Included:</b> Clean ISI-certified safety helmet + fresh disposable hygiene cap provided for every ride (₹4 included in fare).</div>
     </div>
 
     <!-- Voice AI Bar -->
@@ -1470,7 +1469,7 @@
       <div class="route-card" id="routeCard">
         <div class="route-header">
           <div class="route-dist">Road Distance: <span id="routeKm">0.0</span> km</div>
-          <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Available options:</div>
+          <div style="font-size: 11px; color: var(--primary); font-weight: 700;" id="routeSubtitle">Choose booking mode:</div>
         </div>
 
         <!-- Dedicated Leaflet Map Container with CARTO Dark Tiles -->
@@ -1595,9 +1594,9 @@
       <div class="captain-meta">
         <div>📍 <b>Pickup:</b> <span id="dispPickup">--</span></div>
         <div>🏁 <b>Destination:</b> <span id="dispDrop">--</span></div>
-        <div>📏 <b>Distance:</b> <span id="dispTripKm" style="color:var(--primary); font-weight:800;">0.0 KM</span></div>
+        <div>📏 <b>Booked Distance:</b> <span id="dispTripKm" style="color:var(--primary); font-weight:800;">0.0 KM</span></div>
         <div>💰 <b>Fare Due:</b> <span id="dispFare" style="color:var(--primary); font-weight:800;">₹0</span></div>
-        <div style="color: #6ee7b7; font-size: 11.5px; margin-top: 4px;">🪖 <b>Sanitized Helmet:</b> Captain carries sanitized helmet + fresh hair cap</div>
+        <div style="color: #6ee7b7; font-size: 11.5px; margin-top: 5px;">🪖 <b>Sanitized Helmet:</b> Captain carries sanitized helmet + fresh hair cap</div>
       </div>
 
       <a id="btnCallCaptain" href="#" class="btn-call-cap">
@@ -1710,7 +1709,7 @@
         How was your nineO ride?
       </div>
       <div style="font-size: 12px; color: var(--text-dim);" id="feedbackSubtitle">
-        Rate your Captain
+        Rate Captain Rahul Kumar
       </div>
 
       <div class="star-rating-box" id="starRatingBox">
@@ -1724,8 +1723,8 @@
       <div class="feedback-tags" id="feedbackTags">
         <span class="tag-chip" onclick="toggleTag(this)">⚡ Polite Captain</span>
         <span class="tag-chip" onclick="toggleTag(this)">🛡️ Safe Driving</span>
-        <span class="tag-chip" onclick="toggleTag(this)">🪖 Clean Sanitized Helmet</span>
         <span class="tag-chip" onclick="toggleTag(this)">⏱️ On-time Pickup</span>
+        <span class="tag-chip" onclick="toggleTag(this)">🪖 Clean Sanitized Helmet</span>
         <span class="tag-chip" onclick="toggleTag(this)">📍 Route Issue</span>
       </div>
 
@@ -1739,7 +1738,7 @@
     <div class="trust-strip">
       <div class="trust-item"><span>🪖</span><b>Sanitized Helmet</b></div>
       <div class="trust-item"><span>👥</span><b>Group Rides (2–4)</b></div>
-      <div class="trust-item"><span>⚡</span><b>Instant Match</b></div>
+      <div class="trust-item"><span>⚡</span><b>Fast Booking</b></div>
       <div class="trust-item"><span>🌱</span><b>Cleaner Cities</b></div>
     </div>
 
@@ -1797,16 +1796,22 @@
         <p>NINEO provides a technology platform that connects individual riders ("Riders") with independent third-party transport operators or drivers ("Captains" or "Drivers").</p>
         <p>Group bookings request simultaneous individual two-wheeler dispatches (2 to 4 Captains) coordinated under a single parent booking session.</p>
 
-        <h3>2. Pricing, Sanitized Helmet, and Group Terms</h3>
+        <h3>2. User Eligibility and Account Registration</h3>
         <ul>
-          <li><b>Single Ride Pricing:</b> Single trip fares are calculated based on Base Fare (₹21 for the 1st km), Road Distance Rate (₹7/km for subsequent km), and Travel Time (₹0.30/min). Applicable 5% GST is computed on the trip fare, along with a flat ₹4 platform fee and ₹4 sanitized helmet fee. What you see is the final all-inclusive payable fare.</li>
-          <li><b>Sanitized Helmet Service:</b> For your safety and hygiene, a sanitized ISI-certified helmet and fresh disposable hair cap are provided for each trip.</li>
-          <li><b>Daily Passes:</b> Valid for 24 hours from purchase. Includes 5 KM Pass (₹59, 1 ride), 9 KM Super Pass (₹99, 2 rides), and 18 KM Pro Pass (₹179, 3 rides).</li>
-          <li><b>Group Rides:</b> Group bookings (2 to 4 riders) bill dynamically per captain assigned. Daily passes apply toward 1 rider slot; additional group riders are billed at standard single dynamic rates.</li>
+          <li><b>Age Requirement:</b> You must be at least 18 years of age to book rides on the Platform.</li>
+          <li><b>Account Security:</b> All individual riders in a group booking must be present at the agreed pickup location.</li>
         </ul>
 
         <h3>3. Location Tracking and Telemetry</h3>
         <p>You grant NINEO permission to access precise GPS data for matching drivers, route calculation, and real-time transit safety.</p>
+
+        <h3>4. Pricing, Passes, and Group Terms</h3>
+        <ul>
+          <li><b>Single Ride Fares:</b> Single trip fares are calculated based on Base Fare (₹21 for 1st km), Road Distance Rate (₹7/km for additional km), and Travel Time (₹0.30/min). Statutory 5% GST is computed on the trip fare, along with a flat ₹4 platform fee and ₹4 sanitized helmet fee. What you see is the final all-inclusive payable fare.</li>
+          <li><b>Sanitized Helmet Service:</b> For your safety and hygiene, a sanitized ISI-certified helmet and fresh disposable hair cap are provided on each trip.</li>
+          <li><b>Daily Passes:</b> Valid for 24 hours from purchase. Includes 5 KM Pass (₹59, 1 ride), 9 KM Super Pass (₹99, 2 rides), and 18 KM Pro Pass (₹179, 3 rides).</li>
+          <li><b>Group Rides:</b> Group bookings (2 to 4 riders) bill dynamically per captain assigned. Daily passes apply toward 1 rider slot; additional group riders are billed at standard single dynamic rates.</li>
+        </ul>
       </div>
       <div class="terms-footer">
         <button class="btn-submit" style="padding: 12px; font-size: 13px;" onclick="closeTermsModal()">
@@ -1859,11 +1864,11 @@
       }
     }
 
-    /* 
-      Calculates final all-inclusive single ride fare:
+    /*
+      Exact Single Ride Fare Formula:
       - Base fare: ₹21 for 1st km
       - Additional distance: ₹7 per km
-      - Duration: ₹0.30 per minute
+      - Travel time: ₹0.30 per minute
       - 5% GST on the ride fare excluding platform & helmet fees
       - + ₹4 platform fee
       - + ₹4 sanitized helmet fee
@@ -2244,7 +2249,7 @@
       return null;
     }
 
-    /* Fixed Leaflet Map with CARTO Dark Tiles (Eliminates OSM 403 Access Blocked) */
+    /* Reliable Leaflet Map Initialization with CARTO Dark Tiles (Completely fixes 403 Access Blocked) */
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
@@ -2255,7 +2260,7 @@
           attributionControl: false
         }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png', {
           subdomains: 'abcd',
           maxZoom: 19
         }).addTo(mapInstance);
@@ -2460,6 +2465,7 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
+    /* Clean Exact Fare Display (No math formulas visible on user side) */
     function renderComparison(km, minutes) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -2469,7 +2475,6 @@
       const passDue = document.getElementById("activePassDue");
       const passExp = document.getElementById("activePassExplanation");
       const btnBookPass = document.getElementById("btnBookActivePass");
-      const upsellBox = document.getElementById("passUpsellBox");
       const singleGuaranteeBox = document.getElementById("singleRideGuaranteeBox");
 
       const basePerBikeFare = calculateSingleRideFare(km, minutes);
@@ -2645,7 +2650,7 @@
       const subText = document.getElementById("voiceSubText");
       const lower = rawText.toLowerCase().trim();
 
-      // Check for rider count mentions (e.g. 2 people, 3 log, 4 riders)
+      // Check for rider count mentions (e.g. 2 people, 3 log, char riders)
       if (lower.includes("4 people") || lower.includes("4 log") || lower.includes("four") || lower.includes("4 riders")) {
         setRiderCount(4);
       } else if (lower.includes("3 people") || lower.includes("3 log") || lower.includes("three") || lower.includes("3 riders")) {
