@@ -461,7 +461,7 @@
     .route-dist { font-size: 14px; font-weight: 800; color: white; }
     .route-dist span { color: var(--primary); }
 
-    /* Map Slot Container with Reliable Unblocked Styling */
+    /* Map Slot Container */
     .map-container-box {
       width: 100%;
       height: 190px;
@@ -1391,7 +1391,7 @@
     <!-- Sanitized Helmet Assurance Strip -->
     <div class="helmet-strip">
       <span style="font-size: 18px;">🪖</span>
-      <div><b>Sanitized Helmet Included:</b> Clean ISI safety helmet + fresh disposable hygiene hair cap for every ride (₹4 included in fare).</div>
+      <div><b>Sanitized Helmet Included:</b> Clean ISI-certified helmet + fresh disposable hygiene cap provided for every ride (₹4 included in fare).</div>
     </div>
 
     <!-- Voice AI Bar -->
@@ -2256,7 +2256,7 @@
       return null;
     }
 
-    /* Reliable Leaflet Map Initialization (Unblocked High-Availability Carto Provider) */
+    /* Reliable Leaflet Map Initialization (No API Key Required, No 403 Access Blocked) */
     function renderInteractiveMap(pickup, drop, coordinates, etaMin) {
       const mapContainer = document.getElementById("routeMap");
       if (!mapContainer) return;
@@ -2267,11 +2267,20 @@
           attributionControl: false
         }).setView([pickup ? pickup.lat : RANCHI_CENTER.lat, pickup ? pickup.lon : RANCHI_CENTER.lon], 13);
 
-        // Uses reliable high-availability Carto tile servers without 403 access blocks
-        L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}.png', {
-          subdomains: 'abcd',
-          maxZoom: 19
-        }).addTo(mapInstance);
+        // OpenStreetMap Humanitarian tile layer with multi-server subdomains + automatic fallback
+        const primaryTileLayer = L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          subdomains: ['a', 'b', 'c'],
+          attribution: '&copy; OpenStreetMap contributors'
+        });
+
+        // Fail-safe: if any tile fails, automatically loads from Esri World Street Map (100% free, no API key)
+        primaryTileLayer.on('tileerror', function(error) {
+          const coords = error.coords;
+          error.tile.src = `https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/${coords.z}/${coords.y}/${coords.x}`;
+        });
+
+        primaryTileLayer.addTo(mapInstance);
       }
 
       if (routeOutline) mapInstance.removeLayer(routeOutline);
@@ -2473,7 +2482,7 @@
       return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
     }
 
-    /* Clean Exact Fare Display (No complicated breakdown on user UI) */
+    /* Clean Exact Fare Display on User Side */
     function renderComparison(km, minutes) {
       document.getElementById("routeKm").innerText = km;
       document.getElementById("btnBookDirect").style.display = "none";
@@ -2659,7 +2668,7 @@
       const subText = document.getElementById("voiceSubText");
       const lower = rawText.toLowerCase().trim();
 
-      // Check for rider count mentions (e.g. 2 people, 3 log, 4 riders)
+      // Check for rider count mentions (e.g. 2 people, 3 log, char riders)
       if (lower.includes("4 people") || lower.includes("4 log") || lower.includes("four") || lower.includes("4 riders")) {
         setRiderCount(4);
       } else if (lower.includes("3 people") || lower.includes("3 log") || lower.includes("three") || lower.includes("3 riders")) {
