@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>nineO Pilot</title>
+<style>
+:root{--ink:#14171c;--mut:#6b7280;--line:#e8eaee;--soft:#f6f7f9;--acc:#ffb800;--accd:#c98f00;--ok:#12a150;--bad:#e5484d;--blue:#1a6ef0;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);color-scheme:light}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%}
+body{font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:#fff;display:flex;justify-content:center}
+button,input,select{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none}
+.app{position:relative;width:100%;max-width:440px;height:100%;display:flex;flex-direction:column;background:#fff;overflow:hidden;box-shadow:0 0 0 1px var(--line);--dim:.35}
+.wp{position:absolute;inset:0;background-size:cover;background-position:center;z-index:0;pointer-events:none}
+.wp[hidden]{display:none}
+.wp::after{content:"";position:absolute;inset:0;background:#fff;opacity:var(--dim)}
+header,main,nav{position:relative;z-index:1}
+header{display:flex;align-items:center;gap:10px;padding:10px 16px;background:rgba(255,255,255,.94);border-bottom:1px solid var(--line)}
+.logo{font-weight:800;font-size:19px;letter-spacing:-.5px}.logo b{color:var(--acc)}
+.sp{flex:1}
+.ic{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--soft);flex:none}
+.duty{display:flex;align-items:center;gap:8px;border:1.5px solid var(--line);border-radius:30px;padding:5px 6px 5px 14px;font-weight:700;font-size:13px;background:#fff}
+.duty.on{border-color:var(--ok);color:var(--ok);background:#effaf3}
+.tg{width:42px;height:24px;border-radius:20px;background:#cfd3da;position:relative;transition:.2s;flex:none;display:block}
+.tg::after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:.2s}
+.on .tg,.tg.on{background:var(--ok)}.on .tg::after,.tg.on::after{left:21px}
+main{flex:1;overflow-y:auto;padding:14px 16px 20px}
+nav{display:flex;background:rgba(255,255,255,.96);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;padding:9px 0 8px;font-size:11px;font-weight:600;color:var(--mut);display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button.act{color:var(--ink)}nav button.act svg{stroke:var(--accd)}
+svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card{background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:12px;display:block;width:100%;text-align:left}
+.h{font-weight:800;font-size:17px;margin:4px 0 10px}
+.mut{color:var(--mut);font-size:13px}
+.big{font-size:30px;font-weight:800;letter-spacing:-1px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.btn{background:var(--acc);font-weight:800;padding:13px;border-radius:12px;width:100%;text-align:center;display:block}
+.btn:disabled{background:#eee;color:#999;cursor:not-allowed}
+.btn.ghost{background:var(--soft)}
+.bar{background:#2a2e35;color:#fff;border-radius:14px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center;font-weight:700;margin-bottom:12px;width:100%}
+.map{height:250px;border-radius:16px;overflow:hidden;border:1px solid var(--line);margin-bottom:12px;background:#eef1ef}
+.tabs{display:flex;background:#2a2e35;border-radius:12px;padding:4px;margin-bottom:12px}
+.tabs button{flex:1;padding:9px;border-radius:9px;color:#cfd3da;font-weight:700}
+.tabs button.act{background:#fff;color:var(--ink)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.st{background:rgba(255,255,255,.96);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:12px;padding:12px}
+.st b{font-size:24px;display:block}.st span{color:var(--mut);font-size:13px}
+.st.r{border-left-color:var(--bad)}.st.r b{color:var(--bad)}
+.ride{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line);width:100%;text-align:left}
+.ride:last-child{border:0}
+.dot{width:38px;height:38px;border-radius:50%;background:var(--soft);display:grid;place-items:center;flex:none;font-size:16px}
+.tag{font-size:11px;font-weight:700;padding:2px 8px;border-radius:20px;background:var(--soft);color:var(--mut);display:inline-block}
+.tag.g{background:#e7f7ee;color:var(--ok)}.tag.y{background:#fff4d0;color:#8a6200}.tag.b{background:#e8f0fe;color:var(--blue)}
+.seg{display:flex;gap:8px;margin:8px 0 12px}
+.seg button{flex:1;border:1.5px solid var(--line);border-radius:14px;padding:12px 8px;text-align:center;font-weight:700;background:#fff}
+.seg button small{display:block;font-weight:500;color:var(--mut)}
+.seg button.act{border-color:var(--acc);background:#fff9e6}
+label{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:10px 0 4px}
+input,select{width:100%;border:1.5px solid var(--line);border-radius:10px;padding:11px 12px;background:#fff}
+input:focus{outline:0;border-color:var(--acc)}
+.line{display:flex;justify-content:space-between;gap:10px;padding:7px 0;font-size:14px}
+.line.t{border-top:1px dashed var(--line);margin-top:4px;padding-top:10px;font-weight:800;font-size:16px}
+.neg{color:var(--bad)}.pos{color:var(--ok)}
+.tl{position:relative;padding-left:26px}
+.tl div{position:relative;padding-bottom:14px}
+.tl div::before{content:"✓";position:absolute;left:-26px;top:0;width:18px;height:18px;border-radius:50%;background:var(--ok);color:#fff;font-size:11px;display:grid;place-items:center}
+.tl div::after{content:"";position:absolute;left:-18px;top:18px;bottom:0;width:2px;background:#bfe8cf}
+.tl div:last-child::after{display:none}.tl div.p::before{content:"";background:#fff;border:2px solid var(--acc)}
+.tl div.p::after{background:var(--line)}
+.vi{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.vi:last-child{border:0}
+.prog{height:8px;background:var(--line);border-radius:8px;overflow:hidden;margin:8px 0}
+.prog i{display:block;height:100%;background:var(--acc);transition:.3s}
+.ov{position:absolute;inset:0;background:rgba(0,0,0,.45);z-index:10;display:none;align-items:flex-end}
+.ov.show{display:flex}
+.sheet{background:#fff;width:100%;max-height:88%;overflow-y:auto;border-radius:22px 22px 0 0;padding:18px 16px calc(18px + env(safe-area-inset-bottom,0px))}
+.sheet .x{float:right}
+.toast{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);background:#14171c;color:#fff;padding:10px 16px;border-radius:30px;font-size:13px;z-index:20;opacity:0;transition:.25s;pointer-events:none;white-space:nowrap}
+.toast.show{opacity:1}
+.rules li{margin:0 0 6px 18px;font-size:13px;color:var(--mut)}
+</style></head>
+<body>
+<div class="app" id="app">
+  <div class="wp" id="wp" hidden></div>
+  <header>
+    <button class="ic" id="menu" aria-label="Settings"><svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="logo">nine<b>O</b> <span class="mut" style="font-weight:600">Pilot</span></div>
+    <div class="sp"></div>
+    <button class="duty" id="duty"><span id="dutyT">OFF DUTY</span><i class="tg"></i></button>
+  </header>
+  <main id="main"></main>
+  <nav id="nav"></nav>
+  <div class="ov" id="ov"><div class="sheet" id="sheet"></div></div>
+  <div class="toast" id="toast"></div>
+</div>
+<script>
+const $=s=>document.querySelector(s);
+const inr=n=>(n<0?"−":"")+"₹"+Math.abs(n).toLocaleString("en-IN");
+const ICON={home:'<path d="M3 11l9-8 9 8v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',earn:'<path d="M4 19V9M10 19V5M16 19v-7M22 19H2"/>',payout:'<rect x="3" y="6" width="18" height="13" rx="2"/><path d="M3 10h18M16 15h2"/>',profile:'<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/>'};
+const S={online:false,tab:"Today",cat:"Ustaad",demand:false,wallet:300,
+ rides:[
+  {id:"122343222",t:"10:30 AM",fare:120,mode:"online",from:"Ranchi Lake",to:"Kanke Road",km:6,min:18},
+  {id:"122343301",t:"11:45 AM",fare:42,mode:"cash",from:"Albert Ekka Chowk",to:"Morabadi",km:3,min:11},
+  {id:"122343390",t:"01:10 PM",fare:85,mode:"pass",from:"Birsa Chowk",to:"Doranda",km:5,min:16},
+  {id:"122343444",t:"03:20 PM",fare:48,mode:"online",from:"Main Road",to:"Harmu",km:3,min:12}],
+ payouts:[{amt:500,date:"28 Oct, 6:00 PM",st:3,old:1}],
+ verify:{aadhaar:1,dl:1,selfie:0,rc:0,ins:0},
+ vehicle:{no:"JH 01 AB 1234",model:"Honda Shine 125"},
+ bank:null,profile:{name:"Raju Kumar",phone:"9876543210"}};
+// Deductions: microfee ₹4 (₹0 if base fare < ₹50) + platform ₹4 + helmet hygiene ₹4
+const calc=r=>{const micro=r.fare<50?0:4;return{micro,plat:4,hyg:4,ded:micro+8,net:r.fare-micro-8}};
+// Online and pass rides credit net to the wallet; cash rides debit the fees (pilot already holds the cash)
+const impact=r=>r.mode==="cash"?-calc(r).ded:calc(r).net;
+const bal=()=>S.wallet+S.rides.reduce((a,r)=>a+impact(r),0)-S.payouts.filter(p=>!p.old).reduce((a,p)=>a+p.amt,0);
+const today=()=>S.rides.reduce((a,r)=>a+calc(r).net,0);
+const cash=()=>S.rides.filter(r=>r.mode==="cash").reduce((a,r)=>a+r.fare,0);
+const pct=()=>Math.round((Object.values(S.verify).filter(Boolean).length+(S.bank?1:0)+(S.vehicle.no?1:0))/7*100);
+function toast(m){const t=$("#toast");t.textContent=m;t.classList.add("show");clearTimeout(toast.i);toast.i=setTimeout(()=>t.classList.remove("show"),1800)}
+function sheet(h){$("#sheet").innerHTML='<button class="ic x" onclick="closeS()" aria-label="Close">✕</button>'+h;$("#ov").classList.add("show")}
+function closeS(){$("#ov").classList.remove("show")}
+$("#ov").onclick=e=>{if(e.target.id==="ov")closeS()};
+
+function vi([k,n]){const d=S.verify[k];return `<div class="vi"><div class="dot">${d?"✓":"📄"}</div><div style="flex:1"><b>${n}</b><div class="mut">${d?"Submitted · under review":"Not uploaded"}</div></div><button class="tag ${d?'g':'y'}" style="padding:7px 12px" onclick="S.verify['${k}']=1;toast('${n} uploaded');render()">${d?"Re-upload":"Upload"}</button></div>`}
+const V={
+home(){return `
+ <button class="bar" onclick="go('earn')"><span>Today’s Earnings &nbsp; ${inr(today())}</span><span>▾</span></button>
+ <div class="map"><svg viewBox="0 0 400 250" style="width:100%;height:100%;stroke:none" preserveAspectRatio="xMidYMid slice">
+  <rect width="400" height="250" fill="#eef1ef"/><path d="M-10 120L410 100" stroke="#fff" stroke-width="16"/><path d="M150-10L190 260" stroke="#fff" stroke-width="12"/><path d="M290-10L270 260" stroke="#fff" stroke-width="9"/><path d="M-10 200L410 215" stroke="#fff" stroke-width="8"/>
+  <path d="M30 20h90v60H30z" fill="#cfe9d4"/><ellipse cx="335" cy="170" rx="48" ry="30" fill="#bcdcf2"/>
+  <text x="335" y="174" font-size="11" text-anchor="middle" fill="#3a6a8a">Ranchi Lake</text><text x="75" y="55" font-size="11" text-anchor="middle" fill="#3b7a4b">Park</text>
+  <text x="210" y="112" font-size="10" fill="#777">Main Road</text><text x="205" y="238" font-size="10" fill="#777">Kanke Road</text>
+  ${S.demand?'<circle cx="215" cy="110" r="50" fill="#ff5a3c" opacity=".25"/><circle cx="215" cy="110" r="26" fill="#ff5a3c" opacity=".3"/>':''}
+  <circle cx="215" cy="110" r="9" fill="${S.online?'#12a150':'#9aa0a8'}" stroke="#fff" stroke-width="3"/></svg></div>
+ <div class="card"><div class="row"><div><b>High order areas</b><div class="mut">Use this option to see high demand areas</div></div><button class="tg ${S.demand?'on':''}" id="dm" aria-label="Toggle high order areas"></button></div></div>
+ <div class="card row" style="gap:14px"><div class="dot" style="background:#fff4d0">⏱</div><div style="flex:1"><b>Want to know your next order time?</b><div style="color:var(--blue);font-size:13px;font-weight:600">Tap to know</div></div></div>
+ ${S.online?'':'<div class="mut" style="text-align:center">You are off duty. Go on duty to receive rides.</div>'}`},
+earn(){return `
+ <div class="tabs">${["Today","Redeem","Custom"].map(t=>`<button class="${S.tab===t?'act':''}" onclick="S.tab='${t}';render()">${t}</button>`).join("")}</div>
+ ${S.tab==="Today"?`
+ <button class="card" style="text-align:center" onclick="go('today')"><div class="big pos">${inr(today())}</div><div class="mut">Today’s Earnings (after deductions) →</div><div class="line" style="border-top:1px solid var(--line);margin-top:10px"><span>Cash collected</span><b>${inr(cash())}</b></div></button>
+ <div class="grid"><div class="st"><b>${S.rides.length}</b><span>Orders</span></div><div class="st"><b>${S.rides.reduce((a,r)=>a+r.km,0)}</b><span>Kms</span></div>
+ <div class="st"><b>6</b><span>Hours</span></div><div class="st"><b>4.8</b><span>Avg. Rating</span></div>
+ <div class="st r"><b>1</b><span>Rejected orders</span><div class="mut neg">1 more allowed</div></div><div class="st r"><b>0</b><span>Missed orders</span><div class="mut neg">Please do not cancel</div></div></div>`:
+ S.tab==="Redeem"?`<div class="card" style="text-align:center"><div class="big">${inr(bal())}</div><div class="mut">Wallet balance available to withdraw</div></div><button class="btn" onclick="go('payout')">Go to Payout</button>`:
+ `<div class="card"><div class="row"><div style="flex:1"><label>From</label><input type="date"></div><div style="flex:1"><label>To</label><input type="date"></div></div>
+ <button class="btn ghost" style="margin-top:12px" onclick="toast('Showing history for selected dates')">Check history</button></div>
+ <div class="card"><div class="h">Recent days</div>${[["28 Oct",6,"₹612"],["27 Oct",9,"₹904"],["26 Oct",4,"₹388"]].map(d=>`<div class="line"><span>${d[0]} · ${d[1]} rides</span><b>${d[2]}</b></div>`).join("")}</div>`}`},
+today(){return `<div class="row"><button class="ic" onclick="go('earn')" aria-label="Back">←</button><div class="h" style="margin:0">Today’s Earnings</div><span style="width:38px"></span></div>
+ <div class="card" style="text-align:center;margin-top:12px"><div class="big pos">${inr(today())}</div><div class="mut">Net of fees</div><div class="line"><span>Cash collected</span><b>${inr(cash())}</b></div></div>
+ <div class="card">${S.rides.slice().reverse().map(r=>{const c=calc(r);return `<button class="ride" onclick="rideInfo('${r.id}')"><div class="dot">🏍</div><div style="flex:1"><b>${r.from} → ${r.to}</b><div class="mut">${r.t} · ${r.km} km</div><span class="tag ${r.mode==='pass'?'b':r.mode==='cash'?'y':'g'}">${r.mode==='pass'?'Pass ride':r.mode==='cash'?'Cash':'Online'}</span></div><div style="text-align:right"><b>${inr(c.net)}</b><div class="mut">of ${inr(r.fare)}</div></div></button>`}).join("")}</div>`},
+payout(){const b=bal(),can=S.rides.length>0,bk=S.bank;return `
+ <div class="card" style="background:#14171c;color:#fff"><div class="mut" style="color:#aab">Wallet balance</div><div class="big">${inr(b)}</div>
+  <div class="mut" style="color:#aab;margin:4px 0 12px">Ride and pass earnings are added here after every completed ride.</div>
+  <button class="btn" ${can&&b>0&&bk?'':'disabled'} onclick="withdraw()">Withdraw to bank</button>
+  ${!bk?'<div style="color:#ffd36b;font-size:12px;margin-top:8px">Add bank details in Profile to withdraw.</div>':!can?'<div style="color:#ffd36b;font-size:12px;margin-top:8px">Complete at least one ride to withdraw.</div>':''}</div>
+ <div class="card"><div class="h">Deductions per ride</div>
+  <div class="line"><span>Microfee</span><b>₹4 <span class="mut">(₹0 if fare under ₹50)</span></b></div><div class="line"><span>Platform fee</span><b>₹4</b></div><div class="line"><span>Helmet hygiene</span><b>₹4</b></div>
+  <ul class="rules"><li>Pass rides: the fare is added to your wallet once the ride is completed.</li><li>Cash rides: you keep the cash; fees are deducted from the wallet.</li></ul></div>
+ <div class="h">Complete a ride <span class="mut" style="font-weight:500">(demo)</span></div>
+ <div class="seg"><button onclick="demo(40,'online')">₹40<small>Online</small></button><button onclick="demo(85,'pass')">₹85<small>Pass</small></button><button onclick="demo(150,'online')">₹150<small>Online</small></button></div>
+ <div class="h">Redeem requests</div>
+ <div class="card">${S.payouts.map((p,i)=>`<button class="ride" onclick="payInfo(${i})"><div class="dot">🏦</div><div style="flex:1"><b>${inr(p.amt)}</b><div class="mut">${p.date}</div></div><span class="tag ${p.st===3?'g':'y'}">${["","Started","Approved","Paid"][p.st]}</span></button>`).join("")}</div>`},
+profile(){const L=[["aadhaar","Aadhaar card"],["dl","Driving licence"],["selfie","Live selfie"],["rc","Vehicle RC"],["ins","Vehicle insurance"]];return `
+ <div class="card row" style="gap:14px"><div class="dot" style="width:56px;height:56px;font-size:24px;background:#fff4d0">${S.cat==="Ustaad"?"🧔":"👩"}</div>
+  <div style="flex:1"><b style="font-size:17px">${S.profile.name}</b><div class="mut">Pilot · ${S.cat} · ${S.profile.phone}</div></div></div>
+ <div class="h">Pilot category</div>
+ <div class="seg"><button class="${S.cat==="Ustaad"?'act':''}" onclick="S.cat='Ustaad';render()">Ustaad<small>Male pilot</small></button><button class="${S.cat==="Sakhi"?'act':''}" onclick="S.cat='Sakhi';render()">Sakhi<small>Female pilot</small></button></div>
+ <div class="card"><div class="row"><b>Verification</b><b>${pct()}%</b></div><div class="prog"><i style="width:${pct()}%"></i></div><div class="mut">Complete all steps to get verified and start earning.</div></div>
+ <div class="card"><div class="h">Identity</div>${L.slice(0,3).map(vi).join("")}</div>
+ <div class="card"><div class="h">Vehicle</div><label>Vehicle number</label><input id="vno" value="${S.vehicle.no}" placeholder="JH 01 AB 1234"><label>Bike model</label><input id="vm" value="${S.vehicle.model}">
+  <button class="btn ghost" style="margin:12px 0 4px" onclick="S.vehicle={no:$('#vno').value,model:$('#vm').value};toast('Vehicle saved');render()">Save vehicle</button>${L.slice(3).map(vi).join("")}</div>
+ <div class="card"><div class="h">Bank details</div>${S.bank?`<div class="line"><span>Name</span><b>${S.bank.name}</b></div><div class="line"><span>Bank</span><b>${S.bank.bank}</b></div><div class="line"><span>Account</span><b>•••• ${S.bank.acc.slice(-4)}</b></div><div class="line"><span>IFSC</span><b>${S.bank.ifsc}</b></div><button class="btn ghost" onclick="bankForm()">Edit bank details</button>`:`<div class="mut" style="margin-bottom:10px">Payouts are sent to this account.</div><button class="btn" onclick="bankForm()">Add bank details</button>`}</div>`}
+};
+function rideInfo(id){const r=S.rides.find(x=>x.id===id),c=calc(r);sheet(`<div class="h">Order info</div><div class="mut">${r.t} · Order #${r.id}</div>
+ <div class="row" style="margin:12px 0;text-align:center"><div style="flex:1"><b style="font-size:20px">${r.km} km</b><div class="mut">Ride travelled</div></div><div style="flex:1"><b style="font-size:20px">${r.min} mins</b><div class="mut">Duration</div></div></div>
+ <div class="line"><span>Pickup</span><b>${r.from}</b></div><div class="line"><span>Drop</span><b>${r.to}</b></div><div class="line"><span>Paid by</span><b>${r.mode==="pass"?"nineO Pass":r.mode==="cash"?"Cash":"Online"}</b></div>
+ <div class="h" style="margin-top:12px">Fare breakup</div>
+ <div class="line"><span>Base fare</span><b>${inr(r.fare)}</b></div>
+ <div class="line"><span>Microfee</span><b class="${c.micro?'neg':''}">${c.micro?"−₹4":"₹0 · fare under ₹50"}</b></div>
+ <div class="line"><span>Platform fee</span><b class="neg">−₹4</b></div><div class="line"><span>Helmet hygiene</span><b class="neg">−₹4</b></div>
+ <div class="line t"><span>You earn</span><span class="pos">${inr(c.net)}</span></div>
+ <div class="mut" style="margin-top:8px">${r.mode==="cash"?"Cash is with you. "+inr(c.ded)+" is deducted from your wallet.":inr(c.net)+" is added to your wallet."}</div>`)}
+function payInfo(i){const p=S.payouts[i];sheet(`<div class="h">Redeem info</div><div class="${p.st===3?'pos':''}" style="font-weight:800;font-size:17px">${p.st===3?"Successfully added to your account":"In progress"}</div>
+ <div class="card" style="margin-top:10px"><div class="mut">Bank info</div><b>${S.bank?S.bank.name:"Raju Kumar"}</b><div>${S.bank?S.bank.bank+" · •••• "+S.bank.acc.slice(-4):"Axis Bank · •••• 0933"}</div></div>
+ <div class="big" style="font-size:24px">${inr(p.amt)}</div><div class="tl" style="margin-top:12px">
+ <div><b>Redeem request started</b><div class="mut">${p.date}</div></div><div class="${p.st>=2?'':'p'}"><b>Approval from partner bank</b></div><div class="${p.st>=3?'':'p'}"><b>Payment processed by partner bank</b></div></div>`)}
+function withdraw(){const b=bal();sheet(`<div class="h">Withdraw</div><div class="mut">Available ${inr(b)} · ${S.bank.bank} •••• ${S.bank.acc.slice(-4)}</div>
+ <label>Amount (₹)</label><input id="wa" type="number" inputmode="numeric" value="${b}"><div id="we" class="neg mut" style="min-height:18px;margin:6px 0"></div>
+ <button class="btn" onclick="doW()">Confirm withdrawal</button>`)}
+function doW(){const a=+$("#wa").value,b=bal();if(!a||a<1||a>b){$("#we").textContent="Enter an amount between ₹1 and "+inr(b);return}
+ S.payouts.unshift({amt:a,date:"Today, "+new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),st:1});const p=S.payouts[0];
+ setTimeout(()=>{p.st=2;render()},2500);setTimeout(()=>{p.st=3;render()},5000);closeS();toast("Redeem request started");render()}
+function bankForm(){const b=S.bank||{name:"",bank:"",acc:"",ifsc:""};sheet(`<div class="h">Bank details</div>
+ <label>Account holder name</label><input id="bn" value="${b.name}"><label>Bank name</label><input id="bb" value="${b.bank}"><label>Account number</label><input id="ba" inputmode="numeric" value="${b.acc}"><label>IFSC code</label><input id="bi" value="${b.ifsc}" style="text-transform:uppercase">
+ <div id="be" class="neg mut" style="min-height:18px;margin:6px 0"></div><button class="btn" onclick="saveB()">Save</button>`)}
+function saveB(){const n=$("#bn").value.trim(),bb=$("#bb").value.trim(),a=$("#ba").value.trim(),i=$("#bi").value.trim().toUpperCase();
+ if(!n||!bb||!/^\d{9,18}$/.test(a)||!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(i)){$("#be").textContent="Check all fields: account 9–18 digits and a valid IFSC.";return}
+ S.bank={name:n,bank:bb,acc:a,ifsc:i};closeS();toast("Bank details saved");render()}
+function demo(f,m){S.rides.push({id:"1224"+(5000+S.rides.length),t:new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"}),fare:f,mode:m,from:"Ranchi Lake",to:"Lalpur",km:4,min:14});toast("Ride completed · "+inr(calc(S.rides[S.rides.length-1]).net)+" earned");render()}
+// Custom wallpaper (default background is white)
+function settings(){const d=parseFloat(getComputedStyle($("#app")).getPropertyValue("--dim"))||.35;sheet(`<div class="h">Settings</div><div class="card"><b>Custom wallpaper</b><div class="mut" style="margin-bottom:10px">The background stays white unless you add your own image.</div>
+ <input type="file" id="wf" accept="image/*"><label>Wallpaper fade (higher = lighter)</label><input type="range" id="wd" min="0" max="90" value="${Math.round(d*100)}" style="padding:0">
+ <button class="btn ghost" style="margin-top:12px" onclick="setWp(null)">Reset to white</button></div><button class="btn" onclick="closeS()">Done</button>`);
+ $("#wf").onchange=e=>{const f=e.target.files[0];if(!f)return;const im=new Image();im.onload=()=>{const c=document.createElement("canvas"),k=Math.min(1,900/Math.max(im.width,im.height));c.width=im.width*k;c.height=im.height*k;c.getContext("2d").drawImage(im,0,0,c.width,c.height);setWp(c.toDataURL("image/jpeg",.7))};im.src=URL.createObjectURL(f)};
+ $("#wd").oninput=e=>{$("#app").style.setProperty("--dim",e.target.value/100);try{localStorage.setItem("nineo_dim",e.target.value/100)}catch(x){}}}
+function setWp(u){const w=$("#wp");if(u){w.style.backgroundImage="url("+u+")";w.hidden=false}else{w.hidden=true;w.style.backgroundImage=""}try{u?localStorage.setItem("nineo_wp",u):localStorage.removeItem("nineo_wp")}catch(x){toast("Wallpaper applied for this session")}}
+const NAV=[["home","Home"],["earn","Earnings"],["payout","Payout"],["profile","Profile"]];
+function go(v){location.hash=v}
+function render(){const h=(location.hash||"#home").slice(1),k=V[h]?h:"home";
+ $("#main").innerHTML=V[k]();
+ $("#nav").innerHTML=NAV.map(([id,l])=>`<button class="${(k===id||(k==='today'&&id==='earn'))?'act':''}" onclick="go('${id}')"><svg viewBox="0 0 24 24">${ICON[id]}</svg>${l}</button>`).join("");
+ $("#duty").className="duty"+(S.online?" on":"");$("#dutyT").textContent=S.online?"ON DUTY":"OFF DUTY";
+ const d=$("#dm");if(d)d.onclick=()=>{S.demand=!S.demand;render()}}
+$("#duty").onclick=()=>{S.online=!S.online;toast(S.online?"You are on duty":"You are off duty");render()};
+$("#menu").onclick=settings;
+addEventListener("hashchange",()=>{render();$("#main").scrollTop=0});
+try{const u=localStorage.getItem("nineo_wp"),d=localStorage.getItem("nineo_dim");if(d)$("#app").style.setProperty("--dim",d);if(u)setWp(u)}catch(x){}
+render();
+</script></body></html>
